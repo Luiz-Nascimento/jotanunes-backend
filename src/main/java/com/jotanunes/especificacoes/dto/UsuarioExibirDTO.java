@@ -1,13 +1,13 @@
 package com.jotanunes.especificacoes.dto;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public record UsuarioExibirDTO(
         String id,
         String nome,
         String email,
         String perfil,
-        Timestamp dataCriacao,
+        LocalDateTime dataCriacao,
         Boolean ativo
 ) {
 }

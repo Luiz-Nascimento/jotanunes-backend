@@ -2,13 +2,14 @@ package com.jotanunes.especificacoes.model;
 
 
 import jakarta.persistence.*;
-import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Table(name = "usuario")
 public class Usuario {
 
     @Id
@@ -16,33 +17,34 @@ public class Usuario {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @Column(nullable = false, length = 80)
+    @Column(nullable = false, unique = true, length = 80)
     private String nome;
     @Column(nullable = false)
     private String senha;
-    @Column(nullable = false, length = 12)
-    private String perfil;
+    @Column(name = "nivel_acesso", nullable = false, length = 10)
+    private String nivelAcesso;
     @Column(nullable = false, unique = true, length = 255)
     private String email;
     @Column(name = "data_criacao", nullable = false)
-    private Timestamp dataCriacao;
+    @CreationTimestamp
+    private LocalDateTime dataCriacao;
     @ManyToOne
     @JoinColumn(name = "criado_por")
-    private Usuario criado_por;
+    private Usuario criadoPor;
     @Column(nullable = false)
     private Boolean ativo;
 
     public Usuario() {
     }
 
-    public Usuario(UUID id, String nome, String senha, String perfil, String email, Timestamp dataCriacao, Usuario criado_por, Boolean ativo) {
+    public Usuario(UUID id, String nome, String senha, String nivelAcesso, String email, LocalDateTime dataCriacao, Usuario criadoPor, Boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.senha = senha;
-        this.perfil = perfil;
+        this.nivelAcesso = nivelAcesso;
         this.email = email;
         this.dataCriacao = dataCriacao;
-        this.criado_por = criado_por;
+        this.criadoPor = criadoPor;
         this.ativo = ativo;
     }
 
@@ -70,12 +72,12 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public String getPerfil() {
-        return perfil;
+    public String getNivelAcesso() {
+        return nivelAcesso;
     }
 
-    public void setPerfil(String perfil) {
-        this.perfil = perfil;
+    public void setNivelAcesso(String nivelAcesso) {
+        this.nivelAcesso = nivelAcesso;
     }
 
     public String getEmail() {
@@ -86,20 +88,20 @@ public class Usuario {
         this.email = email;
     }
 
-    public Timestamp getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(Timestamp dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
-    public Usuario getCriado_por() {
-        return criado_por;
+    public Usuario getCriadoPor() {
+        return criadoPor;
     }
 
-    public void setCriado_por(Usuario criado_por) {
-        this.criado_por = criado_por;
+    public void setCriadoPor(Usuario criadoPor) {
+        this.criadoPor = criadoPor;
     }
 
     public Boolean getAtivo() {
