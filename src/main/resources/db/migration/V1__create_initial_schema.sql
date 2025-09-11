@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS public."empreendimento"
 (
     id uuid DEFAULT gen_random_uuid(),
@@ -81,10 +80,9 @@ CREATE TABLE IF NOT EXISTS public."usuario"
     data_criacao timestamp without time zone NOT NULL DEFAULT NOW(),
     criado_por uuid,
     ativo boolean NOT NULL DEFAULT TRUE,
-    nivel_acesso character varying(10) NOT NULL,
+    nivel_acesso character varying(10) NOT NULL DEFAULT 'PADRAO', -- ← CORRIGIDO
     PRIMARY KEY (id)
     );
-
 
 CREATE TABLE IF NOT EXISTS public."historico_alteracao"
 (
@@ -100,79 +98,66 @@ CREATE TABLE IF NOT EXISTS public."historico_alteracao"
     PRIMARY KEY (id)
     );
 
--- FOREIGN KEYS CORRETAS (todas invertidas)
-
--- 1. especificacao_tecnica referencia empreendimento
 ALTER TABLE public."especificacao_tecnica"
     ADD CONSTRAINT fk_especificacao_empreendimento
         FOREIGN KEY (empreendimento_id)
             REFERENCES public."empreendimento"(id);
 
--- 2. Ambiente referencia EspecificacaoTecnica
 ALTER TABLE public."ambiente"
     ADD CONSTRAINT fk_ambiente_especificacao
         FOREIGN KEY (especificacao_tecnica_id)
             REFERENCES public."especificacao_tecnica"(id);
 
--- 3. Item referencia Ambiente
 ALTER TABLE public."item"
     ADD CONSTRAINT fk_item_ambiente
         FOREIGN KEY (ambiente_id)
             REFERENCES public."ambiente"(id);
 
--- 4. Item referencia TipoMaterial (FK que faltava!)
 ALTER TABLE public."item"
     ADD CONSTRAINT fk_item_tipo_material
         FOREIGN KEY (tipo_material_id)
             REFERENCES public."tipo_material"(id);
 
--- 5. EspecificacaoMarca referencia EspecificacaoTecnica
 ALTER TABLE public."especificacao_marca"
     ADD CONSTRAINT fk_esp_marca_especificacao
         FOREIGN KEY (especificacao_id)
             REFERENCES public."especificacao_tecnica"(id);
 
--- 6. EspecificacaoMarca referencia TipoMaterial
 ALTER TABLE public."especificacao_marca"
     ADD CONSTRAINT fk_esp_marca_tipo_material
         FOREIGN KEY (tipo_material_id)
             REFERENCES public."tipo_material"(id);
 
--- 7. EspecificacaoMarca referencia Marca
 ALTER TABLE public."especificacao_marca"
     ADD CONSTRAINT fk_esp_marca_marca
         FOREIGN KEY (marca_id)
             REFERENCES public."marca"(id);
 
--- 8. Checklist_Especificacao referencia EspecificacaoTecnica
 ALTER TABLE public."checklist_especificacao"
     ADD CONSTRAINT fk_checklist_especificacao
         FOREIGN KEY (especificacao_id)
             REFERENCES public."especificacao_tecnica"(id);
 
--- 9. Checklist_Especificacao referencia Usuario
 ALTER TABLE public."checklist_especificacao"
     ADD CONSTRAINT fk_checklist_usuario
         FOREIGN KEY (usuario_id)
             REFERENCES public."usuario"(id);
 
--- 10. Historico_Alteracao referencia EspecificacaoTecnica
 ALTER TABLE public."historico_alteracao"
     ADD CONSTRAINT fk_historico_especificacao
         FOREIGN KEY (especificacao_id)
             REFERENCES public."especificacao_tecnica"(id);
 
--- 11. Historico_Alteracao referencia Usuario
 ALTER TABLE public."historico_alteracao"
     ADD CONSTRAINT fk_historico_usuario
         FOREIGN KEY (usuario_id)
             REFERENCES public."usuario"(id);
 
--- 12. Usuario autoreferencia (criado_por)
 ALTER TABLE public."usuario"
     ADD CONSTRAINT fk_usuario_criado_por
         FOREIGN KEY (criado_por)
             REFERENCES public."usuario"(id);
 
-END;
-
+ALTER TABLE public."usuario"
+    ADD CONSTRAINT chk_nivel_acesso
+        CHECK (nivel_acesso IN ('PADRAO', 'GESTOR', 'ADMIN'));
