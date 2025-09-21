@@ -1,178 +1,93 @@
 
-CREATE TABLE IF NOT EXISTS public."empreendimento"
+BEGIN;
+
+
+CREATE TABLE IF NOT EXISTS public.empreendimentos
 (
-    id uuid DEFAULT gen_random_uuid(),
-    nome character varying(255) NOT NULL UNIQUE,
+    id serial PRIMARY KEY,
+    nome character varying(255) NOT NULL,
     localizacao character varying(255) NOT NULL,
     descricao text NOT NULL,
-    PRIMARY KEY (id)
+    observacoes text
     );
 
-CREATE TABLE IF NOT EXISTS public."especificacao_tecnica"
+CREATE TABLE IF NOT EXISTS public.documentos
 (
-    id uuid DEFAULT gen_random_uuid(),
-    empreendimento_id uuid NOT NULL UNIQUE,
-    data_criacao timestamp without time zone NOT NULL DEFAULT NOW(),
+    id serial PRIMARY KEY,
+    empreendimento_id INTEGER NOT NULL,
+    data_criacao timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status character varying(20) NOT NULL DEFAULT 'RASCUNHO',
     data_atualizacao timestamp without time zone,
-    PRIMARY KEY (id)
+    FOREIGN KEY (empreendimento_id) REFERENCES empreendimentos(id)
     );
 
-CREATE TABLE IF NOT EXISTS public."ambiente"
+CREATE TABLE IF NOT EXISTS public.ambientes
 (
-    id uuid DEFAULT gen_random_uuid(),
-    especificacao_tecnica_id uuid NOT NULL,
+    id serial PRIMARY KEY,
+    empreendimento_id INTEGER NOT NULL,
     nome character varying(80) NOT NULL,
     tipo character varying(20) NOT NULL,
-    PRIMARY KEY (id)
+    FOREIGN KEY (empreendimento_id) REFERENCES empreendimentos(id)
     );
 
-CREATE TABLE IF NOT EXISTS public."item"
+CREATE TABLE IF NOT EXISTS public.itens
 (
-    id uuid DEFAULT gen_random_uuid(),
-    ambiente_id uuid NOT NULL,
+    id serial PRIMARY KEY,
+    ambiente_id INTEGER NOT NULL,
     nome character varying(40) NOT NULL,
     descricao character varying(255) NOT NULL,
-    observacao character varying(255),
-    tipo_material_id uuid NOT NULL,
-    PRIMARY KEY (id)
+    status character varying(20) NOT NULL DEFAULT 'PENDENTE',
+    FOREIGN KEY (ambiente_id) REFERENCES ambientes(id)
     );
 
-CREATE TABLE IF NOT EXISTS public."marca"
+CREATE TABLE IF NOT EXISTS public.usuarios
 (
-    id uuid DEFAULT gen_random_uuid(),
-    nome character varying(80) NOT NULL UNIQUE,
-    PRIMARY KEY (id)
-    );
-
-CREATE TABLE IF NOT EXISTS public."tipo_material"
-(
-    id uuid DEFAULT gen_random_uuid(),
-    nome character varying(40) NOT NULL UNIQUE,
-    PRIMARY KEY (id)
-    );
-
-CREATE TABLE IF NOT EXISTS public."especificacao_marca"
-(
-    id uuid DEFAULT gen_random_uuid(),
-    especificacao_id uuid NOT NULL,
-    tipo_material_id uuid NOT NULL,
-    marca_id uuid NOT NULL,
-    PRIMARY KEY (id)
-    );
-
-CREATE TABLE IF NOT EXISTS public."checklist_especificacao"
-(
-    id uuid DEFAULT gen_random_uuid(),
-    status character varying(20) NOT NULL,
-    observacao text,
-    data_revisao timestamp without time zone NOT NULL,
-    especificacao_id uuid NOT NULL,
-    usuario_id uuid NOT NULL,
-    PRIMARY KEY (id)
-    );
-
-CREATE TABLE IF NOT EXISTS public."usuario"
-(
-    id uuid DEFAULT gen_random_uuid(),
-    nome character varying(80) NOT NULL UNIQUE,
+    id uuid PRIMARY KEY,
+    nome character varying(30) NOT NULL UNIQUE,
     senha character varying(255) NOT NULL,
     email character varying(255) NOT NULL UNIQUE,
-    data_criacao timestamp without time zone NOT NULL DEFAULT NOW(),
+    data_criacao timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     criado_por uuid,
     ativo boolean NOT NULL DEFAULT TRUE,
     nivel_acesso character varying(10) NOT NULL,
-    PRIMARY KEY (id)
+    FOREIGN KEY (criado_por) REFERENCES usuarios(id)
     );
 
-
-CREATE TABLE IF NOT EXISTS public."historico_alteracao"
+CREATE TABLE IF NOT EXISTS public.materiais
 (
-    id uuid DEFAULT gen_random_uuid(),
-    data_hora timestamp without time zone NOT NULL,
-    acao character varying(25) NOT NULL,
-    motivo text,
-    dados_antes json,
-    dados_depois json,
-    tabela_afetada character varying NOT NULL,
-    usuario_id uuid NOT NULL,
-    especificacao_id uuid NOT NULL,
-    PRIMARY KEY (id)
+    id serial PRIMARY KEY,
+    nome character varying(30) NOT NULL UNIQUE
     );
 
--- FOREIGN KEYS CORRETAS (todas invertidas)
+CREATE TABLE IF NOT EXISTS public.marcas
+(
+    id serial PRIMARY KEY,
+    nome character varying(50) NOT NULL UNIQUE
+    );
 
--- 1. especificacao_tecnica referencia empreendimento
-ALTER TABLE public."especificacao_tecnica"
-    ADD CONSTRAINT fk_especificacao_empreendimento
-        FOREIGN KEY (empreendimento_id)
-            REFERENCES public."empreendimento"(id);
+CREATE TABLE IF NOT EXISTS public.empreendimento_material_marca
+(
+    id serial PRIMARY KEY,
+    empreendimento_id INTEGER NOT NULL,
+    material_id INTEGER NOT NULL,
+    marca_id INTEGER NOT NULL,
+    FOREIGN KEY (empreendimento_id) REFERENCES empreendimentos(id),
+    FOREIGN KEY (material_id) REFERENCES materiais(id),
+    FOREIGN KEY (marca_id) REFERENCES marcas(id)
+    );
 
--- 2. Ambiente referencia EspecificacaoTecnica
-ALTER TABLE public."ambiente"
-    ADD CONSTRAINT fk_ambiente_especificacao
-        FOREIGN KEY (especificacao_tecnica_id)
-            REFERENCES public."especificacao_tecnica"(id);
+CREATE TABLE IF NOT EXISTS public.revisao_item
+(
+    id serial PRIMARY KEY,
+    item_id INTEGER NOT NULL UNIQUE,
+    usuario_id uuid NOT NULL,
+    status character varying(20) NOT NULL,
+    motivo text NOT NULL,
+    data_avaliacao timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    );
 
--- 3. Item referencia Ambiente
-ALTER TABLE public."item"
-    ADD CONSTRAINT fk_item_ambiente
-        FOREIGN KEY (ambiente_id)
-            REFERENCES public."ambiente"(id);
+CREATE UNIQUE INDEX idx_empreendimento_material_marca ON empreendimento_material_marca (empreendimento_id, material_id, marca_id);
 
--- 4. Item referencia TipoMaterial (FK que faltava!)
-ALTER TABLE public."item"
-    ADD CONSTRAINT fk_item_tipo_material
-        FOREIGN KEY (tipo_material_id)
-            REFERENCES public."tipo_material"(id);
-
--- 5. EspecificacaoMarca referencia EspecificacaoTecnica
-ALTER TABLE public."especificacao_marca"
-    ADD CONSTRAINT fk_esp_marca_especificacao
-        FOREIGN KEY (especificacao_id)
-            REFERENCES public."especificacao_tecnica"(id);
-
--- 6. EspecificacaoMarca referencia TipoMaterial
-ALTER TABLE public."especificacao_marca"
-    ADD CONSTRAINT fk_esp_marca_tipo_material
-        FOREIGN KEY (tipo_material_id)
-            REFERENCES public."tipo_material"(id);
-
--- 7. EspecificacaoMarca referencia Marca
-ALTER TABLE public."especificacao_marca"
-    ADD CONSTRAINT fk_esp_marca_marca
-        FOREIGN KEY (marca_id)
-            REFERENCES public."marca"(id);
-
--- 8. Checklist_Especificacao referencia EspecificacaoTecnica
-ALTER TABLE public."checklist_especificacao"
-    ADD CONSTRAINT fk_checklist_especificacao
-        FOREIGN KEY (especificacao_id)
-            REFERENCES public."especificacao_tecnica"(id);
-
--- 9. Checklist_Especificacao referencia Usuario
-ALTER TABLE public."checklist_especificacao"
-    ADD CONSTRAINT fk_checklist_usuario
-        FOREIGN KEY (usuario_id)
-            REFERENCES public."usuario"(id);
-
--- 10. Historico_Alteracao referencia EspecificacaoTecnica
-ALTER TABLE public."historico_alteracao"
-    ADD CONSTRAINT fk_historico_especificacao
-        FOREIGN KEY (especificacao_id)
-            REFERENCES public."especificacao_tecnica"(id);
-
--- 11. Historico_Alteracao referencia Usuario
-ALTER TABLE public."historico_alteracao"
-    ADD CONSTRAINT fk_historico_usuario
-        FOREIGN KEY (usuario_id)
-            REFERENCES public."usuario"(id);
-
--- 12. Usuario autoreferencia (criado_por)
-ALTER TABLE public."usuario"
-    ADD CONSTRAINT fk_usuario_criado_por
-        FOREIGN KEY (criado_por)
-            REFERENCES public."usuario"(id);
 
 END;
-
