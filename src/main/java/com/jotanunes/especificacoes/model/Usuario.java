@@ -1,28 +1,33 @@
 package com.jotanunes.especificacoes.model;
 
 
+import com.jotanunes.especificacoes.enums.NivelAcesso;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "usuario")
-public class Usuario {
+@Table(name = "usuarios")
+public class Usuario implements UserDetails {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true, length = 80)
+    @Column(nullable = false, unique = true, length = 30)
     private String nome;
     @Column(nullable = false)
     private String senha;
     @Column(name = "nivel_acesso", nullable = false, length = 10)
-    private String nivelAcesso;
+    private NivelAcesso nivelAcesso;
     @Column(nullable = false, unique = true, length = 255)
     private String email;
     @Column(name = "data_criacao", nullable = false)
@@ -37,8 +42,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(UUID id, String nome, String senha, String nivelAcesso, String email, LocalDateTime dataCriacao, Usuario criadoPor, Boolean ativo) {
-        this.id = id;
+    public Usuario(String nome, String senha, NivelAcesso nivelAcesso, String email, LocalDateTime dataCriacao, Usuario criadoPor, Boolean ativo) {
         this.nome = nome;
         this.senha = senha;
         this.nivelAcesso = nivelAcesso;
@@ -48,12 +52,17 @@ public class Usuario {
         this.ativo = ativo;
     }
 
-    public UUID getId() {
-        return id;
+    public Usuario(String nome, String senha, NivelAcesso nivelAcesso, String email, LocalDateTime dataCriacao, Boolean ativo) {
+        this.nome = nome;
+        this.senha = senha;
+        this.nivelAcesso = nivelAcesso;
+        this.email = email;
+        this.dataCriacao = dataCriacao;
+        this.ativo = ativo;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public UUID getId() {
+        return id;
     }
 
     public String getNome() {
@@ -72,11 +81,11 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public String getNivelAcesso() {
+    public NivelAcesso getNivelAcesso() {
         return nivelAcesso;
     }
 
-    public void setNivelAcesso(String nivelAcesso) {
+    public void setNivelAcesso(NivelAcesso nivelAcesso) {
         this.nivelAcesso = nivelAcesso;
     }
 
@@ -112,5 +121,44 @@ public class Usuario {
         this.ativo = ativo;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.nivelAcesso == NivelAcesso.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN")
+                , new SimpleGrantedAuthority("ROLE_GESTOR"),
+                new SimpleGrantedAuthority("ROLE_PADRAO"));
+        else if (this.nivelAcesso == NivelAcesso.GESTOR) return List.of(new SimpleGrantedAuthority("ROLE_GESTOR")
+        , new SimpleGrantedAuthority("ROLE_PADRAO"));
 
+        return List.of(new SimpleGrantedAuthority("ROLE_PADRAO"));
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
