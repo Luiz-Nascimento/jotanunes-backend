@@ -22,6 +22,12 @@ public class EmpreendimentoController {
         return empreendimentoService.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EmpreendimentoResponse> findById(@PathVariable Integer id) {
+        EmpreendimentoResponse response = empreendimentoService.findById(id);
+        return ResponseEntity.ok().body(response);
+    }
+
     @PostMapping
     public ResponseEntity<EmpreendimentoResponse> create(@RequestBody EmpreendimentoRequest data) {
         EmpreendimentoResponse response = empreendimentoService.create(data);
