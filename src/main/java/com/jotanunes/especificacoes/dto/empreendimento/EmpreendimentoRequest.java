@@ -4,6 +4,6 @@ public record EmpreendimentoRequest(
         String nome,
         String localizacao,
         String descricao,
-        String observacao
+        String observacoes
 ) {
 }

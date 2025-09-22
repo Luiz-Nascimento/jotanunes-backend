@@ -27,6 +27,7 @@ public class EmpreendimentoService {
 
     public EmpreendimentoResponse create(EmpreendimentoRequest data) {
         Empreendimento empreendimento = empreendimentoMapper.requestToEntity(data);
+        System.out.println(empreendimento.getObservacoes());
         empreendimentoRepository.save(empreendimento);
         return empreendimentoMapper.toDto(empreendimento);
     }
