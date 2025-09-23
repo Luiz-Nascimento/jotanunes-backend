@@ -33,4 +33,10 @@ public class EmpreendimentoController {
         EmpreendimentoResponse response = empreendimentoService.create(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
+        empreendimentoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
