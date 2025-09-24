@@ -38,4 +38,13 @@ public class EmpreendimentoService {
         empreendimentoRepository.save(empreendimento);
         return empreendimentoMapper.toDto(empreendimento);
     }
+
+    public void delete(Integer id) {
+        if (empreendimentoRepository.existsById(id)) {
+            empreendimentoRepository.deleteById(id);
+        }
+        else {
+            throw new EntityNotFoundException("Empreendimento não encontrado");
+        }
+    }
 }
