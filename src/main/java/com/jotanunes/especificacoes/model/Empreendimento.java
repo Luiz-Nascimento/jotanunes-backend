@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.model;
 import jakarta.persistence.*;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "empreendimentos")
@@ -17,6 +18,9 @@ public class Empreendimento {
 
     @Column(nullable = false)
     private String localizacao;
+
+    @OneToMany(mappedBy = "empreendimento")
+    private Set<Ambiente> ambientes;
 
     @Column(nullable = false)
     private String descricao;
