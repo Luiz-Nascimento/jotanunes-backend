@@ -72,4 +72,14 @@ public class Ambiente {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    @Override
+    public String toString() {
+        return "Ambiente{" +
+                "id=" + id +
+                ", empreendimento=" + empreendimento.getNome() +
+                ", nome='" + nome + '\'' +
+                ", tipo=" + tipo +
+                '}';
+    }
 }
