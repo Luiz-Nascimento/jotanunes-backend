@@ -1,0 +1,13 @@
+spring:
+    application:
+        name: especificacoes
+    datasource:
+        url: jdbc:postgresql://localhost:5432/jotanunesdb
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+    flyway:
+        enabled: true
+        baseline-on-migrate: true
+
+
+
