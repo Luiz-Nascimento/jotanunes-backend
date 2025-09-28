@@ -34,7 +34,7 @@ public class AmbienteService {
     @Transactional
     public AmbienteResponse create(AmbienteRequest data) {
         Empreendimento empreendimento = empreendimentoRepository.findById(data.idEmpreendimento())
-                .orElseThrow(() -> new EntityNotFoundException("Empreendimento não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Empreendimento não encontrado com o id: " + data.idEmpreendimento()));
         Ambiente ambiente = ambienteMapper.toEntity(data);
         ambiente.setEmpreendimento(empreendimento);
         ambienteRepository.save(ambiente);
