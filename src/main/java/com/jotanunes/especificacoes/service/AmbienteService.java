@@ -36,6 +36,7 @@ public class AmbienteService {
         Empreendimento empreendimento = empreendimentoRepository.findById(data.idEmpreendimento())
                 .orElseThrow(() -> new EntityNotFoundException("Empreendimento não encontrado"));
         Ambiente ambiente = ambienteMapper.toEntity(data);
+        ambiente.setEmpreendimento(empreendimento);
         ambienteRepository.save(ambiente);
         empreendimento.getAmbientes().add(ambiente);
         return ambienteMapper.toDto(ambiente);
