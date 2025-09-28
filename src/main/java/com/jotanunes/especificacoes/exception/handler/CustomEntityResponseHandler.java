@@ -3,16 +3,19 @@ package com.jotanunes.especificacoes.exception.handler;
 import com.jotanunes.especificacoes.exception.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestControllerAdvice
-public class CustomEntityResponseHandler extends ResponseEntityExceptionHandler {
+public class CustomEntityResponseHandler {
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex, WebRequest request) {
@@ -21,5 +24,12 @@ public class CustomEntityResponseHandler extends ResponseEntityExceptionHandler 
                 ex.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public final ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException exception) {
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }
