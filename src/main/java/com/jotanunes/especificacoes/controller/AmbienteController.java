@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.service.AmbienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class AmbienteController {
     }
 
     @PostMapping
-    public ResponseEntity<AmbienteResponse> create(@RequestBody AmbienteRequest data) {
+    public ResponseEntity<AmbienteResponse> create(@RequestBody @Valid AmbienteRequest data) {
         AmbienteResponse ambienteResponse = ambienteService.create(data);
         return ResponseEntity.ok().body(ambienteResponse);
     }

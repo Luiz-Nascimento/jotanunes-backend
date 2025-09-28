@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class EmpreendimentoController {
     }
 
     @PostMapping
-    public ResponseEntity<EmpreendimentoResponse> create(@RequestBody EmpreendimentoRequest data) {
+    public ResponseEntity<EmpreendimentoResponse> create(@RequestBody @Valid EmpreendimentoRequest data) {
         EmpreendimentoResponse response = empreendimentoService.create(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

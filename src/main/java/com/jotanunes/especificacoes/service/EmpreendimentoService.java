@@ -28,7 +28,7 @@ public class EmpreendimentoService {
 
     public EmpreendimentoResponse findById(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Empreedimento não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Empreedimento não encontrado com id: " + id));
         return empreendimentoMapper.toDto(empreendimento);
     }
 
