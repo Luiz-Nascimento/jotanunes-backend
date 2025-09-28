@@ -2,7 +2,9 @@ package com.jotanunes.especificacoes.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "empreendimentos")
@@ -17,6 +19,9 @@ public class Empreendimento {
 
     @Column(nullable = false)
     private String localizacao;
+
+    @OneToMany(mappedBy = "empreendimento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Ambiente> ambientes = new HashSet<>();
 
     @Column(nullable = false)
     private String descricao;
@@ -35,6 +40,15 @@ public class Empreendimento {
     public Empreendimento(String nome, String localizacao, String descricao, String observacoes) {
         this.nome = nome;
         this.localizacao = localizacao;
+        this.descricao = descricao;
+        this.observacoes = observacoes;
+    }
+
+    public Empreendimento(Integer id, String nome, String localizacao, Set<Ambiente> ambientes, String descricao, String observacoes) {
+        this.id = id;
+        this.nome = nome;
+        this.localizacao = localizacao;
+        this.ambientes = ambientes;
         this.descricao = descricao;
         this.observacoes = observacoes;
     }
@@ -75,6 +89,17 @@ public class Empreendimento {
         this.observacoes = observacoes;
     }
 
+    public Set<Ambiente> getAmbientes() {
+        return ambientes;
+    }
+
+    public void setAmbientes(Set<Ambiente> ambientes) {
+        this.ambientes = ambientes;
+    }
+
+    public void printAmbientes() {
+        this.ambientes.forEach(System.out::println);
+    }
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
