@@ -4,7 +4,9 @@ package com.jotanunes.especificacoes.model;
 import com.jotanunes.especificacoes.enums.TipoAmbiente;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "ambientes")
@@ -21,6 +23,9 @@ public class Ambiente {
 
     @Column(length = 80, nullable = false)
     private String nome;
+
+    @OneToMany(mappedBy = "ambiente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Item> itens = new HashSet<>();
 
 
     @Enumerated(EnumType.STRING)
@@ -62,6 +67,14 @@ public class Ambiente {
 
     public Integer getId() {
         return id;
+    }
+
+    public Set<Item> getItens() {
+        return itens;
+    }
+
+    public void setItens(Set<Item> itens) {
+        this.itens = itens;
     }
 
     @Override
