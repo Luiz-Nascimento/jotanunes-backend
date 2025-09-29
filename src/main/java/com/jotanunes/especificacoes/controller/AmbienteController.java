@@ -34,5 +34,11 @@ public class AmbienteController {
         return ResponseEntity.ok().body(ambienteResponse);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
+        ambienteService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

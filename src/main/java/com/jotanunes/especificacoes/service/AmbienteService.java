@@ -47,4 +47,11 @@ public class AmbienteService {
         return ambienteMapper.toDto(ambiente);
     }
 
+    public void delete(Integer id) {
+        Ambiente ambiente = ambienteRepository.findById(id).orElseThrow(()
+                -> new EntityNotFoundException("Ambiente não encontrado com id: " + id));
+
+        ambienteRepository.deleteById(id);
+    }
+
 }
