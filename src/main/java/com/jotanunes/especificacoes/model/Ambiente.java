@@ -24,7 +24,7 @@ public class Ambiente {
     @Column(length = 80, nullable = false)
     private String nome;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ambiente", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Item> itens = new HashSet<>();
 
 
