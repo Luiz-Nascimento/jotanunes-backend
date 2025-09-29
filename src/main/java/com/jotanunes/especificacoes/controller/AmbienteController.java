@@ -6,6 +6,7 @@ import com.jotanunes.especificacoes.service.AmbienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,11 @@ public class AmbienteController {
     @GetMapping
     public List<AmbienteResponse> findAll() {
         return ambienteService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AmbienteResponse> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok().body(ambienteService.findById(id));
     }
 
     @PostMapping

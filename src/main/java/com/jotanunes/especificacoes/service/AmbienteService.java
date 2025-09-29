@@ -31,6 +31,11 @@ public class AmbienteService {
         return ambienteRepository.findAll().stream().map(a -> ambienteMapper.toDto(a)).toList();
     }
 
+    public AmbienteResponse findById(Integer id) {
+        return ambienteMapper.toDto(ambienteRepository.findById(id).orElseThrow(()
+                -> new EntityNotFoundException("Ambiente não encontrado com id: " + id)));
+    }
+
     @Transactional
     public AmbienteResponse create(AmbienteRequest data) {
         Empreendimento empreendimento = empreendimentoRepository.findById(data.idEmpreendimento())
