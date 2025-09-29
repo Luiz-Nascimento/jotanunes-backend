@@ -19,9 +19,12 @@ public class Ambiente {
     @JoinColumn(name = "empreendimento_id")
     private Empreendimento empreendimento;
 
+    @Column(length = 80, nullable = false)
     private String nome;
 
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TipoAmbiente tipo;
 
     public Empreendimento getEmpreendimento() {
