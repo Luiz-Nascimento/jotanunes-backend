@@ -11,5 +11,5 @@ public interface MarcaMapper {
 
     Marca toEntity(MarcaRequest request);
 
-    MarcaResponse toDto(Marca marca);
+    MarcaResponse toDTO(Marca marca);
 }
