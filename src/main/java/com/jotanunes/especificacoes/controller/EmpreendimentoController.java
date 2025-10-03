@@ -15,8 +15,11 @@ import java.util.List;
 @RequestMapping("/empreendimentos")
 public class EmpreendimentoController {
 
-    @Autowired
-    EmpreendimentoService empreendimentoService;
+    private final EmpreendimentoService empreendimentoService;
+
+    public EmpreendimentoController(EmpreendimentoService empreendimentoService) {
+        this.empreendimentoService = empreendimentoService;
+    }
 
     @GetMapping
     public List<EmpreendimentoResponse> findAll() {
