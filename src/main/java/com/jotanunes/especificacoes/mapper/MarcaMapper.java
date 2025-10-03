@@ -3,16 +3,13 @@ package com.jotanunes.especificacoes.mapper;
 import com.jotanunes.especificacoes.dto.marca.MarcaRequest;
 import com.jotanunes.especificacoes.dto.marca.MarcaResponse;
 import com.jotanunes.especificacoes.model.Marca;
+import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
-@Component
-public class MarcaMapper {
+@Mapper(componentModel = "spring")
+public interface MarcaMapper {
 
-    public Marca toEntity(MarcaRequest dto) {
-        return new Marca(dto.getNome());
-    }
+    Marca toEntity(MarcaRequest request);
 
-    public MarcaResponse toDTO(Marca marca) {
-        return new MarcaResponse(marca.getId(), marca.getNome());
-    }
+    MarcaResponse toDto(Marca marca);
 }
