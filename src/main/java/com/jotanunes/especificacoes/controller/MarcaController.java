@@ -19,28 +19,28 @@ public class MarcaController {
     }
 
     @PostMapping
-    public ResponseEntity<MarcaResponse> salvar(@RequestBody MarcaRequest dto) {
-        return ResponseEntity.ok(service.salvar(dto));
+    public ResponseEntity<MarcaResponse> create(@RequestBody MarcaRequest dto) {
+        return ResponseEntity.ok(service.create(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<MarcaResponse>> listar() {
-        return ResponseEntity.ok(service.listarTodos());
+    public ResponseEntity<List<MarcaResponse>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MarcaResponse> buscarPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.buscarPorId(id));
+    public ResponseEntity<MarcaResponse> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MarcaResponse> atualizar(@PathVariable Integer id, @RequestBody MarcaRequest dto) {
-        return ResponseEntity.ok(service.atualizar(id, dto));
+    public ResponseEntity<MarcaResponse> update(@PathVariable Integer id, @RequestBody MarcaRequest dto) {
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
-        service.deletar(id);
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

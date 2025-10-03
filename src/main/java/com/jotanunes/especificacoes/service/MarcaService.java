@@ -39,14 +39,14 @@ public class MarcaService {
         return mapper.toDTO(marca);
     }
     @Transactional
-    public MarcaResponse atualizar(Integer id, MarcaRequest dto) {
+    public MarcaResponse update(Integer id, MarcaRequest dto) {
         Marca marca = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Marca não encontrada"));
         marca.setNome(dto.nome());
         return mapper.toDTO(repository.save(marca));
     }
 
-    public void deletar(Integer id) {
+    public void delete(Integer id) {
         repository.deleteById(id);
     }
 }
