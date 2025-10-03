@@ -9,9 +9,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface AmbienteMapper {
-    @Mapping(source = "empreendimento.nome", target = "empreendimento")
+    @Mapping(source = "empreendimento.id", target = "idEmpreendimento")
     AmbienteResponse toDto(Ambiente ambiente);
 
-    @Mapping(target = "id", ignore = true)
     Ambiente toEntity(AmbienteRequest ambienteRequest);
 }

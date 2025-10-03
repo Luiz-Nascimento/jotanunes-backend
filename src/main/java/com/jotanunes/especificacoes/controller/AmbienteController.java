@@ -15,28 +15,31 @@ import java.util.List;
 @RequestMapping("/ambientes")
 public class AmbienteController {
 
-    @Autowired
-    private AmbienteService ambienteService;
+    private final AmbienteService service;
+
+    public AmbienteController(AmbienteService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public List<AmbienteResponse> findAll() {
-        return ambienteService.findAll();
+        return service.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AmbienteResponse> findById(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(ambienteService.findById(id));
+        return ResponseEntity.ok().body(service.findById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<AmbienteResponse> create(@RequestBody @Valid AmbienteRequest data) {
-        AmbienteResponse ambienteResponse = ambienteService.create(data);
+    @PostMapping("/{id}")
+    public ResponseEntity<AmbienteResponse> create(@RequestBody @Valid AmbienteRequest data, @PathVariable Integer id) {
+        AmbienteResponse ambienteResponse = service.create(data, id);
         return ResponseEntity.ok().body(ambienteResponse);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-        ambienteService.delete(id);
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
