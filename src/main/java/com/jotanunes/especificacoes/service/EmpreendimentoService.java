@@ -2,11 +2,12 @@ package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
+import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
 import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,37 +15,42 @@ import java.util.List;
 @Service
 public class EmpreendimentoService {
 
-    @Autowired
-    private EmpreendimentoRepository empreendimentoRepository;
+    private static final Logger logger = LoggerFactory.getLogger(EmpreendimentoService.class);
 
-    @Autowired
-    private EmpreendimentoMapper empreendimentoMapper;
+    private final EmpreendimentoRepository empreendimentoRepository;
+
+    private final EmpreendimentoMapper empreendimentoMapper;
+
+    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository,
+                                 EmpreendimentoMapper empreendimentoMapper) {
+        this.empreendimentoRepository =  empreendimentoRepository;
+        this.empreendimentoMapper = empreendimentoMapper;
+    }
 
     public List<EmpreendimentoResponse> findAll() {
         return empreendimentoRepository.findAll().stream()
-                .map(empreendimento -> empreendimentoMapper.toDto(empreendimento))
+                .map(empreendimentoMapper::toDto)
                 .toList();
     }
 
     public EmpreendimentoResponse findById(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Empreedimento não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Empreedimento não encontrado com id: " + id));
         return empreendimentoMapper.toDto(empreendimento);
     }
 
     public EmpreendimentoResponse create(EmpreendimentoRequest data) {
-        Empreendimento empreendimento = empreendimentoMapper.requestToEntity(data);
-        System.out.println(empreendimento.getObservacoes());
-        empreendimentoRepository.save(empreendimento);
-        return empreendimentoMapper.toDto(empreendimento);
+        Empreendimento empreendimentoPersistido = empreendimentoRepository.save(empreendimentoMapper.requestToEntity(data));
+        logger.info("Empreendimento criado com id: {}", empreendimentoPersistido.getId());
+        return empreendimentoMapper.toDto(empreendimentoPersistido);
     }
 
     public void delete(Integer id) {
-        if (empreendimentoRepository.existsById(id)) {
-            empreendimentoRepository.deleteById(id);
+        logger.info("Deletando empreendimento com id: {}", id);
+        if (!empreendimentoRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Empreendimento não encontrado com id: "+ id);
         }
-        else {
-            throw new EntityNotFoundException("Empreendimento não encontrado");
-        }
+        empreendimentoRepository.deleteById(id);
+        logger.info("Empreendimento deletado com id: {}", id);
     }
 }
