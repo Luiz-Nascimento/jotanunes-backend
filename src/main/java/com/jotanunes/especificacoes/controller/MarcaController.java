@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.marca.MarcaRequest;
 import com.jotanunes.especificacoes.dto.marca.MarcaResponse;
 import com.jotanunes.especificacoes.service.MarcaService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class MarcaController {
     }
 
     @PostMapping
-    public ResponseEntity<MarcaResponse> create(@RequestBody MarcaRequest dto) {
+    public ResponseEntity<MarcaResponse> create(@RequestBody @Valid MarcaRequest dto) {
         return ResponseEntity.ok(service.create(dto));
     }
 
@@ -34,7 +35,7 @@ public class MarcaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MarcaResponse> update(@PathVariable Integer id, @RequestBody MarcaRequest dto) {
+    public ResponseEntity<MarcaResponse> update(@PathVariable Integer id, @RequestBody @Valid MarcaRequest dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
 
