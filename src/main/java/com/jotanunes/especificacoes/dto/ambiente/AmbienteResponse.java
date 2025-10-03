@@ -6,6 +6,6 @@ public record AmbienteResponse(
         Integer id,
         String nome,
         TipoAmbiente tipo,
-        String empreendimento
+        Integer idEmpreendimento
 ) {
 }
