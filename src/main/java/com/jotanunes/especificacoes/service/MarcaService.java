@@ -38,6 +38,7 @@ public class MarcaService {
                 .orElseThrow(() -> new EntityNotFoundException("Marca não encontrada com id: "+ id));
         return mapper.toDTO(marca);
     }
+
     @Transactional
     public MarcaResponse update(Integer id, MarcaRequest dto) {
         Marca marca = repository.findById(id)
