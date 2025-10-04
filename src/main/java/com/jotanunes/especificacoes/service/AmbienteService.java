@@ -9,7 +9,6 @@ import com.jotanunes.especificacoes.model.Ambiente;
 import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.repository.AmbienteRepository;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -58,7 +57,7 @@ public class AmbienteService {
             throw new ResourceNotFoundException("Ambiente não encontrado com id: " + id);
         }
         ambienteRepository.deleteById(id);
-        logger.info("Ambiente deletado com id: "+ id);
+        logger.info("Ambiente deletado com id: {}", id);
     }
 
 }
