@@ -2,13 +2,14 @@ package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.item.ItemRequest;
 import com.jotanunes.especificacoes.dto.item.ItemResponse;
+import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.ItemMapper;
 import com.jotanunes.especificacoes.model.Ambiente;
 import com.jotanunes.especificacoes.model.Item;
 import com.jotanunes.especificacoes.repository.AmbienteRepository;
 import com.jotanunes.especificacoes.repository.ItemRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,37 +18,44 @@ import java.util.List;
 @Service
 public class ItemService {
 
-    @Autowired
-    private ItemRepository repository;
+    private final ItemRepository repository;
+    private final ItemMapper mapper;
+    private final AmbienteRepository ambienteRepository;
 
-    @Autowired
-    private ItemMapper mapper;
-    @Autowired
-    private AmbienteRepository ambienteRepository;
+    private final Logger logger = LoggerFactory.getLogger(ItemService.class);
+
+    public ItemService(ItemRepository repository, ItemMapper mapper, AmbienteRepository ambienteRepository) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.ambienteRepository = ambienteRepository;
+    }
 
     public List<ItemResponse> findAll() {
-        return repository.findAll().stream().map(item -> mapper.toDto(item)).toList();
+        return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
     public ItemResponse findById(Integer id) {
         return mapper.toDto(repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Item nao encontrado com id: " + id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Item nao encontrado com id: " + id)));
     }
 
     @Transactional
     public ItemResponse create(ItemRequest data, Integer id) {
         Ambiente ambiente = ambienteRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Ambiente nao encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Ambiente nao encontrado com id: " + id));
         Item item = mapper.toEntity(data);
         item.setAmbiente(ambiente);
-        repository.save(item);
+        Item itemSalvo = repository.save(item);
         ambiente.getItens().add(item);
+        logger.info("Novo item criado com id {}, associado ao ambiente: {}", itemSalvo.getId(), id);
         return mapper.toDto(item);
     }
 
     public void delete(Integer id) {
-        Item item = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Item nao encontrado com id: " + id));
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Ambiente não encontrado com id: " + id);
+        }
         repository.deleteById(id);
+        logger.info("Deletado item com id {}", id);
     }
 }
