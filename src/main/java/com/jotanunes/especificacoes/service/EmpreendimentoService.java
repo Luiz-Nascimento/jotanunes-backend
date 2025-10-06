@@ -46,11 +46,9 @@ public class EmpreendimentoService {
     }
 
     public void delete(Integer id) {
-        logger.info("Deletando empreendimento com id: {}", id);
         if (!empreendimentoRepository.existsById(id)) {
             throw new ResourceNotFoundException("Empreendimento não encontrado com id: "+ id);
         }
         empreendimentoRepository.deleteById(id);
-        logger.info("Empreendimento deletado com id: {}", id);
     }
 }
