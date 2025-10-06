@@ -4,7 +4,6 @@ package com.jotanunes.especificacoes.model;
 import com.jotanunes.especificacoes.enums.NivelAcesso;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +26,7 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String senha;
     @Column(name = "nivel_acesso", nullable = false, length = 10)
-    private NivelAcesso nivelAcesso;
+    private NivelAcesso nivelAcesso =  NivelAcesso.PADRAO;
     @Column(nullable = false, unique = true, length = 255)
     private String email;
     @Column(name = "data_criacao", nullable = false)
@@ -37,7 +36,7 @@ public class Usuario implements UserDetails {
     @JoinColumn(name = "criado_por")
     private Usuario criadoPor;
     @Column(nullable = false)
-    private Boolean ativo;
+    private Boolean ativo = true;
 
     public Usuario() {
     }
@@ -159,6 +158,6 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return ativo;
     }
 }

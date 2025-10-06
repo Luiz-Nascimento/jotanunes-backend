@@ -2,6 +2,7 @@ package com.jotanunes.especificacoes.exception.handler;
 
 import com.jotanunes.especificacoes.exception.ExceptionResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
+import com.jotanunes.especificacoes.exception.UserAlreadyRegisteredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,5 +42,14 @@ public class CustomEntityResponseHandler {
                 exception.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserAlreadyRegisteredException.class)
+    public final ResponseEntity<ExceptionResponse> handleUserAlreadyFoundExceptions(UserAlreadyRegisteredException exception, WebRequest request) {
+        ExceptionResponse response = new ExceptionResponse(
+                new Date(),
+                exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 }
