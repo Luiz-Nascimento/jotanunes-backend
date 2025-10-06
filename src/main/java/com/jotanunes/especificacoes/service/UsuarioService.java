@@ -1,6 +1,6 @@
 package com.jotanunes.especificacoes.service;
 
-import com.jotanunes.especificacoes.dto.UsuarioExibirDTO;
+import com.jotanunes.especificacoes.dto.UserResponse;
 import com.jotanunes.especificacoes.mapper.UsuarioMapper;
 import com.jotanunes.especificacoes.model.Usuario;
 import com.jotanunes.especificacoes.repository.UsuarioRepository;
@@ -19,16 +19,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioMapper usuarioMapper;
 
-    public List<UsuarioExibirDTO> listarTodos() {
-        List<UsuarioExibirDTO> usuarios = new ArrayList<>();
-        for (Usuario usuario: usuarioRepository.findAll()) {
-            usuarios.add(usuarioMapper.toDto(usuario));
-            System.out.println(usuarioMapper.toDto(usuario));
-        }
-        for (UsuarioExibirDTO usuarioExibirDTO: usuarios) {
-            System.out.println(usuarioExibirDTO);
-        }
-        return usuarios;
+    public List<UserResponse> findAll() {
+        return usuarioRepository.findAll().stream().map(user -> usuarioMapper.toDto(user)).toList();
     }
+
 
 }
