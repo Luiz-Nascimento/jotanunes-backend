@@ -26,6 +26,7 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String senha;
     @Column(name = "nivel_acesso", nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
     private NivelAcesso nivelAcesso =  NivelAcesso.PADRAO;
     @Column(nullable = false, unique = true, length = 255)
     private String email;
