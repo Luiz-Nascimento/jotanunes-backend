@@ -7,7 +7,7 @@ import com.jotanunes.especificacoes.model.Empreendimento;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ItemMapper.class})
 public interface AmbienteMapper {
     @Mapping(source = "empreendimento.id", target = "idEmpreendimento")
     AmbienteResponse toDto(Ambiente ambiente);
