@@ -1,6 +1,6 @@
 package com.jotanunes.especificacoes.controller;
 
-import com.jotanunes.especificacoes.dto.UsuarioExibirDTO;
+import com.jotanunes.especificacoes.dto.UserResponse;
 import com.jotanunes.especificacoes.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class UserController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public List<UsuarioExibirDTO> listarTodos() {
-        return usuarioService.listarTodos();
+    public List<UserResponse> findAll() {
+        return usuarioService.findAll();
     }
 }
