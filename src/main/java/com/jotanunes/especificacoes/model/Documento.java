@@ -19,7 +19,7 @@ public class Documento {
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "empreendimento_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "empreendimento_id", referencedColumnName = "id", nullable = false, unique = true)
     private Empreendimento empreendimento;
 
     @CreationTimestamp
