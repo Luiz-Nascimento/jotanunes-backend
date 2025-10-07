@@ -2,11 +2,13 @@ package com.jotanunes.especificacoes.controller;
 
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMRequest;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
-import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasResponse;
+import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasIdsResponse;
+import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.service.CombinacaoEMMService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/combinacaoEMM")
@@ -18,16 +20,27 @@ public class CombinacaoEMMController {
         this.service = service;
     }
 
-    @GetMapping("/empreendimento/{empreendimentoID}")
-    public List<MaterialMarcasResponse> findByEmpreendimento(@PathVariable Integer empreendimentoID) {
-        return service.findByEmpreendimento(empreendimentoID);
+    @GetMapping
+    public List<CombinacaoEMMResponse> findAll() {
+        return service.findAll();
+    }
+
+    @GetMapping("/empreendimento/{empreendimentoID}/ids")
+    public List<MaterialMarcasIdsResponse> findMaterialMarcasIdsByEmpreendimentoId(@PathVariable Integer empreendimentoID) {
+        return service.findMaterialMarcasIdsByEmpreendimentoId(empreendimentoID);
+    }
+
+    @GetMapping("/empreendimento/{empreendimentoID}/nomes")
+    public List<MaterialMarcasNomeResponse> findMaterialMarcasNomeByEmpreendimentoId(@PathVariable Integer empreendimentoID) {
+        return service.findMaterialMarcasNomeByEmpreendimentoId(empreendimentoID);
     }
 
 
     @PostMapping("/empreendimento/{empreendimentoID}")
     public List<CombinacaoEMMResponse> addCombinacoes(@PathVariable Integer empreendimentoID,
-                                                      @RequestBody List<CombinacaoEMMRequest> requests) {
+                                                     @RequestBody List<CombinacaoEMMRequest> requests) {
         return service.createCombinacoes(empreendimentoID, requests);
     }
+
 
 }

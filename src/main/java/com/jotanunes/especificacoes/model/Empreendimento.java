@@ -100,6 +100,14 @@ public class Empreendimento {
         this.ambientes = ambientes;
     }
 
+    public Set<CombinacaoEMM> getMateriaisPorMarca() {
+        return materiaisPorMarca;
+    }
+
+    public void setMateriaisPorMarca(Set<CombinacaoEMM> materiaisPorMarca) {
+        this.materiaisPorMarca = materiaisPorMarca;
+    }
+
     public void printAmbientes() {
         this.ambientes.forEach(System.out::println);
     }

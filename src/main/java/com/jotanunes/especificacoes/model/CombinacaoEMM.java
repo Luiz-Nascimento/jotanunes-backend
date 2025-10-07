@@ -12,15 +12,15 @@ public class CombinacaoEMM {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "empreendimento_id")
+    @JoinColumn(name = "empreendimento_id", nullable = false)
     private Empreendimento empreendimento;
 
     @ManyToOne
-    @JoinColumn(name = "material_id")
+    @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
     @ManyToOne
-    @JoinColumn(name = "marca_id")
+    @JoinColumn(name = "marca_id", nullable = false)
     private Marca marca;
 
     public CombinacaoEMM() {
