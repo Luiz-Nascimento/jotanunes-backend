@@ -2,7 +2,8 @@ package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMRequest;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
-import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasResponse;
+import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasIdsResponse;
+import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.CombinacaoEMMMapper;
 import com.jotanunes.especificacoes.model.CombinacaoEMM;
@@ -78,37 +79,6 @@ public class CombinacaoEMMService {
         return responses;
     }
 
-
-
-//    public void adicionarCombinacoes(Integer empreendimentoId, List<MaterialMarcasRequest> materiais) {
-//        Empreendimento empreendimento = empreendimentoRepository.findById(empreendimentoId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + empreendimentoId));
-//        for (MaterialMarcasRequest material : materiais) {
-//            Material mat = materialRepository.findById(material.materialId())
-//                    .orElseThrow(() -> new ResourceNotFoundException("Material não encontrado com id: " + material.materialId()));
-//            for(Integer marcaId : material.marcasIds()) {
-//                Marca marca = marcaRepository.findById(marcaId)
-//                        .orElseThrow(() -> new ResourceNotFoundException("Marca não encontrada com id: "+ marcaId));
-//                CombinacaoEMM entity = new CombinacaoEMM();
-//                entity.setEmpreendimento(empreendimento);
-//                entity.setMaterial(mat);
-//                entity.setMarca(marca);
-//                repository.save(entity);
-//            }
-//        }
-//    }
-
-    //Metodo para listar id das combinacoes salvas no sistema
-    // Retornará uma lista que:
-    // Irá retornar um DTO com: ID da combinação e a combinação:
-    // Id do empreendimento, id do material, id da marca
-
-
-    //Metodo para listar combinacoes salvas no sistema apartir do id e nome
-    // Retornará uma lista que:
-    // Irá retornar um DTO com: ID da combinação e a combinação:
-    // Nome do empreendimento, Nome do material, Nome da marca
-
     //Metodo para listar combinações de um empreendimento especifico apartir do id
     // Uma lista que irá retornar:
     // Irá retornar id do material
@@ -119,7 +89,7 @@ public class CombinacaoEMMService {
     // Agrupar por material
     // mapear para dto
     // retorna a lista de dto
-    public List<MaterialMarcasResponse> findByEmpreendimento(Integer empreendimentoID) {
+    public List<MaterialMarcasIdsResponse> findMaterialMarcasIdsByEmpreendimentoId(Integer empreendimentoID) {
         List<CombinacaoEMM> registros = repository.findByEmpreendimentoId(empreendimentoID);
         Map<Integer, Set<Integer>> agrupamento = registros.stream()
                 .collect(Collectors.groupingBy(combinacao ->
@@ -128,7 +98,7 @@ public class CombinacaoEMMService {
                                 Collectors.toSet())));
 
         return agrupamento.entrySet().stream()
-                .map(entry -> new MaterialMarcasResponse(entry.getKey(), entry.getValue()))
+                .map(entry -> new MaterialMarcasIdsResponse(entry.getKey(), entry.getValue()))
                 .toList();
     }
 
@@ -138,5 +108,17 @@ public class CombinacaoEMMService {
     // Irá retornar nome do material
     // Lista com nome das marcas
 
+    public List<MaterialMarcasNomeResponse> findMaterialMarcasNomeByEmpreendimentoId(Integer empreendimentoID) {
+        List<CombinacaoEMM> registros = repository.findByEmpreendimentoId(empreendimentoID);
+        Map<String, Set<String>> agrupamento = registros.stream()
+                .collect(Collectors.groupingBy(combinacao ->
+                                combinacao.getMaterial().getNome(),
+                        Collectors.mapping(combinacao -> combinacao.getMarca().getNome(),
+                                Collectors.toSet())));
+
+        return agrupamento.entrySet().stream()
+                .map(entry -> new MaterialMarcasNomeResponse(entry.getKey(), entry.getValue()))
+                .toList();
+    }
 
 }
