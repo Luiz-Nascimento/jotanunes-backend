@@ -2,6 +2,8 @@ package com.jotanunes.especificacoes.model;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "materiais")
 public class Material {
@@ -12,6 +14,10 @@ public class Material {
 
     @Column(nullable = false, unique = true, length = 100)
     private String nome;
+
+    @OneToMany(mappedBy = "material")
+    private Set<CombinacaoEMM> empreendimentosComMarca;
+
 
     public Material() {
     }
