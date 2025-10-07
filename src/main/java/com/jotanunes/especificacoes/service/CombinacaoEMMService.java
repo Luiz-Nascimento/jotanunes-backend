@@ -133,37 +133,6 @@ public class CombinacaoEMMService {
     // Uma lista que irá retornar:
     // Irá retornar nome do material
     // Lista com nome das marcas
-//    public List<EmpreendimentoMateriasMarcasResponse> listarCombinacoes(Integer empreendimentoId) {
-//        List<CombinacaoEMM> registros =
-//                repository.findByEmpreendimentoId(empreendimentoId);
-//
-//        Map<Material, List<CombinacaoEMM>> agrupado = registros.stream()
-//                .collect(Collectors.groupingBy(CombinacaoEMM::getMaterial));
-//
-//        Empreendimento empreendimento = registros.isEmpty()
-//                ? empreendimentoRepository.findById(empreendimentoId).orElseThrow()
-//                : registros.get(0).getEmpreendimento();
-//
-//        List<EmpreendimentoMateriasMarcasResponse> responseList = new ArrayList<>();
-//
-//        for (Map.Entry<Material, List<CombinacaoEMM>> entry : agrupado.entrySet()) {
-//            Material mat = entry.getKey();
-//            Set<Integer> marcasIds = entry.getValue().stream()
-//                    .map(em -> em.getMarca().getId())
-//                    .collect(Collectors.toSet());
-//            Set<String> marcasNomes = entry.getValue().stream()
-//                    .map(em -> em.getMarca().getNome())
-//                    .collect(Collectors.toSet());
-//            responseList.add(new EmpreendimentoMateriasMarcasResponse(
-//                    empreendimento.getId(),
-//                    empreendimento.getNome(),
-//                    mat.getId(),
-//                    mat.getNome(),
-//                    marcasIds,
-//                    marcasNomes
-//            ));
-//        }
-//        return responseList;
-//    }
+
 
 }
