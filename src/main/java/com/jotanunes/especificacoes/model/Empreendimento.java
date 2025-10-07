@@ -23,6 +23,9 @@ public class Empreendimento {
     @OneToMany(mappedBy = "empreendimento", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Ambiente> ambientes = new HashSet<>();
 
+    @OneToMany(mappedBy = "empreendimento")
+    private Set<CombinacaoEMM> materiaisPorMarca;
+
     @Column(nullable = false)
     private String descricao;
 
