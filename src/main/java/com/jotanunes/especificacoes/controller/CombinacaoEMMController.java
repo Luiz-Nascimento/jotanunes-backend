@@ -8,6 +8,7 @@ import com.jotanunes.especificacoes.service.CombinacaoEMMService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/combinacaoEMM")
@@ -37,7 +38,7 @@ public class CombinacaoEMMController {
 
     @PostMapping("/empreendimento/{empreendimentoID}")
     public List<CombinacaoEMMResponse> addCombinacoes(@PathVariable Integer empreendimentoID,
-                                                      @RequestBody List<CombinacaoEMMRequest> requests) {
+                                                     @RequestBody List<CombinacaoEMMRequest> requests) {
         return service.createCombinacoes(empreendimentoID, requests);
     }
 
