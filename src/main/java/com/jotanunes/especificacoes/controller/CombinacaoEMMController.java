@@ -18,6 +18,11 @@ public class CombinacaoEMMController {
         this.service = service;
     }
 
+    @GetMapping
+    public List<CombinacaoEMMResponse> findAll() {
+        return service.findAll();
+    }
+
     @GetMapping("/empreendimento/{empreendimentoID}")
     public List<MaterialMarcasResponse> findByEmpreendimento(@PathVariable Integer empreendimentoID) {
         return service.findByEmpreendimento(empreendimentoID);

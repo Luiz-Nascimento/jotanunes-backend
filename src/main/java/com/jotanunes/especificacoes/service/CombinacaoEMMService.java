@@ -38,6 +38,10 @@ public class CombinacaoEMMService {
         this.emmMapper = emmMapper;
     }
 
+    public List<CombinacaoEMMResponse> findAll() {
+        return repository.findAll().stream().map(emmMapper::toCombinacaoEMMResponse).toList();
+    }
+
     //Metodo para criar combinações EMM,
     //Referenciado um id de empreendimento
     //Um id de material
