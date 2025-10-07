@@ -7,6 +7,8 @@ import com.jotanunes.especificacoes.model.Documento;
 import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.repository.DocumentoRepository;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,11 @@ public class DocumentoService {
         return repository.findAll().stream().map(documentoMapper::toDto).toList();
     }
 
+    public DocumentoResponse findById(Integer id) {
+        return documentoMapper.toDto(repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Documento não encontrado com id: " + id)));
+    }
+
     public DocumentoResponse create(Integer empreendimentoId) {
         Empreendimento empreendimento = empreendimentoRepository.findById(empreendimentoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + empreendimentoId));
@@ -36,6 +43,15 @@ public class DocumentoService {
         Documento documentoSalvo = repository.save(documento);
         return documentoMapper.toDto(documentoSalvo);
     }
+
+    public void delete(Integer id) {
+        if(!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Documento não encontrado com id: " + id);
+        }
+        repository.deleteById(id);
+
+    }
+
 
 
 }
