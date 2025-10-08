@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.controller;
 
+import com.jotanunes.especificacoes.dto.ambiente.AmbienteDocResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.service.AmbienteService;
@@ -29,6 +30,10 @@ public class AmbienteController {
     @GetMapping("/{id}")
     public ResponseEntity<AmbienteResponse> findById(@PathVariable Integer id) {
         return ResponseEntity.ok().body(service.findById(id));
+    }
+    @GetMapping("/doc/{id}")
+    public ResponseEntity<AmbienteDocResponse> getDocResponse(@PathVariable Integer id) {
+        return ResponseEntity.ok().body(service.getDocResponse(id));
     }
 
     @PostMapping("/{id}")

@@ -1,6 +1,7 @@
 package com.jotanunes.especificacoes.mapper;
 
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
+import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.model.Empreendimento;
@@ -17,12 +18,28 @@ public interface EmpreendimentoMapper {
     EmpreendimentoResponse toDtoAuto(Empreendimento empreendimento);
     Empreendimento requestToEntity(EmpreendimentoRequest empreendimentoRequest);
 
+    EmpreendimentoDocResponse toAutoDocResponse(Empreendimento empreendimento);
+
     // Método default para preencher o campo manualmente
     default EmpreendimentoResponse toDto(Empreendimento empreendimento, List<MaterialMarcasNomeResponse> marcas) {
         EmpreendimentoResponse auto = toDtoAuto(empreendimento);
         // Cria o record manualmente, reaproveitando os campos automáticos
         return new EmpreendimentoResponse(
                 auto.id(),
+                auto.nome(),
+                auto.localizacao(),
+                auto.descricao(),
+                auto.observacoes(),
+                auto.ambientes(),
+                marcas // campo manual
+        );
+    }
+
+    default EmpreendimentoDocResponse toDocResponse(Empreendimento empreendimento, List<MaterialMarcasNomeResponse> marcas) {
+        EmpreendimentoDocResponse auto = toAutoDocResponse(empreendimento);
+        // Cria o record manualmente, reaproveitando os campos automáticos
+        return new EmpreendimentoDocResponse(
+
                 auto.nome(),
                 auto.localizacao(),
                 auto.descricao(),

@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.controller;
 
+import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
@@ -35,6 +36,12 @@ public class EmpreendimentoController {
     @GetMapping("/{id}")
     public ResponseEntity<EmpreendimentoResponse> findById(@PathVariable Integer id) {
         EmpreendimentoResponse response = empreendimentoService.findById(id);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/doc/{id}")
+    public ResponseEntity<EmpreendimentoDocResponse> getDocResponse(@PathVariable Integer id) {
+        EmpreendimentoDocResponse response = empreendimentoService.getDocResponse(id);
         return ResponseEntity.ok().body(response);
     }
 
