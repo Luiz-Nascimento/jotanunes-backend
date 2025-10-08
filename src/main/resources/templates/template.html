@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Especificação Técnica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            margin: 32px 24px;
+            background: #fff;
+            color: #222;
+        }
+        h1 {
+            text-align: center;
+            color: #123967;
+            font-size: 22px;
+            border-bottom: 2px solid #123967;
+            margin-bottom: 22px;
+            padding-bottom: 6px;
+        }
+        h2 {
+            color: #154a9c;
+            margin-top: 30px;
+            font-size: 17px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0;
+        }
+        th, td {
+            border: 1px solid #aaa;
+            padding: 6px 8px;
+            vertical-align: top;
+        }
+        th {
+            background: #e6ebf4;
+            font-weight: bold;
+        }
+        ul { margin: 8px 0 8px 24px; }
+        strong { color: #246; }
+        em { font-style: italic; color: #777; }
+    </style>
+</head>
+<body>
+<h1 th:text="${template.nome}">Nome do Empreendimento</h1>
+<p><strong>Localização:</strong> <span th:text="${template.localizacao}">Localização</span></p>
+<p><strong>Descrição:</strong> <span th:text="${template.descricao}">Descrição</span></p>
+<p><strong>Observações:</strong> <span th:text="${template.observacoes}">Observações</span></p>
+
+<h2>Ambientes</h2>
+<ul>
+    <li th:each="ambiente : ${template.ambientes}">
+        <strong th:text="${ambiente.nome}">Nome do Ambiente</strong>
+        <em th:text="${ambiente.tipo}">Tipo do Ambiente</em>
+        <table>
+            <thead>
+            <tr>
+                <th>Nome do Item</th>
+                <th>Descrição</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${ambiente.itens}">
+                <td th:text="${item.nome}">Nome Item</td>
+                <td th:text="${item.descricao}">Descrição Item</td>
+            </tr>
+            </tbody>
+        </table>
+    </li>
+</ul>
+
+<h2>Materiais e Marcas</h2>
+<ul>
+    <li th:each="material : ${template.marcasMaterial}">
+        <strong th:text="${material.nomeMaterial}">Nome do Material</strong>:
+        <ul>
+            <li th:each="marca : ${material.marcasNome}" th:text="${marca}">Nome da Marca</li>
+        </ul>
+    </li>
+</ul>
+</body>
+</html>

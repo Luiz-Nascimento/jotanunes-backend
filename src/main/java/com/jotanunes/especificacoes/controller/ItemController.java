@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.controller;
 
+import com.jotanunes.especificacoes.dto.item.ItemDocResponse;
 import com.jotanunes.especificacoes.dto.item.ItemRequest;
 import com.jotanunes.especificacoes.dto.item.ItemResponse;
 import com.jotanunes.especificacoes.model.Item;
@@ -26,6 +27,12 @@ public class ItemController {
     @GetMapping("/{id}")
     public ResponseEntity<ItemResponse> findById(@PathVariable Integer id) {
         ItemResponse response = service.findById(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/doc/{id}")
+    public ResponseEntity<ItemDocResponse> getDocResponse(@PathVariable Integer id) {
+        ItemDocResponse response = service.getDocResponse(id);
         return ResponseEntity.ok(response);
     }
 

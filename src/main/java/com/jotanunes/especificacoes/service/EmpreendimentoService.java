@@ -1,6 +1,7 @@
 package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
+import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
@@ -49,6 +50,14 @@ public class EmpreendimentoService {
         List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
         return empreendimentoMapper.toDto(empreendimento, marcas);
     }
+
+    public EmpreendimentoDocResponse getDocResponse(Integer id) {
+        Empreendimento empreendimento = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreedimento não encontrado com id: " + id));
+        List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
+        return empreendimentoMapper.toDocResponse(empreendimento, marcas);
+    }
+
 
     public EmpreendimentoResponse create(EmpreendimentoRequest data) {
         Empreendimento empreendimentoPersistido = empreendimentoRepository.save(empreendimentoMapper.requestToEntity(data));

@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.mapper;
 
+import com.jotanunes.especificacoes.dto.ambiente.AmbienteDocResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.model.Ambiente;
@@ -11,6 +12,8 @@ import org.mapstruct.Mapping;
 public interface AmbienteMapper {
     @Mapping(source = "empreendimento.id", target = "idEmpreendimento")
     AmbienteResponse toDto(Ambiente ambiente);
+
+    AmbienteDocResponse toDocResponse(Ambiente ambiente);
 
     Ambiente toEntity(AmbienteRequest ambienteRequest);
 }

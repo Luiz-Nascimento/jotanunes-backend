@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.service;
 
+import com.jotanunes.especificacoes.dto.item.ItemDocResponse;
 import com.jotanunes.especificacoes.dto.item.ItemRequest;
 import com.jotanunes.especificacoes.dto.item.ItemResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
@@ -37,6 +38,11 @@ public class ItemService {
     public ItemResponse findById(Integer id) {
         return mapper.toDto(repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item nao encontrado com id: " + id)));
+    }
+
+    public ItemDocResponse getDocResponse(Integer id) {
+        return mapper.toDocResponse(repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id)));
     }
 
     @Transactional

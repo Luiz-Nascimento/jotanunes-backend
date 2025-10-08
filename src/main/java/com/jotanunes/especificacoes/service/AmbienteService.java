@@ -1,6 +1,7 @@
 package com.jotanunes.especificacoes.service;
 
 
+import com.jotanunes.especificacoes.dto.ambiente.AmbienteDocResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
@@ -37,6 +38,10 @@ public class AmbienteService {
 
     public AmbienteResponse findById(Integer id) {
         return ambienteMapper.toDto(ambienteRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id)));
+    }
+    public AmbienteDocResponse getDocResponse(Integer id) {
+        return ambienteMapper.toDocResponse(ambienteRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id)));
     }
 
