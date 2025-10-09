@@ -6,7 +6,6 @@ import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
-import com.jotanunes.especificacoes.model.CombinacaoEMM;
 import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.repository.CombinacaoEMMRepository;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class EmpreendimentoService {
@@ -24,7 +22,6 @@ public class EmpreendimentoService {
     private static final Logger logger = LoggerFactory.getLogger(EmpreendimentoService.class);
 
     private final EmpreendimentoRepository empreendimentoRepository;
-
     private final EmpreendimentoMapper empreendimentoMapper;
 
     @Autowired
@@ -34,7 +31,7 @@ public class EmpreendimentoService {
 
     public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository,
                                  EmpreendimentoMapper empreendimentoMapper) {
-        this.empreendimentoRepository =  empreendimentoRepository;
+        this.empreendimentoRepository = empreendimentoRepository;
         this.empreendimentoMapper = empreendimentoMapper;
     }
 
@@ -46,18 +43,17 @@ public class EmpreendimentoService {
 
     public EmpreendimentoResponse findById(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Empreedimento não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
         List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
         return empreendimentoMapper.toDto(empreendimento, marcas);
     }
 
     public EmpreendimentoDocResponse getDocResponse(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Empreedimento não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
         List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
         return empreendimentoMapper.toDocResponse(empreendimento, marcas);
     }
-
 
     public EmpreendimentoResponse create(EmpreendimentoRequest data) {
         Empreendimento empreendimentoPersistido = empreendimentoRepository.save(empreendimentoMapper.requestToEntity(data));
@@ -66,9 +62,25 @@ public class EmpreendimentoService {
         return empreendimentoMapper.toDto(empreendimentoPersistido, marcas);
     }
 
+    public EmpreendimentoResponse update(Integer id, EmpreendimentoRequest data) {
+        Empreendimento empreendimentoExistente = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
+
+        empreendimentoExistente.setNome(data.nome());
+        empreendimentoExistente.setLocalizacao(data.localizacao());
+        empreendimentoExistente.setDescricao(data.descricao());
+        empreendimentoExistente.setObservacoes(data.observacoes());
+
+        Empreendimento empreendimentoAtualizado = empreendimentoRepository.save(empreendimentoExistente);
+        logger.info("Empreendimento atualizado com id: {}", empreendimentoAtualizado.getId());
+
+        List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
+        return empreendimentoMapper.toDto(empreendimentoAtualizado, marcas);
+    }
+
     public void delete(Integer id) {
         if (!empreendimentoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Empreendimento não encontrado com id: "+ id);
+            throw new ResourceNotFoundException("Empreendimento não encontrado com id: " + id);
         }
         empreendimentoRepository.deleteById(id);
     }
