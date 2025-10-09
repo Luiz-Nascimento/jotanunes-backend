@@ -36,7 +36,7 @@ public class EmpreendimentoController {
             description = "Retorna dados de todos empreendimentos cadastrados"
     )
     @GetMapping
-    public List<EmpreendimentoResponse> findAll() {
+    public List<EmpreendimentoResponse> listEmpreendimentos() {
         return empreendimentoService.getAllEmpreendimentos();
     }
 
@@ -45,7 +45,7 @@ public class EmpreendimentoController {
             description = "Retorna dados do empreendimento com ID especificado "
     )
     @GetMapping("/{id}")
-    public ResponseEntity<EmpreendimentoResponse> findById(@PathVariable Integer id) {
+    public ResponseEntity<EmpreendimentoResponse> getEmpreendimento(@PathVariable Integer id) {
         EmpreendimentoResponse response = empreendimentoService.getEmpreendimentoById(id);
         return ResponseEntity.ok().body(response);
     }
@@ -55,7 +55,7 @@ public class EmpreendimentoController {
             description = "Retorna dados enxutos prontos para serem preenchidos num documento"
     )
     @GetMapping("/doc/{id}")
-    public ResponseEntity<EmpreendimentoDocResponse> getDocResponse(@PathVariable Integer id) {
+    public ResponseEntity<EmpreendimentoDocResponse> getEmpreendimentoDocResponse(@PathVariable Integer id) {
         EmpreendimentoDocResponse response = empreendimentoService.getEmpreendimentoDocResponse(id);
         return ResponseEntity.ok().body(response);
     }
@@ -65,7 +65,7 @@ public class EmpreendimentoController {
             description = "Cria um novo empreendimento apartir das informações fornecidas no JSON"
     )
     @PostMapping
-    public ResponseEntity<EmpreendimentoResponse> create(@RequestBody @Valid EmpreendimentoRequest data) {
+    public ResponseEntity<EmpreendimentoResponse> createEmpreendimento(@RequestBody @Valid EmpreendimentoRequest data) {
         EmpreendimentoResponse response = empreendimentoService.createEmpreendimento(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -75,7 +75,7 @@ public class EmpreendimentoController {
             description = "Atualiza um empreendimento especificado com ID, apartir das informações fornecidas no JSON"
     )
     @PutMapping("/{id}")
-     public ResponseEntity<EmpreendimentoResponse> update(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoRequest data) {
+     public ResponseEntity<EmpreendimentoResponse> updateEmpreendimento(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoRequest data) {
         EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(id, data);
         return ResponseEntity.ok().body(response); //quando o usuario quiser corrigir o documento reprovado pelo gestor
     }
@@ -86,7 +86,7 @@ public class EmpreendimentoController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteEmpreendimento(@PathVariable Integer id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         empreendimentoService.deleteEmpreendimento(id);
         logger.info("User: {} deletou o empreendimento {}", auth.getName(), id);
