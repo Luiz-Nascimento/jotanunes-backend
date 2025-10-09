@@ -32,21 +32,21 @@ public class AmbienteService {
         this.empreendimentoRepository = empreendimentoRepository;
     }
 
-    public List<AmbienteResponse> findAll() {
+    public List<AmbienteResponse> getAllAmbientes() {
         return ambienteRepository.findAll().stream().map(ambienteMapper::toDto).toList();
     }
 
-    public AmbienteResponse findById(Integer id) {
+    public AmbienteResponse getAmbienteById(Integer id) {
         return ambienteMapper.toDto(ambienteRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id)));
     }
-    public AmbienteDocResponse getDocResponse(Integer id) {
+    public AmbienteDocResponse getAmbienteDocResponse(Integer id) {
         return ambienteMapper.toDocResponse(ambienteRepository.findById(id).orElseThrow(()
                 -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id)));
     }
 
     @Transactional
-    public AmbienteResponse create(AmbienteRequest data, Integer id) {
+    public AmbienteResponse createAmbiente(AmbienteRequest data, Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com o id: " + id));
         Ambiente ambiente = ambienteMapper.toEntity(data);
@@ -57,7 +57,7 @@ public class AmbienteService {
         return ambienteMapper.toDto(ambienteSalvo);
     }
 
-    public void delete(Integer id) {
+    public void deleteAmbiente(Integer id) {
         if (!ambienteRepository.existsById(id)) {
             throw new ResourceNotFoundException("Ambiente não encontrado com id: " + id);
         }
