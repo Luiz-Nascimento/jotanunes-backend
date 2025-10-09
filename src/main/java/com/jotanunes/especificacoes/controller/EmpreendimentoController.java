@@ -51,6 +51,13 @@ public class EmpreendimentoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    
+    @PutMapping("/{id}")
+     public ResponseEntity<EmpreendimentoResponse> update(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoRequest data) {
+        EmpreendimentoResponse response = empreendimentoService.update(id, data);
+        return ResponseEntity.ok().body(response); //quando o usuario quiser corrigir o documento reprovado pelo gestor
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
