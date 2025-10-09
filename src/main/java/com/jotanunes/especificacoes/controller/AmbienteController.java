@@ -4,6 +4,7 @@ import com.jotanunes.especificacoes.dto.ambiente.AmbienteDocResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.service.AmbienteService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Ambientes", description = "Operações relacionadas a ambientes")
 @RestController
 @RequestMapping("/ambientes")
 public class AmbienteController {

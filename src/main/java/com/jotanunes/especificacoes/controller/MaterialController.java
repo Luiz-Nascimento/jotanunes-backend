@@ -3,12 +3,14 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.material.MaterialRequest;
 import com.jotanunes.especificacoes.dto.material.MaterialResponse;
 import com.jotanunes.especificacoes.service.MaterialService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Materiais", description = "Operações relacionada à materiais.")
 @RestController
 @RequestMapping("/materiais")
 public class MaterialController {

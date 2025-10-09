@@ -5,6 +5,7 @@ import com.jotanunes.especificacoes.dto.item.ItemRequest;
 import com.jotanunes.especificacoes.dto.item.ItemResponse;
 import com.jotanunes.especificacoes.model.Item;
 import com.jotanunes.especificacoes.service.ItemService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Itens", description = "Operações relacionadas a itens de um ambiente")
 @RestController
 @RequestMapping("/itens")
 public class ItemController {

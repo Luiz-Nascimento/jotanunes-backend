@@ -2,6 +2,7 @@ package com.jotanunes.especificacoes.controller;
 
 import com.jotanunes.especificacoes.dto.documento.DocumentoResponse;
 import com.jotanunes.especificacoes.service.DocumentoService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Documento", description = "Operações relacionadas à uma especificação técnica")
 @RestController
 @RequestMapping("/documentos")
 public class DocumentoController {

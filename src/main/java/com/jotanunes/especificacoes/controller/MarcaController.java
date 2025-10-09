@@ -3,12 +3,14 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.marca.MarcaRequest;
 import com.jotanunes.especificacoes.dto.marca.MarcaResponse;
 import com.jotanunes.especificacoes.service.MarcaService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Marcas", description = "Operações relacionadas à marcas.")
 @RestController
 @RequestMapping("/marcas")
 public class MarcaController {
