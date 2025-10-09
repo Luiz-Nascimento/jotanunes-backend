@@ -35,34 +35,29 @@ public class EmpreendimentoService {
         this.empreendimentoMapper = empreendimentoMapper;
     }
 
-    public List<EmpreendimentoResponse> findAll() {
-        return empreendimentoRepository.findAll().stream()
-                .map(e -> empreendimentoMapper.toDto(e, combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(e.getId())))
-                .toList();
+    public List<EmpreendimentoResponse> getAllEmpreendimentos() {
+        return empreendimentoMapper.toDtoList(empreendimentoRepository.findAll());
     }
 
-    public EmpreendimentoResponse findById(Integer id) {
-        Empreendimento empreendimento = empreendimentoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
-        List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
-        return empreendimentoMapper.toDto(empreendimento, marcas);
+    public EmpreendimentoResponse getEmpreendimentoById(Integer id) {
+        return empreendimentoMapper.toDto(empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id)));
     }
 
-    public EmpreendimentoDocResponse getDocResponse(Integer id) {
+    public EmpreendimentoDocResponse getEmpreendimentoDocResponse(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
         List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
         return empreendimentoMapper.toDocResponse(empreendimento, marcas);
     }
 
-    public EmpreendimentoResponse create(EmpreendimentoRequest data) {
-        Empreendimento empreendimentoPersistido = empreendimentoRepository.save(empreendimentoMapper.requestToEntity(data));
-        logger.info("Empreendimento criado com id: {}", empreendimentoPersistido.getId());
-        List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(empreendimentoPersistido.getId());
-        return empreendimentoMapper.toDto(empreendimentoPersistido, marcas);
+    public EmpreendimentoResponse createEmpreendimento(EmpreendimentoRequest data) {
+        Empreendimento empreendimento = empreendimentoRepository.save(empreendimentoMapper.requestToEntity(data));
+        logger.info("Empreendimento criado com id: {}", empreendimento.getId());
+        return empreendimentoMapper.toDto(empreendimento);
     }
 
-    public EmpreendimentoResponse update(Integer id, EmpreendimentoRequest data) {
+    public EmpreendimentoResponse updateEmpreendimento(Integer id, EmpreendimentoRequest data) {
         Empreendimento empreendimentoExistente = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
 
@@ -74,11 +69,10 @@ public class EmpreendimentoService {
         Empreendimento empreendimentoAtualizado = empreendimentoRepository.save(empreendimentoExistente);
         logger.info("Empreendimento atualizado com id: {}", empreendimentoAtualizado.getId());
 
-        List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
-        return empreendimentoMapper.toDto(empreendimentoAtualizado, marcas);
+        return empreendimentoMapper.toDto(empreendimentoAtualizado);
     }
 
-    public void delete(Integer id) {
+    public void deleteEmpreendimento(Integer id) {
         if (!empreendimentoRepository.existsById(id)) {
             throw new ResourceNotFoundException("Empreendimento não encontrado com id: " + id);
         }
