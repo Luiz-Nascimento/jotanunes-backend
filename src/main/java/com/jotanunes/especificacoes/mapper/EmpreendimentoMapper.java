@@ -14,26 +14,15 @@ import java.util.Set;
 @Mapper(componentModel = "spring", uses = {AmbienteMapper.class})
 public interface EmpreendimentoMapper {
 
-    @Mapping(target = "marcas", ignore = true)
-    EmpreendimentoResponse toDtoAuto(Empreendimento empreendimento);
+
+    EmpreendimentoResponse toDto(Empreendimento empreendimento);
+
+    List<EmpreendimentoResponse> toDtoList(List<Empreendimento> entities);
+
     Empreendimento requestToEntity(EmpreendimentoRequest empreendimentoRequest);
 
     EmpreendimentoDocResponse toAutoDocResponse(Empreendimento empreendimento);
 
-    // Método default para preencher o campo manualmente
-    default EmpreendimentoResponse toDto(Empreendimento empreendimento, List<MaterialMarcasNomeResponse> marcas) {
-        EmpreendimentoResponse auto = toDtoAuto(empreendimento);
-        // Cria o record manualmente, reaproveitando os campos automáticos
-        return new EmpreendimentoResponse(
-                auto.id(),
-                auto.nome(),
-                auto.localizacao(),
-                auto.descricao(),
-                auto.observacoes(),
-                auto.ambientes(),
-                marcas // campo manual
-        );
-    }
 
     default EmpreendimentoDocResponse toDocResponse(Empreendimento empreendimento, List<MaterialMarcasNomeResponse> marcas) {
         EmpreendimentoDocResponse auto = toAutoDocResponse(empreendimento);

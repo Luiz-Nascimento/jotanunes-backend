@@ -5,10 +5,6 @@ import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -41,7 +37,7 @@ public class EmpreendimentoController {
     )
     @GetMapping
     public List<EmpreendimentoResponse> findAll() {
-        return empreendimentoService.findAll();
+        return empreendimentoService.getAllEmpreendimentos();
     }
 
     @Operation(
@@ -50,7 +46,7 @@ public class EmpreendimentoController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<EmpreendimentoResponse> findById(@PathVariable Integer id) {
-        EmpreendimentoResponse response = empreendimentoService.findById(id);
+        EmpreendimentoResponse response = empreendimentoService.getEmpreendimentoById(id);
         return ResponseEntity.ok().body(response);
     }
 
@@ -60,7 +56,7 @@ public class EmpreendimentoController {
     )
     @GetMapping("/doc/{id}")
     public ResponseEntity<EmpreendimentoDocResponse> getDocResponse(@PathVariable Integer id) {
-        EmpreendimentoDocResponse response = empreendimentoService.getDocResponse(id);
+        EmpreendimentoDocResponse response = empreendimentoService.getEmpreendimentoDocResponse(id);
         return ResponseEntity.ok().body(response);
     }
 
@@ -70,7 +66,7 @@ public class EmpreendimentoController {
     )
     @PostMapping
     public ResponseEntity<EmpreendimentoResponse> create(@RequestBody @Valid EmpreendimentoRequest data) {
-        EmpreendimentoResponse response = empreendimentoService.create(data);
+        EmpreendimentoResponse response = empreendimentoService.createEmpreendimento(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -80,7 +76,7 @@ public class EmpreendimentoController {
     )
     @PutMapping("/{id}")
      public ResponseEntity<EmpreendimentoResponse> update(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoRequest data) {
-        EmpreendimentoResponse response = empreendimentoService.update(id, data);
+        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(id, data);
         return ResponseEntity.ok().body(response); //quando o usuario quiser corrigir o documento reprovado pelo gestor
     }
 
@@ -92,7 +88,7 @@ public class EmpreendimentoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        empreendimentoService.delete(id);
+        empreendimentoService.deleteEmpreendimento(id);
         logger.info("User: {} deletou o empreendimento {}", auth.getName(), id);
         return ResponseEntity.noContent().build();
     }
