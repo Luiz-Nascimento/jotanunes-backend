@@ -4,11 +4,10 @@ import com.jotanunes.especificacoes.dto.ambiente.AmbienteDocResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.service.AmbienteService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,12 +22,19 @@ public class AmbienteController {
     public AmbienteController(AmbienteService service) {
         this.service = service;
     }
-
+    @Operation(
+            summary = "Buscar todos ambientes",
+            description = "Retorna dados de todos ambientes cadastrados"
+    )
     @GetMapping
     public List<AmbienteResponse> findAll() {
         return service.findAll();
     }
 
+    @Operation(
+            summary = "Buscar ambiente por id",
+            description = "Retorna dados do ambiente com ID especificado"
+    )
     @GetMapping("/{id}")
     public ResponseEntity<AmbienteResponse> findById(@PathVariable Integer id) {
         return ResponseEntity.ok().body(service.findById(id));
