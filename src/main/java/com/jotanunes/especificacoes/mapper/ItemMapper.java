@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
-    @Mapping(source = "ambiente.nome", target = "ambiente")
+    @Mapping(source = "ambiente.id", target = "ambiente")
     ItemResponse toDto(Item item);
 
     Item toEntity(ItemRequest itemRequest);

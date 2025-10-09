@@ -7,6 +7,6 @@ public record ItemResponse(
         String nome,
         String descricao,
         ItemStatus status,
-        String ambiente
+        Integer ambiente
 ) {
 }

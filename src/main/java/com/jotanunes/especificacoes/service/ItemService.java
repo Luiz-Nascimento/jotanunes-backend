@@ -31,22 +31,22 @@ public class ItemService {
         this.ambienteRepository = ambienteRepository;
     }
 
-    public List<ItemResponse> findAll() {
+    public List<ItemResponse> getAllItens() {
         return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
-    public ItemResponse findById(Integer id) {
+    public ItemResponse getItemById(Integer id) {
         return mapper.toDto(repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item nao encontrado com id: " + id)));
     }
 
-    public ItemDocResponse getDocResponse(Integer id) {
+    public ItemDocResponse getItemDocResponse(Integer id) {
         return mapper.toDocResponse(repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id)));
     }
 
     @Transactional
-    public ItemResponse create(ItemRequest data, Integer id) {
+    public ItemResponse createItem(ItemRequest data, Integer id) {
         Ambiente ambiente = ambienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ambiente nao encontrado com id: " + id));
         Item item = mapper.toEntity(data);
@@ -57,7 +57,7 @@ public class ItemService {
         return mapper.toDto(item);
     }
 
-    public void delete(Integer id) {
+    public void deleteItem(Integer id) {
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Ambiente não encontrado com id: " + id);
         }
