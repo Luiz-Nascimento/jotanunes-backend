@@ -5,6 +5,9 @@ spring:
         url: jdbc:postgresql://localhost:5432/jotanunesdb
         username: ${DB_USERNAME}
         password: ${DB_PASSWORD}
+    jpa:
+      hibernate:
+          ddl-auto: none
     flyway:
         enabled: true
         baseline-on-migrate: true
