@@ -27,8 +27,8 @@ public class AmbienteController {
             description = "Retorna dados de todos ambientes cadastrados"
     )
     @GetMapping
-    public List<AmbienteResponse> findAll() {
-        return service.findAll();
+    public List<AmbienteResponse> listAllAmbientes() {
+        return service.getAllAmbientes();
     }
 
     @Operation(
@@ -36,23 +36,23 @@ public class AmbienteController {
             description = "Retorna dados do ambiente com ID especificado"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<AmbienteResponse> findById(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(service.findById(id));
+    public ResponseEntity<AmbienteResponse> getAmbiente(@PathVariable Integer id) {
+        return ResponseEntity.ok().body(service.getAmbienteById(id));
     }
     @GetMapping("/doc/{id}")
-    public ResponseEntity<AmbienteDocResponse> getDocResponse(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(service.getDocResponse(id));
+    public ResponseEntity<AmbienteDocResponse> getAmbienteDocResponse(@PathVariable Integer id) {
+        return ResponseEntity.ok().body(service.getAmbienteDocResponse(id));
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<AmbienteResponse> create(@RequestBody @Valid AmbienteRequest data, @PathVariable Integer id) {
-        AmbienteResponse ambienteResponse = service.create(data, id);
+    public ResponseEntity<AmbienteResponse> createAmbiente(@RequestBody @Valid AmbienteRequest data, @PathVariable Integer id) {
+        AmbienteResponse ambienteResponse = service.createAmbiente(data, id);
         return ResponseEntity.ok().body(ambienteResponse);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-        service.delete(id);
+    public ResponseEntity<Void> deleteAmbiente(@PathVariable Integer id) {
+        service.deleteAmbiente(id);
         return ResponseEntity.noContent().build();
     }
 
