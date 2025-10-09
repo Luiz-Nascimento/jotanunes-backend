@@ -5,11 +5,12 @@ import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasIdsResponse;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.service.CombinacaoEMMService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
+@Tag(name = "Combinação EMM", description = "Operações relacionadas a combinações de empreendimento, marca e material.")
 @RestController
 @RequestMapping("/combinacaoEMM")
 public class CombinacaoEMMController {

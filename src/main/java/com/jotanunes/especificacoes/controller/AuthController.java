@@ -8,6 +8,7 @@ import com.jotanunes.especificacoes.enums.NivelAcesso;
 import com.jotanunes.especificacoes.repository.UsuarioRepository;
 import com.jotanunes.especificacoes.service.AuthorizationService;
 import com.jotanunes.especificacoes.infra.security.JwtUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Autenticação", description = "Operações relacionadas a autenticação de usuários")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

@@ -4,6 +4,7 @@ import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Empreendimentos", description = "Operações relacionadas a empreendimentos.")
 @RestController
 @RequestMapping("/empreendimentos")
 public class EmpreendimentoController {
