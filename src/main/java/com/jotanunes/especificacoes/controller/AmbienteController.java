@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Ambientes", description = "Operações relacionadas a ambientes")
+@Tag(name = "Ambientes", description = "Operações relacionadas a ambientes do empreendimento")
 @RestController
 @RequestMapping("/ambientes")
 public class AmbienteController {
