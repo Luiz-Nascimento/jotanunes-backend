@@ -8,6 +8,7 @@ import com.jotanunes.especificacoes.enums.NivelAcesso;
 import com.jotanunes.especificacoes.repository.UsuarioRepository;
 import com.jotanunes.especificacoes.service.AuthorizationService;
 import com.jotanunes.especificacoes.infra.security.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,13 +32,11 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
+    
+    @Operation(
+            summary = "Login de usuário",
+            description = "Autentica o usuário e retorna um token JWT"
+    )
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         authenticationManager.authenticate(
@@ -48,6 +47,10 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token));
     }
 
+    @Operation(
+            summary = "Registro de novo usuário",
+            description = "Registra um novo usuário com nível de acesso padrão"
+    )
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         authorizationService.register(request);
