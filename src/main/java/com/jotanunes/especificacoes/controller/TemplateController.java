@@ -2,6 +2,7 @@ package com.jotanunes.especificacoes.controller;
 
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,10 @@ public class TemplateController {
         this.empreendimentoService = empreendimentoService;
     }
 
+    @Operation(
+            summary = "Gerar template HTML para um empreendimento",
+            description = "Gera um template HTML com os dados do empreendimento com ID especificado e seus ambientes"
+    )
     @GetMapping("/template/{empreendimentoId}")
     public String getTemplate(@PathVariable Integer empreendimentoId, Model model) {
         EmpreendimentoDocResponse data = empreendimentoService.getEmpreendimentoDocResponse(empreendimentoId);
