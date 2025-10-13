@@ -32,7 +32,7 @@ public class EmpreendimentoController {
     }
 
     @Operation(
-            summary = "Buscar todos empreendimentos",
+            summary = "Retornar dados de todos empreendimentos",
             description = "Retorna dados de todos empreendimentos cadastrados"
     )
     @GetMapping
@@ -41,7 +41,7 @@ public class EmpreendimentoController {
     }
 
     @Operation(
-            summary = "Buscar empreendimento por ID",
+            summary = "Retornar dados de um empreendimento",
             description = "Retorna dados do empreendimento com ID especificado "
     )
     @GetMapping("/{id}")
@@ -51,8 +51,8 @@ public class EmpreendimentoController {
     }
 
     @Operation(
-            summary = "Buscar dados enxutos de um empreendimento por ID",
-            description = "Retorna dados enxutos prontos para serem preenchidos num documento"
+            summary = "Retornar dados de um empreendimento, formatados para documento",
+            description = "Retorna dados do empreendimento com ID especificado formatados para documento"
     )
     @GetMapping("/doc/{id}")
     public ResponseEntity<EmpreendimentoDocResponse> getEmpreendimentoDocResponse(@PathVariable Integer id) {
