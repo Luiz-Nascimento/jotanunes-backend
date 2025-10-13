@@ -32,7 +32,7 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
-    
+
     @Operation(
             summary = "Login de usuário",
             description = "Autentica o usuário e retorna um token JWT"
