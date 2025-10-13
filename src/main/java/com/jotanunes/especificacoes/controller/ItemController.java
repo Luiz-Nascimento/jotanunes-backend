@@ -61,10 +61,17 @@ public class ItemController {
     }
 
     @PreAuthorize("hasRole('GESTOR')")
-    @PutMapping("/revisarItem/{id}")
-    public ResponseEntity<RevisaoItemResponse> reviewItem(@PathVariable Integer id, @RequestBody RevisaoItemRequest request) {
-        RevisaoItemResponse response = service.reviewItem(id, request);
+    @PutMapping("/revisarItem")
+    public ResponseEntity<RevisaoItemResponse> reviewItem(@RequestBody RevisaoItemRequest request) {
+        RevisaoItemResponse response = service.reviewItem(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasRole('GESTOR')")
+    @PutMapping("/revisarItens")
+    public ResponseEntity<List<RevisaoItemResponse>> reviewItems(@RequestBody List<RevisaoItemRequest> requests) {
+        List<RevisaoItemResponse> responses = service.reviewItemsBulk(requests);
+        return ResponseEntity.ok(responses);
     }
     @Operation(
             summary = "Deletar um item",

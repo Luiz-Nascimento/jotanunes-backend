@@ -5,6 +5,7 @@ import com.jotanunes.especificacoes.dto.item.ItemRequest;
 import com.jotanunes.especificacoes.dto.item.ItemResponse;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemRequest;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
+import com.jotanunes.especificacoes.enums.ItemStatus;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.ItemMapper;
 import com.jotanunes.especificacoes.mapper.RevisaoItemMapper;
@@ -24,7 +25,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -74,9 +78,9 @@ public class ItemService {
     }
 
     @Transactional
-    public RevisaoItemResponse reviewItem(Integer id, RevisaoItemRequest data) {
-        Item item = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
+    public RevisaoItemResponse reviewItem(RevisaoItemRequest data) {
+        Item item = repository.findById(data.itemId())
+                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + data.itemId()));
         if (item.getStatus() == com.jotanunes.especificacoes.enums.ItemStatus.APROVADO ||
             item.getStatus() == com.jotanunes.especificacoes.enums.ItemStatus.REPROVADO) {
             throw new IllegalStateException("Item já foi revisado com status: " + item.getStatus());
@@ -86,7 +90,6 @@ public class ItemService {
                 data.motivo() == null) {
             throw new IllegalArgumentException("Motivo é obrigatório para itens reprovados.");
         }
-        // Lógica para buscar informações do usuário que está revisando o item
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         Usuario usuario = usuarioRepository.findByEmail(email)
@@ -94,9 +97,43 @@ public class ItemService {
         item.setStatus(data.status());
         RevisaoItem revisao = new RevisaoItem(item, data.status(), data.motivo(), usuario);
         RevisaoItem revisaoSalva = revisaoItemRepository.save(revisao);
-        logger.info("Item com id {} revisado para o status {} por usuario {}", id, data.status(), email);
+        logger.info("Item com id {} revisado para o status {} por usuario {}", data.itemId(), data.status(), email);
         return revisaoItemMapper.toDto(revisaoSalva);
     }
+
+    @Transactional
+    public List<RevisaoItemResponse> reviewItemsBulk(List<RevisaoItemRequest> requests) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com email: " + email));
+
+        List<RevisaoItem> revisoes = new ArrayList<>();
+        for (RevisaoItemRequest data : requests) {
+            Item item = repository.findById(data.itemId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + data.itemId()));
+            if (item.getStatus() == ItemStatus.APROVADO || item.getStatus() == ItemStatus.REPROVADO) {
+                throw new IllegalStateException("Item já foi revisado com status: " + item.getStatus());
+            }
+            if (data.status() == ItemStatus.REPROVADO && data.motivo() == null) {
+                throw new IllegalArgumentException("Motivo é obrigatório para itens reprovados.");
+            }
+            item.setStatus(data.status());
+            revisoes.add(new RevisaoItem(item, data.status(), data.motivo(), usuario));
+        }
+        List<RevisaoItem> revisoesSalvas = revisaoItemRepository.saveAll(revisoes);
+        revisoesSalvas.forEach(revisao ->
+                logger.info("Item com id {} revisado para o status {} por usuario {}",
+                        revisao.getItem().getId(), revisao.getStatus(), email)
+        );
+        return revisoesSalvas.stream()
+                .map(revisaoItemMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+
+
+
 
     public void deleteItem(Integer id) {
         if (!repository.existsById(id)) {

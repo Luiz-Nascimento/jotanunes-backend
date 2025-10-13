@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
+
     @Mapping(source = "ambiente.id", target = "ambiente")
     ItemResponse toDto(Item item);
 
