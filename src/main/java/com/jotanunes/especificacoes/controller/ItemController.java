@@ -3,12 +3,15 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.item.ItemDocResponse;
 import com.jotanunes.especificacoes.dto.item.ItemRequest;
 import com.jotanunes.especificacoes.dto.item.ItemResponse;
+import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemRequest;
+import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
 import com.jotanunes.especificacoes.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,11 +59,18 @@ public class ItemController {
         ItemResponse response = service.createItem(data, idAmbiente);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PreAuthorize("hasRole('GESTOR')")
+    @PutMapping("/revisarItem/{id}")
+    public ResponseEntity<RevisaoItemResponse> reviewItem(@PathVariable Integer id, @RequestBody RevisaoItemRequest request) {
+        RevisaoItemResponse response = service.reviewItem(id, request);
+        return ResponseEntity.ok(response);
+    }
     @Operation(
             summary = "Deletar um item",
             description = "Deleta o item com ID especificado"
     )
-    @DeleteMapping("/{id}")
+                                              @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Integer id) {
         service.deleteItem(id);
         return ResponseEntity.noContent().build();

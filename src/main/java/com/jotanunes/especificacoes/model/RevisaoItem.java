@@ -22,7 +22,7 @@ public class RevisaoItem {
     @Column(nullable = false)
     private ItemStatus status;
 
-    @Column(name = "motivo", nullable = false)
+    @Column(name = "motivo")
     private String motivo;
 
     @ManyToOne
@@ -35,7 +35,12 @@ public class RevisaoItem {
 
     public RevisaoItem() {
     }
-
+    public RevisaoItem(Item item, ItemStatus status, String motivo, Usuario usuario) {
+        this.item = item;
+        this.status = status;
+        this.motivo = motivo;
+        this.usuario = usuario;
+    }
     public Integer getId() {
         return id;
     }
