@@ -23,7 +23,7 @@ public class AmbienteController {
         this.service = service;
     }
     @Operation(
-            summary = "Buscar todos ambientes",
+            summary = "Retornar dados de todos ambientes",
             description = "Retorna dados de todos ambientes cadastrados"
     )
     @GetMapping
@@ -32,24 +32,35 @@ public class AmbienteController {
     }
 
     @Operation(
-            summary = "Buscar ambiente por id",
+            summary = "Retornar dados de um ambiente",
             description = "Retorna dados do ambiente com ID especificado"
     )
     @GetMapping("/{id}")
     public ResponseEntity<AmbienteResponse> getAmbiente(@PathVariable Integer id) {
         return ResponseEntity.ok().body(service.getAmbienteById(id));
     }
+    @Operation(
+            summary = "Retornar dados de um ambiente formatados para documento",
+            description = "Retorna dados do ambiente com ID especificado formatados para documento"
+    )
     @GetMapping("/doc/{id}")
     public ResponseEntity<AmbienteDocResponse> getAmbienteDocResponse(@PathVariable Integer id) {
         return ResponseEntity.ok().body(service.getAmbienteDocResponse(id));
     }
-
-    @PostMapping("/{id}")
-    public ResponseEntity<AmbienteResponse> createAmbiente(@RequestBody @Valid AmbienteRequest data, @PathVariable Integer id) {
-        AmbienteResponse ambienteResponse = service.createAmbiente(data, id);
+    @Operation(
+            summary = "Criar um novo ambiente",
+            description = "Cria um novo ambiente associado ao empreendimento com ID especificado"
+    )
+    @PostMapping("/{idEmpreendimento}")
+    public ResponseEntity<AmbienteResponse> createAmbiente(@RequestBody @Valid AmbienteRequest data, @PathVariable Integer idEmpreendimento) {
+        AmbienteResponse ambienteResponse = service.createAmbiente(data, idEmpreendimento);
         return ResponseEntity.ok().body(ambienteResponse);
     }
 
+    @Operation(
+            summary = "Deletar um ambiente",
+            description = "Deleta o ambiente com ID especificado"
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAmbiente(@PathVariable Integer id) {
         service.deleteAmbiente(id);
