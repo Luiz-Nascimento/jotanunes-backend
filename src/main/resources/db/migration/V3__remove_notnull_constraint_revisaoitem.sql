@@ -1,0 +1,1 @@
+ALTER TABLE revisao_item ALTER COLUMN motivo DROP NOT NULL;
