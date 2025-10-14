@@ -2,7 +2,7 @@ spring:
     application:
         name: especificacoes
     datasource:
-        url: jdbc:postgresql://localhost:5432/jotanunesdb
+        url: jdbc:postgresql://localhost:5432/jotanunesdb?stringtype=unspecified
         username: ${DB_USERNAME}
         password: ${DB_PASSWORD}
     jpa:

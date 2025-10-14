@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.service;
 import com.jotanunes.especificacoes.dto.item.ItemDocResponse;
 import com.jotanunes.especificacoes.dto.item.ItemRequest;
 import com.jotanunes.especificacoes.dto.item.ItemResponse;
+import com.jotanunes.especificacoes.dto.item.ItemUpdate;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemRequest;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
 import com.jotanunes.especificacoes.enums.ItemStatus;
@@ -17,6 +18,7 @@ import com.jotanunes.especificacoes.repository.AmbienteRepository;
 import com.jotanunes.especificacoes.repository.ItemRepository;
 import com.jotanunes.especificacoes.repository.RevisaoItemRepository;
 import com.jotanunes.especificacoes.repository.UsuarioRepository;
+import com.jotanunes.especificacoes.util.StatusVerifyCascadeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,8 @@ public class ItemService {
     UsuarioRepository usuarioRepository;
     @Autowired
     RevisaoItemRepository revisaoItemRepository;
+    @Autowired
+    StatusVerifyCascadeUtil verifyCascadeUtil;
 
     private final Logger logger = LoggerFactory.getLogger(ItemService.class);
     @Autowired
@@ -66,14 +70,25 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemResponse createItem(ItemRequest data, Integer id) {
-        Ambiente ambiente = ambienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ambiente nao encontrado com id: " + id));
+    public ItemResponse createItem(ItemRequest data) {
+        Ambiente ambiente = ambienteRepository.findById(data.idAmbiente())
+                .orElseThrow(() -> new ResourceNotFoundException("Ambiente nao encontrado com id: " + data.idAmbiente()));
         Item item = mapper.toEntity(data);
         item.setAmbiente(ambiente);
         Item itemSalvo = repository.save(item);
-        ambiente.getItens().add(item);
-        logger.info("Novo item criado com id {}, associado ao ambiente: {}", itemSalvo.getId(), id);
+        verifyCascadeUtil.atualizarStatusCascade(item);
+        logger.info("Novo item criado com id {}, associado ao ambiente: {}", itemSalvo.getId(), data.idAmbiente());
+        return mapper.toDto(item);
+    }
+
+    @Transactional
+    public ItemResponse updateItem(Integer id, ItemUpdate data) {
+        Item item = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
+        item.setDescricao(data.descricao());
+        item.setStatus(ItemStatus.PENDENTE);
+        verifyCascadeUtil.atualizarStatusCascade(item);
+        logger.info("Item com id {} atualizado", id);
         return mapper.toDto(item);
     }
 
@@ -95,8 +110,12 @@ public class ItemService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com email: " + email));
         item.setStatus(data.status());
+
+        verifyCascadeUtil.atualizarStatusCascade(item);
+
         RevisaoItem revisao = new RevisaoItem(item, data.status(), data.motivo(), usuario);
         RevisaoItem revisaoSalva = revisaoItemRepository.save(revisao);
+
         logger.info("Item com id {} revisado para o status {} por usuario {}", data.itemId(), data.status(), email);
         return revisaoItemMapper.toDto(revisaoSalva);
     }
@@ -120,6 +139,7 @@ public class ItemService {
             }
             item.setStatus(data.status());
             revisoes.add(new RevisaoItem(item, data.status(), data.motivo(), usuario));
+            verifyCascadeUtil.atualizarStatusCascade(item);
         }
         List<RevisaoItem> revisoesSalvas = revisaoItemRepository.saveAll(revisoes);
         revisoesSalvas.forEach(revisao ->

@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.model;
 
+import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -19,6 +20,10 @@ public class Empreendimento {
 
     @Column(nullable = false)
     private String localizacao;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private EmpreendimentoStatus status = EmpreendimentoStatus.PENDENTE;
 
     @OneToMany(mappedBy = "empreendimento", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Ambiente> ambientes = new HashSet<>();
@@ -90,6 +95,14 @@ public class Empreendimento {
 
     public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
+    }
+
+    public EmpreendimentoStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EmpreendimentoStatus status) {
+        this.status = status;
     }
 
     public Set<Ambiente> getAmbientes() {

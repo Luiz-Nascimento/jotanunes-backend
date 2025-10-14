@@ -15,5 +15,6 @@ public interface AmbienteMapper {
 
     AmbienteDocResponse toDocResponse(Ambiente ambiente);
 
+    @Mapping(target = "status", ignore = true)
     Ambiente toEntity(AmbienteRequest ambienteRequest);
 }

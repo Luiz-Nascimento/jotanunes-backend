@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.controller;
 
+import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
@@ -58,6 +59,14 @@ public class EmpreendimentoController {
     public ResponseEntity<EmpreendimentoDocResponse> getEmpreendimentoDocResponse(@PathVariable Integer id) {
         EmpreendimentoDocResponse response = empreendimentoService.getEmpreendimentoDocResponse(id);
         return ResponseEntity.ok().body(response);
+    }
+    @GetMapping("/{id}/ambientes")
+    @Operation(
+            summary = "Retornar todos os ambientes de um empreendimento",
+            description = "Retorna todos os ambientes associados ao empreendimento com ID especificado"
+    )
+    public List<AmbienteResponse> getAmbientesByEmpreendimentoId(@PathVariable Integer id) {
+        return empreendimentoService.getAmbientesByEmpreendimentoId(id);
     }
 
     @Operation(

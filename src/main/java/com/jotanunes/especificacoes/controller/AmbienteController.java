@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteDocResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
+import com.jotanunes.especificacoes.dto.item.ItemResponse;
 import com.jotanunes.especificacoes.service.AmbienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,13 +48,18 @@ public class AmbienteController {
     public ResponseEntity<AmbienteDocResponse> getAmbienteDocResponse(@PathVariable Integer id) {
         return ResponseEntity.ok().body(service.getAmbienteDocResponse(id));
     }
+
+    @GetMapping("/{id}/itens")
+    public List<ItemResponse> getItensByAmbienteId(@PathVariable Integer id) {
+        return service.getItensByAmbienteId(id);
+    }
     @Operation(
             summary = "Criar um novo ambiente",
             description = "Cria um novo ambiente associado ao empreendimento com ID especificado"
     )
-    @PostMapping("/{idEmpreendimento}")
-    public ResponseEntity<AmbienteResponse> createAmbiente(@RequestBody @Valid AmbienteRequest data, @PathVariable Integer idEmpreendimento) {
-        AmbienteResponse ambienteResponse = service.createAmbiente(data, idEmpreendimento);
+    @PostMapping
+    public ResponseEntity<AmbienteResponse> createAmbiente(@RequestBody @Valid AmbienteRequest data) {
+        AmbienteResponse ambienteResponse = service.createAmbiente(data);
         return ResponseEntity.ok().body(ambienteResponse);
     }
 
