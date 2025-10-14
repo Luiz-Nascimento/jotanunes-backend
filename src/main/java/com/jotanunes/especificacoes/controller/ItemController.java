@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.item.ItemDocResponse;
 import com.jotanunes.especificacoes.dto.item.ItemRequest;
 import com.jotanunes.especificacoes.dto.item.ItemResponse;
+import com.jotanunes.especificacoes.dto.item.ItemUpdate;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemRequest;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
 import com.jotanunes.especificacoes.service.ItemService;
@@ -54,12 +55,16 @@ public class ItemController {
             summary = "Criar um novo item",
             description = "Cria um novo item associado ao ambiente com ID especificado"
     )
-    @PostMapping("/{idAmbiente}")
-    public ResponseEntity<ItemResponse> createItem(@PathVariable Integer idAmbiente, @RequestBody ItemRequest data) {
-        ItemResponse response = service.createItem(data, idAmbiente);
+    @PostMapping
+    public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest data) {
+        ItemResponse response = service.createItem(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
+    @PutMapping("/{id}")
+    public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer id, @RequestBody ItemUpdate data) {
+        ItemResponse response = service.updateItem(id, data);
+        return ResponseEntity.ok(response);
+    }
     @PreAuthorize("hasRole('GESTOR')")
     @PutMapping("/revisarItem")
     public ResponseEntity<RevisaoItemResponse> reviewItem(@RequestBody RevisaoItemRequest request) {

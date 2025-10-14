@@ -1,6 +1,8 @@
 package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.documento.DocumentoResponse;
+import com.jotanunes.especificacoes.dto.documento.DocumentoResumidoResponse;
+import com.jotanunes.especificacoes.enums.DocumentoStatus;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.DocumentoMapper;
 import com.jotanunes.especificacoes.model.Documento;
@@ -43,6 +45,18 @@ public class DocumentoService {
         Documento documentoSalvo = repository.save(documento);
         return documentoMapper.toDto(documentoSalvo);
     }
+
+//    public DocumentoResumidoResponse aprovarDocumento(Integer id) {
+//        Documento documento = repository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Documento não encontrado com id: " + id));
+//        if (documento.getStatus() == null || documento.getStatus().name().equals("PENDENTE")) {
+//            for (documento.getEmpreendimento().getAmbientes())
+//        } else {
+//            throw new IllegalStateException("Apenas documentos com status PENDENTE podem ser aprovados.");
+//        }
+//        Documento documentoAtualizado = repository.save(documento);
+//        return documentoMapper.toResumidoDto(documentoAtualizado);
+//    }
 
     public void delete(Integer id) {
         if(!repository.existsById(id)) {

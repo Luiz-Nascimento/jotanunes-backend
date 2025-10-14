@@ -1,6 +1,7 @@
 package com.jotanunes.especificacoes.model;
 
 
+import com.jotanunes.especificacoes.enums.AmbienteStatus;
 import com.jotanunes.especificacoes.enums.TipoAmbiente;
 import jakarta.persistence.*;
 
@@ -23,6 +24,10 @@ public class Ambiente {
 
     @Column(length = 80, nullable = false)
     private String nome;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AmbienteStatus status = AmbienteStatus.PENDENTE;
 
     @OneToMany(mappedBy = "ambiente", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Item> itens = new HashSet<>();
@@ -47,6 +52,16 @@ public class Ambiente {
         this.empreendimento = empreendimento;
         this.nome = nome;
         this.tipo = tipo;
+    }
+
+
+
+    public AmbienteStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AmbienteStatus status) {
+        this.status = status;
     }
 
     public String getNome() {

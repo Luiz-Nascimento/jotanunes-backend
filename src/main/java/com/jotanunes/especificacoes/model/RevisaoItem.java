@@ -15,7 +15,7 @@ public class RevisaoItem {
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false, unique = true)
+    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
     private Item item;
 
     @Enumerated(EnumType.STRING)
