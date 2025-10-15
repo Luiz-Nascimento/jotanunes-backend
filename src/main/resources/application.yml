@@ -2,7 +2,7 @@ spring:
     application:
         name: especificacoes
     datasource:
-        url: jdbc:postgresql://localhost:5432/jotanunesdb?stringtype=unspecified
+        url: jdbc:postgresql://jotanunes-db-get-info-database.b.aivencloud.com:21733/jotanunesdb?sslmode=require
         username: ${DB_USERNAME}
         password: ${DB_PASSWORD}
     jpa:
@@ -17,5 +17,19 @@ spring:
         enabled: true
         baseline-on-migrate: true
 
-
+---
+spring:
+    config:
+      activate:
+          on-profile: dev
+    datasource:
+        url: jdbc:postgresql://localhost:5432/jotanunesdb?stringtype=unspecified
+        username: ${DEV_DB_USERNAME}
+        password: ${DEV_DB_PASSWORD}
+    jpa:
+        properties:
+            hibernate:
+                ddl-auto: update
+    flyway:
+        enabled: false
 
