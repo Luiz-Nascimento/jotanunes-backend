@@ -9,8 +9,10 @@ import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
 import com.jotanunes.especificacoes.mapper.ItemMapper;
 import com.jotanunes.especificacoes.model.Ambiente;
+import com.jotanunes.especificacoes.model.CatalogoAmbiente;
 import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.repository.AmbienteRepository;
+import com.jotanunes.especificacoes.repository.CatalogoAmbienteRepository;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
 import com.jotanunes.especificacoes.util.StatusVerifyCascadeUtil;
 import org.slf4j.Logger;
@@ -30,13 +32,15 @@ public class AmbienteService {
     private final Logger logger = LoggerFactory.getLogger(AmbienteService.class);
     private final ItemMapper itemMapper;
     private final StatusVerifyCascadeUtil statusVerifyCascadeUtil;
+    private final CatalogoAmbienteRepository catalogoAmbienteRepository;
 
-    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, ItemMapper itemMapper, StatusVerifyCascadeUtil statusVerifyCascadeUtil) {
+    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, ItemMapper itemMapper, StatusVerifyCascadeUtil statusVerifyCascadeUtil, CatalogoAmbienteRepository catalogoAmbienteRepository) {
         this.ambienteRepository = ambienteRepository;
         this.ambienteMapper = ambienteMapper;
         this.empreendimentoRepository = empreendimentoRepository;
         this.itemMapper = itemMapper;
         this.statusVerifyCascadeUtil = statusVerifyCascadeUtil;
+        this.catalogoAmbienteRepository = catalogoAmbienteRepository;
     }
 
     public List<AmbienteResponse> getAllAmbientes() {
@@ -62,8 +66,11 @@ public class AmbienteService {
     public AmbienteResponse createAmbiente(AmbienteRequest data) {
         Empreendimento empreendimento = empreendimentoRepository.findById(data.idEmpreendimento())
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com o id: " + data.idEmpreendimento()));
-        Ambiente ambiente = ambienteMapper.toEntity(data);
+        CatalogoAmbiente ambienteModelo = catalogoAmbienteRepository.findById(data.idCatalogoAmbiente())
+                .orElseThrow(() -> new ResourceNotFoundException("Catálogo de Ambiente não encontrado com o id: " + data.idCatalogoAmbiente()));
+        Ambiente ambiente = new Ambiente();
         ambiente.setEmpreendimento(empreendimento);
+        ambiente.setCatalogoAmbiente(ambienteModelo);
         Ambiente ambienteSalvo = ambienteRepository.save(ambiente);
         statusVerifyCascadeUtil.atualizarStatusCascade(ambiente);
         logger.info("Ambiente criado com id {} no empreendimento: {} ", ambiente.getId(), empreendimento.getId());
