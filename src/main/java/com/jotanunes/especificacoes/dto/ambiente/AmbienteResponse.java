@@ -6,9 +6,9 @@ import com.jotanunes.especificacoes.enums.TipoAmbiente;
 
 public record AmbienteResponse(
         Integer id,
-        String nome,
+        String catalogoAmbienteNome,
         AmbienteStatus status,
-        TipoAmbiente tipo,
+        TipoAmbiente tipoAmbienteCatalogo,
         Integer idEmpreendimento
 ) {
 }

@@ -5,5 +5,5 @@ import com.jotanunes.especificacoes.enums.TipoAmbiente;
 
 import java.util.Set;
 
-public record AmbienteDocResponse(String nome, TipoAmbiente tipo, Set<ItemDocResponse> itens) {
+public record AmbienteDocResponse(String catalogoAmbienteNome, TipoAmbiente catalogoAmbienteTipo, Set<ItemDocResponse> itens) {
 }
