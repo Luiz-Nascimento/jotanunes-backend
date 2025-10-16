@@ -10,10 +10,12 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
 
+    @Mapping(source = "catalogoItem.nome", target = "nome")
+    @Mapping(source = "catalogoItem.descricao", target = "descricao")
     @Mapping(source = "ambiente.id", target = "ambiente")
     ItemResponse toDto(Item item);
 
-    Item toEntity(ItemRequest itemRequest);
-
+    @Mapping(source = "catalogoItem.nome", target = "nome")
+    @Mapping(source = "catalogoItem.descricao", target = "descricao")
     ItemDocResponse toDocResponse(Item item);
 }

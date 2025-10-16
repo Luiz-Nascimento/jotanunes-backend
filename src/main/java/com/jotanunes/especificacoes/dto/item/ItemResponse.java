@@ -6,6 +6,7 @@ public record ItemResponse(
         Integer id,
         String nome,
         String descricao,
+        String descricaoCustomizada,
         ItemStatus status,
         Integer ambiente
 ) {
