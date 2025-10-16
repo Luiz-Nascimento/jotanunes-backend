@@ -10,11 +10,13 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {ItemMapper.class})
 public interface AmbienteMapper {
+    @Mapping(source = "catalogoAmbiente.nome", target = "catalogoAmbienteNome")
+    @Mapping(source = "catalogoAmbiente.tipo", target = "tipoAmbienteCatalogo")
     @Mapping(source = "empreendimento.id", target = "idEmpreendimento")
     AmbienteResponse toDto(Ambiente ambiente);
 
+    @Mapping(source = "catalogoAmbiente.nome", target = "catalogoAmbienteNome")
+    @Mapping(source = "catalogoAmbiente.tipo", target = "catalogoAmbienteTipo")
     AmbienteDocResponse toDocResponse(Ambiente ambiente);
 
-    @Mapping(target = "status", ignore = true)
-    Ambiente toEntity(AmbienteRequest ambienteRequest);
 }

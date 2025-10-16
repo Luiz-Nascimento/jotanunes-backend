@@ -59,10 +59,15 @@ public class AmbienteController {
     )
     @PostMapping
     public ResponseEntity<AmbienteResponse> createAmbiente(@RequestBody @Valid AmbienteRequest data) {
-        AmbienteResponse ambienteResponse = service.createAmbiente(data);
+        AmbienteResponse ambienteResponse = service.createAmbienteVazio(data);
         return ResponseEntity.ok().body(ambienteResponse);
     }
 
+    @PostMapping("/com-itens")
+    public ResponseEntity<AmbienteResponse> createAmbienteComItens(@RequestBody AmbienteRequest request) {
+        AmbienteResponse ambienteResponse = service.createAmbienteModelo(request);
+        return ResponseEntity.ok().body(ambienteResponse);
+    }
     @Operation(
             summary = "Deletar um ambiente",
             description = "Deleta o ambiente com ID especificado"

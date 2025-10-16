@@ -9,9 +9,10 @@ import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
 import com.jotanunes.especificacoes.mapper.ItemMapper;
 import com.jotanunes.especificacoes.model.Ambiente;
+import com.jotanunes.especificacoes.model.CatalogoAmbiente;
 import com.jotanunes.especificacoes.model.Empreendimento;
-import com.jotanunes.especificacoes.repository.AmbienteRepository;
-import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
+import com.jotanunes.especificacoes.model.Item;
+import com.jotanunes.especificacoes.repository.*;
 import com.jotanunes.especificacoes.util.StatusVerifyCascadeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +31,19 @@ public class AmbienteService {
     private final Logger logger = LoggerFactory.getLogger(AmbienteService.class);
     private final ItemMapper itemMapper;
     private final StatusVerifyCascadeUtil statusVerifyCascadeUtil;
+    private final CatalogoAmbienteRepository catalogoAmbienteRepository;
+    private final CatalogoItemRepository catalogoItemRepository;
+    private final ItemRepository itemRepository;
 
-    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, ItemMapper itemMapper, StatusVerifyCascadeUtil statusVerifyCascadeUtil) {
+    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, ItemMapper itemMapper, StatusVerifyCascadeUtil statusVerifyCascadeUtil, CatalogoAmbienteRepository catalogoAmbienteRepository, CatalogoItemRepository catalogoItemRepository, ItemRepository itemRepository) {
         this.ambienteRepository = ambienteRepository;
         this.ambienteMapper = ambienteMapper;
         this.empreendimentoRepository = empreendimentoRepository;
         this.itemMapper = itemMapper;
         this.statusVerifyCascadeUtil = statusVerifyCascadeUtil;
+        this.catalogoAmbienteRepository = catalogoAmbienteRepository;
+        this.catalogoItemRepository = catalogoItemRepository;
+        this.itemRepository = itemRepository;
     }
 
     public List<AmbienteResponse> getAllAmbientes() {
@@ -59,15 +66,52 @@ public class AmbienteService {
     }
 
     @Transactional
-    public AmbienteResponse createAmbiente(AmbienteRequest data) {
+    public AmbienteResponse createAmbienteVazio(AmbienteRequest data) {
         Empreendimento empreendimento = empreendimentoRepository.findById(data.idEmpreendimento())
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com o id: " + data.idEmpreendimento()));
-        Ambiente ambiente = ambienteMapper.toEntity(data);
+        CatalogoAmbiente ambienteModelo = catalogoAmbienteRepository.findById(data.idCatalogoAmbiente())
+                .orElseThrow(() -> new ResourceNotFoundException("Catálogo de Ambiente não encontrado com o id: " + data.idCatalogoAmbiente()));
+        Ambiente ambiente = new Ambiente();
         ambiente.setEmpreendimento(empreendimento);
+        ambiente.setCatalogoAmbiente(ambienteModelo);
         Ambiente ambienteSalvo = ambienteRepository.save(ambiente);
         statusVerifyCascadeUtil.atualizarStatusCascade(ambiente);
         logger.info("Ambiente criado com id {} no empreendimento: {} ", ambiente.getId(), empreendimento.getId());
         return ambienteMapper.toDto(ambienteSalvo);
+    }
+
+    @Transactional
+    public AmbienteResponse createAmbienteModelo(AmbienteRequest data) {
+        Empreendimento empreendimento = empreendimentoRepository.findById(data.idEmpreendimento())
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com o id: " + data.idEmpreendimento()));
+        CatalogoAmbiente ambienteModelo = catalogoAmbienteRepository.findById(data.idCatalogoAmbiente())
+                .orElseThrow(() -> new ResourceNotFoundException("Catálogo de Ambiente não encontrado com o id: " + data.idCatalogoAmbiente()));
+        Ambiente ambiente = new Ambiente();
+        ambiente.setEmpreendimento(empreendimento);
+        ambiente.setCatalogoAmbiente(ambienteModelo);
+        // Preencher itens do ambiente com base no catálogo
+        // Vou pegar a lista de itens do ambiente
+        // Chamar o conteudo usando o repository de catalogo de itens, baseado no id do ambienteModelo
+        // mapeando para formato de item e adicionando na lista de itens do ambiente
+
+        List<Item> itensModelo = catalogoItemRepository.findByAmbienteId(ambienteModelo.getId())
+                .stream()
+                .map(catalogoItem -> {
+                    Item item = new Item();
+                    item.setCatalogoItem(catalogoItem);
+                    item.setAmbiente(ambiente);
+                    return item;
+                })
+                .toList();
+
+        ambiente.getItens().addAll(itensModelo);
+        Ambiente ambienteSalvo = ambienteRepository.save(ambiente);
+
+        statusVerifyCascadeUtil.atualizarStatusCascade(ambiente);
+        logger.info("Ambiente criado com id {} no empreendimento: {} ", ambiente.getId(), empreendimento.getId());
+
+        return ambienteMapper.toDto(ambienteSalvo);
+
     }
 
     public void deleteAmbiente(Integer id) {

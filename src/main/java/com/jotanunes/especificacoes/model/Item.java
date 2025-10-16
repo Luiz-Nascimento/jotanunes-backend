@@ -18,11 +18,12 @@ public class Item {
     @JoinColumn(name = "ambiente_id")
     private Ambiente ambiente;
 
-    @Column(nullable = false, length = 40)
-    private String nome;
+    @ManyToOne
+    @JoinColumn(name = "catalogo_item_id", nullable = false)
+    private CatalogoItem catalogoItem;
 
-    @Column(nullable = false)
-    private String descricao;
+    @Column(name = "descricao_customizada")
+    private String descricaoCustomizada;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -40,24 +41,9 @@ public class Item {
         return ambiente;
     }
 
+
     public void setAmbiente(Ambiente ambiente) {
         this.ambiente = ambiente;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
     }
 
     public ItemStatus getStatus() {
@@ -68,14 +54,32 @@ public class Item {
         this.status = status;
     }
 
+    public String getDescricaoCustomizada() {
+        return descricaoCustomizada;
+    }
+
+    public void setDescricaoCustomizada(String descricaoCustomizada) {
+        this.descricaoCustomizada = descricaoCustomizada;
+    }
+
+    public CatalogoItem getCatalogoItem() {
+        return catalogoItem;
+    }
+
+    public void setCatalogoItem(CatalogoItem catalogoItem) {
+        this.catalogoItem = catalogoItem;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Item item)) return false;
-        return Objects.equals(id, item.id) && Objects.equals(ambiente, item.ambiente) && Objects.equals(nome, item.nome) && Objects.equals(descricao, item.descricao) && status == item.status;
+        return Objects.equals(id, item.id) && Objects.equals(ambiente, item.ambiente) && Objects.equals(catalogoItem, item.catalogoItem) && Objects.equals(descricaoCustomizada, item.descricaoCustomizada) && status == item.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ambiente, nome, descricao, status);
+        return Objects.hash(id, ambiente, catalogoItem, descricaoCustomizada, status);
     }
 }
+

@@ -2,7 +2,6 @@ package com.jotanunes.especificacoes.model;
 
 
 import com.jotanunes.especificacoes.enums.AmbienteStatus;
-import com.jotanunes.especificacoes.enums.TipoAmbiente;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -22,8 +21,9 @@ public class Ambiente {
     @JoinColumn(name = "empreendimento_id")
     private Empreendimento empreendimento;
 
-    @Column(length = 80, nullable = false)
-    private String nome;
+    @ManyToOne
+    @JoinColumn(name = "catalogo_ambiente_id", nullable = false)
+    private CatalogoAmbiente catalogoAmbiente;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -31,11 +31,6 @@ public class Ambiente {
 
     @OneToMany(mappedBy = "ambiente", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Item> itens = new HashSet<>();
-
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TipoAmbiente tipo;
 
     public Empreendimento getEmpreendimento() {
         return empreendimento;
@@ -48,13 +43,13 @@ public class Ambiente {
     public Ambiente() {
     }
 
-    public Ambiente(Empreendimento empreendimento, String nome, TipoAmbiente tipo) {
-        this.empreendimento = empreendimento;
-        this.nome = nome;
-        this.tipo = tipo;
+    public CatalogoAmbiente getCatalogoAmbiente() {
+        return catalogoAmbiente;
     }
 
-
+    public void setCatalogoAmbiente(CatalogoAmbiente catalogoAmbiente) {
+        this.catalogoAmbiente = catalogoAmbiente;
+    }
 
     public AmbienteStatus getStatus() {
         return status;
@@ -64,21 +59,6 @@ public class Ambiente {
         this.status = status;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public TipoAmbiente getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoAmbiente tipo) {
-        this.tipo = tipo;
-    }
 
     public Integer getId() {
         return id;
@@ -109,8 +89,6 @@ public class Ambiente {
         return "Ambiente{" +
                 "id=" + id +
                 ", empreendimento=" + empreendimento.getNome() +
-                ", nome='" + nome + '\'' +
-                ", tipo=" + tipo +
                 '}';
     }
 }

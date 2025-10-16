@@ -10,14 +10,8 @@ import com.jotanunes.especificacoes.enums.ItemStatus;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.ItemMapper;
 import com.jotanunes.especificacoes.mapper.RevisaoItemMapper;
-import com.jotanunes.especificacoes.model.Ambiente;
-import com.jotanunes.especificacoes.model.Item;
-import com.jotanunes.especificacoes.model.RevisaoItem;
-import com.jotanunes.especificacoes.model.Usuario;
-import com.jotanunes.especificacoes.repository.AmbienteRepository;
-import com.jotanunes.especificacoes.repository.ItemRepository;
-import com.jotanunes.especificacoes.repository.RevisaoItemRepository;
-import com.jotanunes.especificacoes.repository.UsuarioRepository;
+import com.jotanunes.especificacoes.model.*;
+import com.jotanunes.especificacoes.repository.*;
 import com.jotanunes.especificacoes.util.StatusVerifyCascadeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +42,8 @@ public class ItemService {
     private final Logger logger = LoggerFactory.getLogger(ItemService.class);
     @Autowired
     private RevisaoItemMapper revisaoItemMapper;
+    @Autowired
+    private CatalogoItemRepository catalogoItemRepository;
 
     public ItemService(ItemRepository repository, ItemMapper mapper, AmbienteRepository ambienteRepository) {
         this.repository = repository;
@@ -73,7 +69,10 @@ public class ItemService {
     public ItemResponse createItem(ItemRequest data) {
         Ambiente ambiente = ambienteRepository.findById(data.idAmbiente())
                 .orElseThrow(() -> new ResourceNotFoundException("Ambiente nao encontrado com id: " + data.idAmbiente()));
-        Item item = mapper.toEntity(data);
+        CatalogoItem itemReferencia = catalogoItemRepository.findById(data.idItemCatalogo())
+                .orElseThrow(() -> new ResourceNotFoundException("Item de catálogo não encontrado com id: " + data.idItemCatalogo()));
+        Item item = new Item();
+        item.setCatalogoItem(itemReferencia);
         item.setAmbiente(ambiente);
         Item itemSalvo = repository.save(item);
         verifyCascadeUtil.atualizarStatusCascade(item);
@@ -85,7 +84,7 @@ public class ItemService {
     public ItemResponse updateItem(Integer id, ItemUpdate data) {
         Item item = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
-        item.setDescricao(data.descricao());
+        item.setDescricaoCustomizada(data.descricaoCustomizada());
         item.setStatus(ItemStatus.PENDENTE);
         verifyCascadeUtil.atualizarStatusCascade(item);
         logger.info("Item com id {} atualizado", id);
