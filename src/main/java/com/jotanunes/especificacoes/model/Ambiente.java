@@ -3,6 +3,8 @@ package com.jotanunes.especificacoes.model;
 
 import com.jotanunes.especificacoes.enums.AmbienteStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -26,7 +28,8 @@ public class Ambiente {
     private CatalogoAmbiente catalogoAmbiente;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(columnDefinition = "ambiente_status", nullable = false)
     private AmbienteStatus status = AmbienteStatus.PENDENTE;
 
     @OneToMany(mappedBy = "ambiente", cascade = CascadeType.ALL, orphanRemoval = true)
