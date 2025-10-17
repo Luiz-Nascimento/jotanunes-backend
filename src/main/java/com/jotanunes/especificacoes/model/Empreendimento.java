@@ -2,6 +2,8 @@ package com.jotanunes.especificacoes.model;
 
 import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -22,7 +24,8 @@ public class Empreendimento {
     private String localizacao;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(columnDefinition = "empreendimento_status", nullable = false)
     private EmpreendimentoStatus status = EmpreendimentoStatus.PENDENTE;
 
     @OneToMany(mappedBy = "empreendimento", cascade = CascadeType.ALL, orphanRemoval = true)
