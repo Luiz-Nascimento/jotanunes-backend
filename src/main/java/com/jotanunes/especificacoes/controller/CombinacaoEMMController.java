@@ -7,6 +7,7 @@ import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse
 import com.jotanunes.especificacoes.service.CombinacaoEMMService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class CombinacaoEMMController {
     )
     @PostMapping("/empreendimento/{empreendimentoID}")
     public List<CombinacaoEMMResponse> addCombinacoes(@PathVariable Integer empreendimentoID,
-                                                     @RequestBody List<CombinacaoEMMRequest> requests) {
+                                                     @RequestBody @Valid List<CombinacaoEMMRequest> requests) {
         return service.createCombinacoes(empreendimentoID, requests);
     }
 
