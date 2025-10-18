@@ -12,8 +12,10 @@ public class CatalogoItem {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private String nome;
 
+    @Column(nullable = false)
     private String descricao;
 
     @ManyToOne
