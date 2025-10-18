@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.ambiente.CatalogoAmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.CatalogoAmbienteResponse;
 import com.jotanunes.especificacoes.service.CatalogoAmbienteService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class CatalogoAmbienteController {
     }
 
     @PostMapping
-    public ResponseEntity<CatalogoAmbienteResponse> createCatalogoAmbiente(@RequestBody CatalogoAmbienteRequest request) {
+    public ResponseEntity<CatalogoAmbienteResponse> createCatalogoAmbiente(@RequestBody @Valid CatalogoAmbienteRequest request) {
         CatalogoAmbienteResponse response = service.createCatalogoAmbiente(request);
         return ResponseEntity.ok(response);
     }
