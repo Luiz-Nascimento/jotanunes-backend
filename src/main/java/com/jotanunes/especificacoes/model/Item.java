@@ -22,7 +22,7 @@ public class Item {
     @JoinColumn(name = "catalogo_item_id", nullable = false)
     private CatalogoItem catalogoItem;
 
-    @Column(name = "descricao_customizada")
+    @Column(name = "descricao_customizada", length = 160)
     private String descricaoCustomizada;
 
     @Enumerated(EnumType.STRING)

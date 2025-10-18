@@ -9,6 +9,7 @@ import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
 import com.jotanunes.especificacoes.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,12 +57,12 @@ public class ItemController {
             description = "Cria um novo item associado ao ambiente com ID especificado"
     )
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequest data) {
+    public ResponseEntity<ItemResponse> createItem(@RequestBody @Valid ItemRequest data) {
         ItemResponse response = service.createItem(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer id, @RequestBody ItemUpdate data) {
+    public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer id, @RequestBody @Valid ItemUpdate data) {
         ItemResponse response = service.updateItem(id, data);
         return ResponseEntity.ok(response);
     }
