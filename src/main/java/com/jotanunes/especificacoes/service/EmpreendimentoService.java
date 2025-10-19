@@ -27,8 +27,6 @@ public class EmpreendimentoService {
     private final EmpreendimentoMapper empreendimentoMapper;
 
     @Autowired
-    CombinacaoEMMRepository combinacaoEMMRepository;
-    @Autowired
     private CombinacaoEMMService combinacaoEMMService;
     @Autowired
     private AmbienteMapper ambienteMapper;
