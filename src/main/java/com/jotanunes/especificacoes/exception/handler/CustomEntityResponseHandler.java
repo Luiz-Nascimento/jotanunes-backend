@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 
 import java.time.LocalDate;
@@ -69,5 +70,14 @@ public class CustomEntityResponseHandler {
                 request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handleNoResourceFoundExceptions(NoResourceFoundException exception, WebRequest request) {
+        ExceptionResponse response = new ExceptionResponse(
+                new Date(),
+                "Recurso não encontrado: " + exception.getResourcePath(), "Método : " + exception.getHttpMethod() + " - " +
+                request.getDescription(false));
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
 }
