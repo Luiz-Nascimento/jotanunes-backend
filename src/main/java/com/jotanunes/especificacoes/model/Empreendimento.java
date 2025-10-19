@@ -23,6 +23,12 @@ public class Empreendimento {
     @Column(nullable = false)
     private String localizacao;
 
+    @Column(nullable = false)
+    private String descricao;
+
+    @Column(name = "observacoes")
+    private String observacoes;
+
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(columnDefinition = "empreendimento_status", nullable = false)
@@ -34,10 +40,7 @@ public class Empreendimento {
     @OneToMany(mappedBy = "empreendimento")
     private Set<CombinacaoEMM> materiaisPorMarca;
 
-    @Column(nullable = false)
-    private String descricao;
 
-    private String observacoes;
 
     public Empreendimento() {
     }
@@ -66,6 +69,10 @@ public class Empreendimento {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNome() {
