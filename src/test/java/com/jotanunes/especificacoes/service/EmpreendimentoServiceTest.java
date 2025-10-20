@@ -53,7 +53,7 @@ public class EmpreendimentoServiceTest {
         verify(empreendimentoMapper).toDto(empreendimento);
     }
 
-    @DisplayName("Deve lançar ResourceNotFoundException com mensagem correta quando empreendimento não for encontrado por ID")
+    @DisplayName("Deve lançar exceção quando empreendimento não for encontrado por ID")
     @Test
     public void deveLancarExcecaoQuandoEmpreendimentoNaoEncontrado() {
         when(empreendimentoRepository.findById(99)).thenReturn(Optional.empty());
@@ -62,6 +62,7 @@ public class EmpreendimentoServiceTest {
         verify(empreendimentoRepository).findById(99);
     }
 
+    @DisplayName("Deve criar um novo empreendimento com sucesso")
     @Test
     public void deveCriarUmNovoEmpreendimento() {
         EmpreendimentoRequest request = EmpreendimentoFactory.criarEmpreendimentoRequestPadrao();
@@ -83,6 +84,7 @@ public class EmpreendimentoServiceTest {
 
     }
 
+    @DisplayName("Deve lançar exceção ao falhar na criação de empreendimento")
     @Test
     public void deveLancarExcecaoAoFalharCriacaoDeEmpreendimento() {
         EmpreendimentoRequest request = EmpreendimentoFactory.criarEmpreendimentoRequestPadrao();
@@ -100,8 +102,9 @@ public class EmpreendimentoServiceTest {
         verify(empreendimentoMapper, never()).toDto(any(Empreendimento.class));
     }
 
+    @DisplayName("Deve atualizar um empreendimento existente com sucesso")
     @Test
-    public void deveAtualizarEmpreendimentoExistente() {
+    public void deveAtualizarEmpreendimento() {
         EmpreendimentoRequest updateRequest = EmpreendimentoFactory.criarEmpreendimentoRequestAtualizado();
         Empreendimento existingEntity = EmpreendimentoFactory.criarEmpreendimentoPadrao();
         Empreendimento updatedEntity = EmpreendimentoFactory.criarEmpreendimentoAtualizado();
@@ -120,4 +123,29 @@ public class EmpreendimentoServiceTest {
 
     }
 
+    @DisplayName("Deve deletar um empreendimento existente com sucesso")
+    @Test
+    public void deveDeletarUmEmpreendimento() {
+        when(empreendimentoRepository.existsById(1)).thenReturn(true);
+        doNothing().when(empreendimentoRepository).deleteById(1);
+
+        empreendimentoService.deleteEmpreendimento(1);
+
+        verify(empreendimentoRepository).existsById(1);
+        verify(empreendimentoRepository).deleteById(1);
+    }
+
+    @DisplayName("Deve lançar exceção ao tentar deletar empreendimento inexistente")
+    @Test
+    public void deveLancarExcecaoAoDeletarEmpreendimentoInexistente() {
+        when(empreendimentoRepository.existsById(99)).thenReturn(false);
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            empreendimentoService.deleteEmpreendimento(99);
+        });
+
+        assertTrue(exception.getMessage().contains("Empreendimento não encontrado com id: 99"));
+        verify(empreendimentoRepository).existsById(99);
+        verify(empreendimentoRepository, never()).deleteById(anyInt());
+    }
 }
