@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +32,7 @@ public class ItemService {
     private final ItemMapper mapper;
     private final AmbienteRepository ambienteRepository;
     @Autowired
-    UsuarioRepository usuarioRepository;
+    UserRepository userRepository;
     @Autowired
     RevisaoItemRepository revisaoItemRepository;
     @Autowired
@@ -104,15 +103,14 @@ public class ItemService {
                 data.motivo() == null) {
             throw new IllegalArgumentException("Motivo é obrigatório para itens reprovados.");
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        Usuario usuario = usuarioRepository.findByEmail(email)
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com email: " + email));
         item.setStatus(data.status());
 
         verifyCascadeUtil.atualizarStatusCascade(item);
 
-        RevisaoItem revisao = new RevisaoItem(item, data.status(), data.motivo(), usuario);
+        RevisaoItem revisao = new RevisaoItem(item, data.status(), data.motivo(), user);
         RevisaoItem revisaoSalva = revisaoItemRepository.save(revisao);
 
         logger.info("Item com id {} revisado para o status {} por usuario {}", data.itemId(), data.status(), email);
@@ -123,7 +121,7 @@ public class ItemService {
     public List<RevisaoItemResponse> reviewItemsBulk(List<RevisaoItemRequest> requests) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        Usuario usuario = usuarioRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com email: " + email));
 
         List<RevisaoItem> revisoes = new ArrayList<>();
@@ -137,7 +135,7 @@ public class ItemService {
                 throw new IllegalArgumentException("Motivo é obrigatório para itens reprovados.");
             }
             item.setStatus(data.status());
-            revisoes.add(new RevisaoItem(item, data.status(), data.motivo(), usuario));
+            revisoes.add(new RevisaoItem(item, data.status(), data.motivo(), user));
             verifyCascadeUtil.atualizarStatusCascade(item);
         }
         List<RevisaoItem> revisoesSalvas = revisaoItemRepository.saveAll(revisoes);
