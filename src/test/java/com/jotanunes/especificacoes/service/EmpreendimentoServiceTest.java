@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.service;
 
+import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
@@ -14,9 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -40,19 +40,17 @@ public class EmpreendimentoServiceTest {
     @Test
     public void deveRetornarEmpreendimentoPorId() {
         Empreendimento empreendimento = EmpreendimentoFactory.criarEmpreendimentoPadrao();
+        EmpreendimentoResponse expectedResponse = EmpreendimentoFactory.criarEmpreendimentoResponsePadrao();
+
         when(empreendimentoRepository.findById(1)).thenReturn(Optional.of(empreendimento));
-        when(empreendimentoMapper.toDto(empreendimento)).thenReturn(new EmpreendimentoResponse(empreendimento.getId(),
-                empreendimento.getNome(), empreendimento.getStatus(), empreendimento.getLocalizacao(),
-                empreendimento.getDescricao(), empreendimento.getObservacoes()));
+        when(empreendimentoMapper.toDto(empreendimento)).thenReturn(expectedResponse);
+
         EmpreendimentoResponse response = empreendimentoService.getEmpreendimentoById(1);
-        assertEquals(1, response.id());
-        assertEquals("Empreendimento Teste", response.nome());
-        assertEquals(empreendimento.getStatus(), response.status());
-        assertEquals("Localização Teste", response.localizacao());
-        assertEquals("Descrição do Empreendimento Teste", response.descricao());
-        assertEquals("Observações do Empreendimento Teste", response.observacoes());
-        Mockito.verify(empreendimentoRepository).findById(1);
-        Mockito.verify(empreendimentoMapper).toDto(empreendimento);
+
+        assertEquals(expectedResponse, response);
+
+        verify(empreendimentoRepository).findById(1);
+        verify(empreendimentoMapper).toDto(empreendimento);
     }
 
     @DisplayName("Deve lançar ResourceNotFoundException com mensagem correta quando empreendimento não for encontrado por ID")
@@ -61,8 +59,65 @@ public class EmpreendimentoServiceTest {
         when(empreendimentoRepository.findById(99)).thenReturn(Optional.empty());
         ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> empreendimentoService.getEmpreendimentoById(99));
         assertTrue(ex.getMessage().contains("Empreendimento não encontrado com id: 99"));
-        Mockito.verify(empreendimentoRepository).findById(99);
+        verify(empreendimentoRepository).findById(99);
     }
 
+    @Test
+    public void deveCriarUmNovoEmpreendimento() {
+        EmpreendimentoRequest request = EmpreendimentoFactory.criarEmpreendimentoRequestPadrao();
+        Empreendimento mappedEntity = EmpreendimentoFactory.criarEmpreendimentoMapeadoPadrao();
+        Empreendimento persistedEntity = EmpreendimentoFactory.criarEmpreendimentoPadrao();
+        EmpreendimentoResponse expectedResponse = EmpreendimentoFactory.criarEmpreendimentoResponsePadrao();
+
+        when(empreendimentoMapper.requestToEntity(request)).thenReturn(mappedEntity);
+        when(empreendimentoRepository.save(mappedEntity)).thenReturn(persistedEntity);
+        when(empreendimentoMapper.toDto(persistedEntity)).thenReturn(expectedResponse);
+
+        EmpreendimentoResponse response = empreendimentoService.createEmpreendimento(request);
+
+        assertEquals(expectedResponse, response);
+        verify(empreendimentoMapper).requestToEntity(request);
+        verify(empreendimentoRepository).save(mappedEntity);
+        verify(empreendimentoMapper).toDto(persistedEntity);
+
+
+    }
+
+    @Test
+    public void deveLancarExcecaoAoFalharCriacaoDeEmpreendimento() {
+        EmpreendimentoRequest request = EmpreendimentoFactory.criarEmpreendimentoRequestPadrao();
+        Empreendimento mappedEntity = EmpreendimentoFactory.criarEmpreendimentoMapeadoPadrao();
+
+        when(empreendimentoMapper.requestToEntity(request)).thenReturn(mappedEntity);
+        when(empreendimentoRepository.save(mappedEntity)).thenThrow(new RuntimeException());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            empreendimentoService.createEmpreendimento(request);
+        });
+
+        verify(empreendimentoMapper).requestToEntity(request);
+        verify(empreendimentoRepository).save(mappedEntity);
+        verify(empreendimentoMapper, never()).toDto(any(Empreendimento.class));
+    }
+
+    @Test
+    public void deveAtualizarEmpreendimentoExistente() {
+        EmpreendimentoRequest updateRequest = EmpreendimentoFactory.criarEmpreendimentoRequestAtualizado();
+        Empreendimento existingEntity = EmpreendimentoFactory.criarEmpreendimentoPadrao();
+        Empreendimento updatedEntity = EmpreendimentoFactory.criarEmpreendimentoAtualizado();
+        EmpreendimentoResponse expectedResponse = EmpreendimentoFactory.criarEmpreendimentoResponseAtualizado();
+
+        when(empreendimentoRepository.findById(1)).thenReturn(Optional.of(existingEntity));
+        when(empreendimentoRepository.save(existingEntity)).thenReturn(updatedEntity);
+        when(empreendimentoMapper.toDto(updatedEntity)).thenReturn(expectedResponse);
+
+        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(1, updateRequest);
+
+        assertEquals(expectedResponse, response);
+        verify(empreendimentoRepository).findById(1);
+        verify(empreendimentoRepository).save(existingEntity);
+        verify(empreendimentoMapper).toDto(updatedEntity);
+
+    }
 
 }
