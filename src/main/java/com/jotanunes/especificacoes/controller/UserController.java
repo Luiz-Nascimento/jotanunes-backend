@@ -1,11 +1,14 @@
 package com.jotanunes.especificacoes.controller;
 
 import com.jotanunes.especificacoes.dto.usuario.RoleChangeRequest;
+import com.jotanunes.especificacoes.dto.usuario.UserCreateRequest;
 import com.jotanunes.especificacoes.dto.usuario.UserResponse;
-import com.jotanunes.especificacoes.service.UsuarioService;
+import com.jotanunes.especificacoes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +22,7 @@ import java.util.UUID;
 public class UserController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UserService userService;
 
     @Operation(
             summary = "Listar todos os usuários",
@@ -28,7 +31,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<UserResponse> findAll() {
-        return usuarioService.findAll();
+        return userService.findAll();
     }
 
     @Operation(
@@ -38,7 +41,16 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/role")
     public ResponseEntity<UserResponse> updateUserRole(@PathVariable UUID id, @RequestBody RoleChangeRequest role) {
-        UserResponse response = usuarioService.updateUserRole(id, role);
+        UserResponse response = userService.updateUserRole(id, role);
         return ResponseEntity.ok(response);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserCreateRequest request) {
+        UserResponse response = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+
 }

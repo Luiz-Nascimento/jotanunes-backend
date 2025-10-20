@@ -27,7 +27,7 @@ public class RevisaoItem {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
-    private Usuario usuario;
+    private User user;
 
     @UpdateTimestamp
     @Column(name = "data_avaliacao", nullable = false)
@@ -35,11 +35,11 @@ public class RevisaoItem {
 
     public RevisaoItem() {
     }
-    public RevisaoItem(Item item, ItemStatus status, String motivo, Usuario usuario) {
+    public RevisaoItem(Item item, ItemStatus status, String motivo, User user) {
         this.item = item;
         this.status = status;
         this.motivo = motivo;
-        this.usuario = usuario;
+        this.user = user;
     }
     public Integer getId() {
         return id;
@@ -69,12 +69,12 @@ public class RevisaoItem {
         this.motivo = motivo;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public User getUsuario() {
+        return user;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuario(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getDataAvaliacao() {

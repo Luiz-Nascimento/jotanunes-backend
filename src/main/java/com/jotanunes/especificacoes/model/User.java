@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "usuarios")
-public class Usuario implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,14 +35,21 @@ public class Usuario implements UserDetails {
     private LocalDateTime dataCriacao;
     @ManyToOne
     @JoinColumn(name = "criado_por")
-    private Usuario criadoPor;
+    private User criadoPor;
     @Column(nullable = false)
     private Boolean ativo = true;
 
-    public Usuario() {
+    public User() {
     }
 
-    public Usuario(String nome, String senha, NivelAcesso nivelAcesso, String email, LocalDateTime dataCriacao, Usuario criadoPor, Boolean ativo) {
+    public User(String nome, String senha, String email, NivelAcesso nivelAcesso) {
+        this.nome = nome;
+        this.senha = senha;
+        this.email = email;
+        this.nivelAcesso = nivelAcesso;
+    }
+
+    public User(String nome, String senha, NivelAcesso nivelAcesso, String email, LocalDateTime dataCriacao, User criadoPor, Boolean ativo) {
         this.nome = nome;
         this.senha = senha;
         this.nivelAcesso = nivelAcesso;
@@ -52,7 +59,7 @@ public class Usuario implements UserDetails {
         this.ativo = ativo;
     }
 
-    public Usuario(String nome, String senha, NivelAcesso nivelAcesso, String email, LocalDateTime dataCriacao, Boolean ativo) {
+    public User(String nome, String senha, NivelAcesso nivelAcesso, String email, LocalDateTime dataCriacao, Boolean ativo) {
         this.nome = nome;
         this.senha = senha;
         this.nivelAcesso = nivelAcesso;
@@ -63,6 +70,10 @@ public class Usuario implements UserDetails {
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -105,11 +116,11 @@ public class Usuario implements UserDetails {
         this.dataCriacao = dataCriacao;
     }
 
-    public Usuario getCriadoPor() {
+    public User getCriadoPor() {
         return criadoPor;
     }
 
-    public void setCriadoPor(Usuario criadoPor) {
+    public void setCriadoPor(User criadoPor) {
         this.criadoPor = criadoPor;
     }
 
