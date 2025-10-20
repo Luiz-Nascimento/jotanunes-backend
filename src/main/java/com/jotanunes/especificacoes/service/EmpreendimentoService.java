@@ -62,9 +62,10 @@ public class EmpreendimentoService {
     }
 
     public EmpreendimentoResponse createEmpreendimento(EmpreendimentoRequest data) {
-        Empreendimento empreendimento = empreendimentoRepository.save(empreendimentoMapper.requestToEntity(data));
-        logger.info("Empreendimento criado com id: {}", empreendimento.getId());
-        return empreendimentoMapper.toDto(empreendimento);
+        Empreendimento empreendimento = empreendimentoMapper.requestToEntity(data);
+        Empreendimento empreendimentoPersistido = empreendimentoRepository.save(empreendimento);
+        logger.info("Empreendimento criado com id: {}", empreendimentoPersistido.getId());
+        return empreendimentoMapper.toDto(empreendimentoPersistido);
     }
 
     public EmpreendimentoResponse updateEmpreendimento(Integer id, EmpreendimentoRequest data) {
