@@ -5,6 +5,7 @@ import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
+import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -68,20 +70,16 @@ public class EmpreendimentoService {
         return empreendimentoMapper.toDto(empreendimentoPersistido);
     }
 
-//    public EmpreendimentoResponse updateEmpreendimento(Integer id, EmpreendimentoRequest data) {
-//        Empreendimento empreendimentoExistente = empreendimentoRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
-//
-//        empreendimentoExistente.setNome(data.nome());
-//        empreendimentoExistente.setLocalizacao(data.localizacao());
-//        empreendimentoExistente.setDescricao(data.descricao());
-//        empreendimentoExistente.setObservacoes(data.observacoes());
-//
-//        Empreendimento empreendimentoAtualizado = empreendimentoRepository.save(empreendimentoExistente);
-//        logger.info("Empreendimento atualizado com id: {}", empreendimentoAtualizado.getId());
-//
-//        return empreendimentoMapper.toDto(empreendimentoAtualizado);
-//    }
+    @Transactional
+    public EmpreendimentoResponse updateEmpreendimento(EmpreendimentoUpdate data) {
+        Empreendimento empreendimentoExistente = empreendimentoRepository.findById(data.idEmpreendimento())
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + data.idEmpreendimento()));
+        empreendimentoMapper.updateFromDto(data, empreendimentoExistente);
+        Empreendimento empreendimentoAtualizado = empreendimentoRepository.save(empreendimentoExistente);
+        logger.info("Empreendimento atualizado com id: {}", empreendimentoAtualizado.getId());
+
+        return empreendimentoMapper.toDto(empreendimentoAtualizado);
+    }
 
     public void deleteEmpreendimento(Integer id) {
         if (!empreendimentoRepository.existsById(id)) {
