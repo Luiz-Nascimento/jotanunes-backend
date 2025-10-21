@@ -5,6 +5,7 @@ import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
+import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,17 +27,17 @@ public class EmpreendimentoService {
 
     private final EmpreendimentoRepository empreendimentoRepository;
     private final EmpreendimentoMapper empreendimentoMapper;
+    private final CombinacaoEMMService combinacaoEMMService;
+    private final AmbienteMapper ambienteMapper;
 
-    @Autowired
-    private CombinacaoEMMService combinacaoEMMService;
-    @Autowired
-    private AmbienteMapper ambienteMapper;
-
-    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository,
-                                 EmpreendimentoMapper empreendimentoMapper) {
+    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, EmpreendimentoMapper empreendimentoMapper, CombinacaoEMMService combinacaoEMMService, AmbienteMapper ambienteMapper) {
         this.empreendimentoRepository = empreendimentoRepository;
         this.empreendimentoMapper = empreendimentoMapper;
+        this.combinacaoEMMService = combinacaoEMMService;
+        this.ambienteMapper = ambienteMapper;
     }
+
+
 
     public List<EmpreendimentoResponse> getAllEmpreendimentos() {
         return empreendimentoMapper.toDtoList(empreendimentoRepository.findAll());
@@ -68,15 +70,11 @@ public class EmpreendimentoService {
         return empreendimentoMapper.toDto(empreendimentoPersistido);
     }
 
-    public EmpreendimentoResponse updateEmpreendimento(Integer id, EmpreendimentoRequest data) {
-        Empreendimento empreendimentoExistente = empreendimentoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
-
-        empreendimentoExistente.setNome(data.nome());
-        empreendimentoExistente.setLocalizacao(data.localizacao());
-        empreendimentoExistente.setDescricao(data.descricao());
-        empreendimentoExistente.setObservacoes(data.observacoes());
-
+    @Transactional
+    public EmpreendimentoResponse updateEmpreendimento(EmpreendimentoUpdate data) {
+        Empreendimento empreendimentoExistente = empreendimentoRepository.findById(data.idEmpreendimento())
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + data.idEmpreendimento()));
+        empreendimentoMapper.updateFromDto(data, empreendimentoExistente);
         Empreendimento empreendimentoAtualizado = empreendimentoRepository.save(empreendimentoExistente);
         logger.info("Empreendimento atualizado com id: {}", empreendimentoAtualizado.getId());
 

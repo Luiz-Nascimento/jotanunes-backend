@@ -4,6 +4,7 @@ import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
+import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -81,12 +82,12 @@ public class EmpreendimentoController {
 
     @Operation(
             summary = "Atualiza um empreendimento",
-            description = "Atualiza um empreendimento especificado com ID, apartir das informações fornecidas no JSON"
+            description = "Atualiza um empreendimento especificado apartir das informações fornecidas no JSON"
     )
-    @PutMapping("/{id}")
-     public ResponseEntity<EmpreendimentoResponse> updateEmpreendimento(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoRequest data) {
-        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(id, data);
-        return ResponseEntity.ok().body(response); //quando o usuario quiser corrigir o documento reprovado pelo gestor
+    @PutMapping
+     public ResponseEntity<EmpreendimentoResponse> updateEmpreendimento(@RequestBody @Valid EmpreendimentoUpdate data) {
+        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(data);
+        return ResponseEntity.ok().body(response);
     }
 
     @Operation(

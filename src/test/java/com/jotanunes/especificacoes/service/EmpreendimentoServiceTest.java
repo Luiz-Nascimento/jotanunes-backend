@@ -2,6 +2,7 @@ package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
+import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
@@ -105,19 +106,20 @@ public class EmpreendimentoServiceTest {
     @DisplayName("Deve atualizar um empreendimento existente com sucesso")
     @Test
     public void deveAtualizarEmpreendimento() {
-        EmpreendimentoRequest updateRequest = EmpreendimentoFactory.criarEmpreendimentoRequestAtualizado();
+        EmpreendimentoUpdate updateDTO = EmpreendimentoFactory.criarEmpreendimentoUpdate();
         Empreendimento existingEntity = EmpreendimentoFactory.criarEmpreendimentoPadrao();
         Empreendimento updatedEntity = EmpreendimentoFactory.criarEmpreendimentoAtualizado();
         EmpreendimentoResponse expectedResponse = EmpreendimentoFactory.criarEmpreendimentoResponseAtualizado();
 
-        when(empreendimentoRepository.findById(1)).thenReturn(Optional.of(existingEntity));
+        when(empreendimentoRepository.findById(updateDTO.idEmpreendimento())).thenReturn(Optional.of(existingEntity));
         when(empreendimentoRepository.save(existingEntity)).thenReturn(updatedEntity);
         when(empreendimentoMapper.toDto(updatedEntity)).thenReturn(expectedResponse);
 
-        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(1, updateRequest);
+        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(updateDTO);
 
         assertEquals(expectedResponse, response);
-        verify(empreendimentoRepository).findById(1);
+        verify(empreendimentoRepository).findById(updateDTO.idEmpreendimento());
+        verify(empreendimentoMapper).updateFromDto(updateDTO, existingEntity);
         verify(empreendimentoRepository).save(existingEntity);
         verify(empreendimentoMapper).toDto(updatedEntity);
 

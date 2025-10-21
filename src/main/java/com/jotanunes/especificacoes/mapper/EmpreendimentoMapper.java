@@ -4,16 +4,20 @@ import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
+import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
 import com.jotanunes.especificacoes.model.Empreendimento;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 import java.util.List;
-import java.util.Set;
+
 
 @Mapper(componentModel = "spring", uses = {AmbienteMapper.class})
 public interface EmpreendimentoMapper {
 
+    @BeanMapping(
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+    )
+    void updateFromDto(EmpreendimentoUpdate dto, @MappingTarget Empreendimento empreendimento);
 
     EmpreendimentoResponse toDto(Empreendimento empreendimento);
 
