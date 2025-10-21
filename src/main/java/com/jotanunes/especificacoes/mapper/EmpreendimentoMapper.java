@@ -6,10 +6,9 @@ import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.model.Empreendimento;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
-import java.util.Set;
+
 
 @Mapper(componentModel = "spring", uses = {AmbienteMapper.class})
 public interface EmpreendimentoMapper {

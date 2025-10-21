@@ -25,17 +25,17 @@ public class EmpreendimentoService {
 
     private final EmpreendimentoRepository empreendimentoRepository;
     private final EmpreendimentoMapper empreendimentoMapper;
+    private final CombinacaoEMMService combinacaoEMMService;
+    private final AmbienteMapper ambienteMapper;
 
-    @Autowired
-    private CombinacaoEMMService combinacaoEMMService;
-    @Autowired
-    private AmbienteMapper ambienteMapper;
-
-    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository,
-                                 EmpreendimentoMapper empreendimentoMapper) {
+    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, EmpreendimentoMapper empreendimentoMapper, CombinacaoEMMService combinacaoEMMService, AmbienteMapper ambienteMapper) {
         this.empreendimentoRepository = empreendimentoRepository;
         this.empreendimentoMapper = empreendimentoMapper;
+        this.combinacaoEMMService = combinacaoEMMService;
+        this.ambienteMapper = ambienteMapper;
     }
+
+
 
     public List<EmpreendimentoResponse> getAllEmpreendimentos() {
         return empreendimentoMapper.toDtoList(empreendimentoRepository.findAll());
@@ -68,20 +68,20 @@ public class EmpreendimentoService {
         return empreendimentoMapper.toDto(empreendimentoPersistido);
     }
 
-    public EmpreendimentoResponse updateEmpreendimento(Integer id, EmpreendimentoRequest data) {
-        Empreendimento empreendimentoExistente = empreendimentoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
-
-        empreendimentoExistente.setNome(data.nome());
-        empreendimentoExistente.setLocalizacao(data.localizacao());
-        empreendimentoExistente.setDescricao(data.descricao());
-        empreendimentoExistente.setObservacoes(data.observacoes());
-
-        Empreendimento empreendimentoAtualizado = empreendimentoRepository.save(empreendimentoExistente);
-        logger.info("Empreendimento atualizado com id: {}", empreendimentoAtualizado.getId());
-
-        return empreendimentoMapper.toDto(empreendimentoAtualizado);
-    }
+//    public EmpreendimentoResponse updateEmpreendimento(Integer id, EmpreendimentoRequest data) {
+//        Empreendimento empreendimentoExistente = empreendimentoRepository.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
+//
+//        empreendimentoExistente.setNome(data.nome());
+//        empreendimentoExistente.setLocalizacao(data.localizacao());
+//        empreendimentoExistente.setDescricao(data.descricao());
+//        empreendimentoExistente.setObservacoes(data.observacoes());
+//
+//        Empreendimento empreendimentoAtualizado = empreendimentoRepository.save(empreendimentoExistente);
+//        logger.info("Empreendimento atualizado com id: {}", empreendimentoAtualizado.getId());
+//
+//        return empreendimentoMapper.toDto(empreendimentoAtualizado);
+//    }
 
     public void deleteEmpreendimento(Integer id) {
         if (!empreendimentoRepository.existsById(id)) {

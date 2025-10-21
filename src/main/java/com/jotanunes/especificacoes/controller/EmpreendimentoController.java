@@ -78,16 +78,16 @@ public class EmpreendimentoController {
         EmpreendimentoResponse response = empreendimentoService.createEmpreendimento(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
-    @Operation(
-            summary = "Atualiza um empreendimento",
-            description = "Atualiza um empreendimento especificado com ID, apartir das informações fornecidas no JSON"
-    )
-    @PutMapping("/{id}")
-     public ResponseEntity<EmpreendimentoResponse> updateEmpreendimento(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoRequest data) {
-        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(id, data);
-        return ResponseEntity.ok().body(response); //quando o usuario quiser corrigir o documento reprovado pelo gestor
-    }
+//
+//    @Operation(
+//            summary = "Atualiza um empreendimento",
+//            description = "Atualiza um empreendimento especificado com ID, apartir das informações fornecidas no JSON"
+//    )
+//    @PutMapping("/{id}")
+//     public ResponseEntity<EmpreendimentoResponse> updateEmpreendimento(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoRequest data) {
+//        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(id, data);
+//        return ResponseEntity.ok().body(response); //quando o usuario quiser corrigir o documento reprovado pelo gestor
+//    }
 
     @Operation(
             summary = "Deleta um empreendimento",

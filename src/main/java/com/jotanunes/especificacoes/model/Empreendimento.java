@@ -1,13 +1,19 @@
 package com.jotanunes.especificacoes.model;
 
 import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
+import com.jotanunes.especificacoes.enums.LinhaEmpreendimento;
+import com.jotanunes.especificacoes.enums.SistemaConstrutivo;
+import com.jotanunes.especificacoes.enums.TipologiaEmpreendimento;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+import org.hibernate.type.SqlTypes;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "empreendimentos")
@@ -16,6 +22,21 @@ public class Empreendimento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(columnDefinition = "tipologia_empreendimento", nullable = false)
+    private TipologiaEmpreendimento tipologia;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(columnDefinition = "sistema_construtivo", nullable = false)
+    private SistemaConstrutivo sistemaConstrutivo;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(columnDefinition = "linha_empreendimento", nullable = false)
+    private LinhaEmpreendimento linha;
 
     @Column(nullable = false)
     private String nome;
@@ -26,8 +47,12 @@ public class Empreendimento {
     @Column(nullable = false)
     private String descricao;
 
-    @Column(name = "observacoes")
-    private String observacoes;
+    @Type(ListArrayType.class)
+    @Column(
+            name = "observacoes",
+            columnDefinition = "text[]"
+    )
+    private List<String> observacoes = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
@@ -40,31 +65,17 @@ public class Empreendimento {
     @OneToMany(mappedBy = "empreendimento")
     private Set<CombinacaoEMM> materiaisPorMarca;
 
-
-
     public Empreendimento() {
     }
 
-    public Empreendimento(String nome, String localizacao, String descricao) {
+    public Empreendimento(TipologiaEmpreendimento tipologia, SistemaConstrutivo sistemaConstrutivo, LinhaEmpreendimento linha, String nome, String localizacao, String descricao, EmpreendimentoStatus status) {
+        this.tipologia = tipologia;
+        this.sistemaConstrutivo = sistemaConstrutivo;
+        this.linha = linha;
         this.nome = nome;
         this.localizacao = localizacao;
         this.descricao = descricao;
-    }
-
-    public Empreendimento(String nome, String localizacao, String descricao, String observacoes) {
-        this.nome = nome;
-        this.localizacao = localizacao;
-        this.descricao = descricao;
-        this.observacoes = observacoes;
-    }
-
-    public Empreendimento(Integer id, String nome, String localizacao, Set<Ambiente> ambientes, String descricao, String observacoes) {
-        this.id = id;
-        this.nome = nome;
-        this.localizacao = localizacao;
-        this.ambientes = ambientes;
-        this.descricao = descricao;
-        this.observacoes = observacoes;
+        this.status = status;
     }
 
     public Integer getId() {
@@ -73,6 +84,30 @@ public class Empreendimento {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public TipologiaEmpreendimento getTipologia() {
+        return tipologia;
+    }
+
+    public void setTipologia(TipologiaEmpreendimento tipologia) {
+        this.tipologia = tipologia;
+    }
+
+    public SistemaConstrutivo getSistemaConstrutivo() {
+        return sistemaConstrutivo;
+    }
+
+    public void setSistemaConstrutivo(SistemaConstrutivo sistemaConstrutivo) {
+        this.sistemaConstrutivo = sistemaConstrutivo;
+    }
+
+    public LinhaEmpreendimento getLinha() {
+        return linha;
+    }
+
+    public void setLinha(LinhaEmpreendimento linha) {
+        this.linha = linha;
     }
 
     public String getNome() {
@@ -99,11 +134,11 @@ public class Empreendimento {
         this.descricao = descricao;
     }
 
-    public String getObservacoes() {
+    public List<String> getObservacoes() {
         return observacoes;
     }
 
-    public void setObservacoes(String observacoes) {
+    public void setObservacoes(List<String> observacoes) {
         this.observacoes = observacoes;
     }
 
@@ -129,20 +164,5 @@ public class Empreendimento {
 
     public void setMateriaisPorMarca(Set<CombinacaoEMM> materiaisPorMarca) {
         this.materiaisPorMarca = materiaisPorMarca;
-    }
-
-    public void printAmbientes() {
-        this.ambientes.forEach(System.out::println);
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Empreendimento that = (Empreendimento) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
     }
 }
