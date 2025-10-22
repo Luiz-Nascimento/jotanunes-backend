@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.dto.usuario.RoleChangeRequest;
 import com.jotanunes.especificacoes.dto.usuario.UserCreateRequest;
 import com.jotanunes.especificacoes.dto.usuario.UserResponse;
+import com.jotanunes.especificacoes.dto.usuario.UserUpdateStatusRequest;
 import com.jotanunes.especificacoes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -50,6 +51,12 @@ public class UserController {
     public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserCreateRequest request) {
         UserResponse response = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PatchMapping("/atualizar-status")
+    public ResponseEntity<UserResponse> updateStatusUser(@RequestBody @Valid UserUpdateStatusRequest request) {
+        UserResponse response = userService.updateStatus(request);
+        return ResponseEntity.ok(response);
     }
 
 

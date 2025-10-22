@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.service;
 import com.jotanunes.especificacoes.dto.usuario.RoleChangeRequest;
 import com.jotanunes.especificacoes.dto.usuario.UserCreateRequest;
 import com.jotanunes.especificacoes.dto.usuario.UserResponse;
+import com.jotanunes.especificacoes.dto.usuario.UserUpdateStatusRequest;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.UserMapper;
 import com.jotanunes.especificacoes.model.User;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -54,6 +56,19 @@ public class UserService {
         User userPersisted = userRepository.save(userMapped);
         logger.info("Administrador {} registrou um novo usuario com email {} e acesso {}", userCreating.getEmail(), userPersisted.getEmail(), userPersisted.getNivelAcesso());
         return userMapper.toDto(userPersisted);
+    }
+
+    @Transactional
+    public UserResponse updateStatus(UserUpdateStatusRequest data) {
+        User persistedUser = userRepository.findByEmail(data.email())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário com esse email não existe."));
+        if (Objects.equals(persistedUser.getAtivo(), data.novoStatus())) {
+            return userMapper.toDto(persistedUser);
+        }
+        persistedUser.setAtivo(data.novoStatus());
+        User updatedUser = userRepository.save(persistedUser);
+        return userMapper.toDto(updatedUser);
+
     }
 
 

@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.usuario.UserCreateRequest;
 import com.jotanunes.especificacoes.dto.usuario.UserResponse;
+import com.jotanunes.especificacoes.dto.usuario.UserUpdateStatusRequest;
 import com.jotanunes.especificacoes.factory.UserFactory;
 import com.jotanunes.especificacoes.mapper.UserMapper;
 import com.jotanunes.especificacoes.model.User;
@@ -16,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -41,6 +44,42 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
+    @Test
+    public void deveDesativarUsuario() {
+        UserUpdateStatusRequest data = new UserUpdateStatusRequest("user@gmail.com", Boolean.FALSE);
+        User usuarioEncontrado = UserFactory.criarUsuarioPersistidoCriadoPadrao();
+        User usuarioAtualizado = UserFactory.criarUsuarioPersistidoCriadoPadrao();
+        usuarioAtualizado.setAtivo(Boolean.FALSE);
+        UserResponse expectedResponse = UserFactory.criarInativoUserResponsePadrao();
+
+        when(userRepository.findByEmail(data.email())).thenReturn(Optional.of(usuarioEncontrado));
+        when(userRepository.save(usuarioEncontrado)).thenReturn(usuarioAtualizado);
+        when(userMapper.toDto(usuarioAtualizado)).thenReturn(expectedResponse);
+
+        UserResponse actualResponse = userService.updateStatus(data);
+
+        assertEquals(expectedResponse, actualResponse);
+        verify(userRepository).findByEmail(data.email());
+        verify(userRepository).save(usuarioEncontrado);
+        verify(userMapper).toDto(usuarioAtualizado);
+    }
+
+    @Test
+    public void deveManterAtivoUsuario() {
+        UserUpdateStatusRequest data = new UserUpdateStatusRequest("user@gmail.com", Boolean.TRUE);
+        User usuarioEncontrado = UserFactory.criarUsuarioPersistidoCriadoPadrao();
+        UserResponse expectedResponse = UserFactory.criarUserResponsePadrao();
+
+        when(userRepository.findByEmail(data.email())).thenReturn(Optional.of(usuarioEncontrado));
+        when(userMapper.toDto(usuarioEncontrado)).thenReturn(expectedResponse);
+
+        UserResponse actualResponse = userService.updateStatus(data);
+
+        assertEquals(expectedResponse, actualResponse);
+        verify(userRepository).findByEmail(data.email());
+        verify(userMapper).toDto(usuarioEncontrado);
+    }
 
     @Test
     public void deveCriarUmNovoUsuarioComSucesso() {
