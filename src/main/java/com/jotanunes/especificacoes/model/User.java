@@ -39,6 +39,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Boolean ativo = true;
 
+    @Column(name = "alterar_senha")
+    private boolean alterarSenha = false;
+
     public User() {
     }
 
@@ -130,6 +133,14 @@ public class User implements UserDetails {
 
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public boolean isAlterarSenha(){
+        return alterarSenha;
+    }
+
+    public void setAlterarSenha(boolean alterarSenha) {
+        this.alterarSenha = alterarSenha;
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.jotanunes.especificacoes.controller;
 
-import com.jotanunes.especificacoes.dto.usuario.RoleChangeRequest;
-import com.jotanunes.especificacoes.dto.usuario.UserCreateRequest;
-import com.jotanunes.especificacoes.dto.usuario.UserResponse;
-import com.jotanunes.especificacoes.dto.usuario.UserUpdateStatusRequest;
+import com.jotanunes.especificacoes.dto.usuario.*;
 import com.jotanunes.especificacoes.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -59,5 +56,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{id}/definir-senha")
+    public ResponseEntity<Void> adminSetPassword(@PathVariable UUID id, @RequestBody UserPasswordResetRequest request) {
+        userService.adminSetPassword(id, request);
+        return ResponseEntity.noContent().build();
+
+    }
 
 }

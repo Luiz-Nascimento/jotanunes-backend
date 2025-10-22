@@ -1,9 +1,6 @@
 package com.jotanunes.especificacoes.service;
 
-import com.jotanunes.especificacoes.dto.usuario.RoleChangeRequest;
-import com.jotanunes.especificacoes.dto.usuario.UserCreateRequest;
-import com.jotanunes.especificacoes.dto.usuario.UserResponse;
-import com.jotanunes.especificacoes.dto.usuario.UserUpdateStatusRequest;
+import com.jotanunes.especificacoes.dto.usuario.*;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.UserMapper;
 import com.jotanunes.especificacoes.model.User;
@@ -71,5 +68,17 @@ public class UserService {
 
     }
 
+    @Transactional
+    public void adminSetPassword(UUID userId, UserPasswordResetRequest request)
+    {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Não foi possível encontrar um usuário com este Id" + userId));
 
+        user.setSenha(passwordEncoder.encode(request.getNovaSenha()));
+
+        user.setAlterarSenha(true);
+
+        userRepository.save(user);
+
+    }
 }
