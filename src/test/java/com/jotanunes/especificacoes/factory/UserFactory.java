@@ -41,6 +41,16 @@ public class UserFactory {
                 "admin@gmail.com");
 
     }
+    public static UserResponse criarInativoUserResponsePadrao() {
+        return new UserResponse(
+                "b2ff45dd-f98d-44c3-8f70-eee17f7a8f77",
+                "user",
+                "user@gmail.com",
+                NivelAcesso.PADRAO.toString(),
+                false,
+                "admin@gmail.com");
+
+    }
     public static User criarUsuarioAdminPadrao() {
         User user = new User();
         user.setId(UUID.fromString("a1aa45dd-f98d-44c3-8f70-eee17f7a8f11"));
