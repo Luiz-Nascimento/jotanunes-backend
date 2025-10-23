@@ -46,6 +46,10 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "Criar um usuário",
+            description = "Permite um ADMIN cadastrar um novo usuário no sistema"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserCreateRequest request) {
@@ -53,6 +57,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(
+            summary = "Atualizar status de um usuário",
+            description = "Permite um ADMIN atualizar o status de um usuário de email e novo status especificado."
+    )
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/atualizar-status")
     public ResponseEntity<UserResponse> updateStatusUser(@RequestBody @Valid UserUpdateStatusRequest request) {
         UserResponse response = userService.updateStatus(request);
