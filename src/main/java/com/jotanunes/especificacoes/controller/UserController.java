@@ -56,7 +56,7 @@ public class UserController {
         UserResponse response = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    
+
     @Operation(
             summary = "Atualizar status de um usuário",
             description = "Permite um ADMIN atualizar o status de um usuário de email e novo status especificado."
