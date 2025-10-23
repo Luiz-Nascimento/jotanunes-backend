@@ -54,7 +54,7 @@ CREATE INDEX IF NOT EXISTS idx_ambientes_catalogo_ambiente_id ON ambientes(catal
 CREATE TABLE IF NOT EXISTS catalogo_itens (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(60) NOT NULL,
-    descricao VARCHAR(160),
+    descricao VARCHAR(255),
     ambiente_id INT REFERENCES catalogo_ambientes(id) ON DELETE RESTRICT
 );
 CREATE INDEX IF NOT EXISTS idx_catalogo_itens_ambiente_id ON catalogo_itens(ambiente_id);
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS itens
     id serial PRIMARY KEY,
     catalogo_item_id INTEGER NOT NULL REFERENCES catalogo_itens(id),
     ambiente_id INTEGER NOT NULL,
-    descricao_customizada character varying(160) NOT NULL,
+    descricao_customizada character varying(255),
     status item_status NOT NULL DEFAULT 'PENDENTE',
     FOREIGN KEY (ambiente_id) REFERENCES ambientes(id) ON DELETE CASCADE
 );
@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS usuarios
     criado_por uuid,
     ativo boolean NOT NULL DEFAULT TRUE,
     nivel_acesso nivel_acesso_enum NOT NULL DEFAULT 'PADRAO',
+    alterar_senha BOOLEAN DEFAULT FALSE NOT NULL,
     FOREIGN KEY (criado_por) REFERENCES usuarios(id) ON DELETE SET NULL
 );
 CREATE INDEX IF NOT EXISTS idx_usuarios_criado_por ON usuarios(criado_por);
