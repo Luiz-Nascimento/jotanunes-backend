@@ -4,6 +4,8 @@ package com.jotanunes.especificacoes.model;
 import com.jotanunes.especificacoes.enums.NivelAcesso;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,9 +27,9 @@ public class User implements UserDetails {
     private String nome;
     @Column(nullable = false)
     private String senha;
-    @Column(name = "nivel_acesso", nullable = false, length = 10)
-    @Enumerated(EnumType.STRING)
-    private NivelAcesso nivelAcesso =  NivelAcesso.PADRAO;
+    @Column(name = "nivel_acesso", nullable = false, columnDefinition = "nivel_acesso_enum")
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    private NivelAcesso nivelAcesso;
     @Column(nullable = false, unique = true, length = 255)
     private String email;
     @Column(name = "data_criacao", nullable = false)
