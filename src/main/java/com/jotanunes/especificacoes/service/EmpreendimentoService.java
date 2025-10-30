@@ -10,11 +10,9 @@ import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
 import com.jotanunes.especificacoes.model.Empreendimento;
-import com.jotanunes.especificacoes.repository.CombinacaoEMMRepository;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +64,7 @@ public class EmpreendimentoService {
     public EmpreendimentoResponse createEmpreendimento(EmpreendimentoRequest data) {
         Empreendimento empreendimento = empreendimentoMapper.requestToEntity(data);
         Empreendimento empreendimentoPersistido = empreendimentoRepository.save(empreendimento);
+        System.out.println(empreendimentoPersistido.getSegmento());
         logger.info("Empreendimento criado com id: {}", empreendimentoPersistido.getId());
         return empreendimentoMapper.toDto(empreendimentoPersistido);
     }
