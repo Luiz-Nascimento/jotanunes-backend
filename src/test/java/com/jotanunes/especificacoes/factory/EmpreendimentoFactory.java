@@ -4,10 +4,7 @@ package com.jotanunes.especificacoes.factory;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
-import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
-import com.jotanunes.especificacoes.enums.LinhaEmpreendimento;
-import com.jotanunes.especificacoes.enums.SistemaConstrutivo;
-import com.jotanunes.especificacoes.enums.TipologiaEmpreendimento;
+import com.jotanunes.especificacoes.enums.*;
 import com.jotanunes.especificacoes.model.Empreendimento;
 
 import java.util.ArrayList;
@@ -20,9 +17,7 @@ public class EmpreendimentoFactory {
     public static Empreendimento criarEmpreendimentoPadrao() {
         Empreendimento empreendimento = new Empreendimento();
         empreendimento.setId(1);
-        empreendimento.setTipologia(TipologiaEmpreendimento.TORRE);
-        empreendimento.setSistemaConstrutivo(SistemaConstrutivo.PC);
-        empreendimento.setLinha(LinhaEmpreendimento.MAIS_VIVER);
+        empreendimento.setSegmento(SegmentoEmpreendimento.TORRE_PC_MAIS_VIVER);
         empreendimento.setNome("Empreendimento Teste");
         empreendimento.setLocalizacao("Localização Teste");
         empreendimento.setDescricao("Descrição do Empreendimento Teste");
@@ -31,10 +26,8 @@ public class EmpreendimentoFactory {
 
     public static EmpreendimentoRequest criarEmpreendimentoRequestPadrao() {
         return new EmpreendimentoRequest(
+                SegmentoEmpreendimento.TORRE_PC_MAIS_VIVER,
                 "Empreendimento Teste",
-                TipologiaEmpreendimento.TORRE,
-                SistemaConstrutivo.PC,
-                LinhaEmpreendimento.MAIS_VIVER,
                 "Localização Teste",
                 "Descrição do Empreendimento Teste"
         );
@@ -42,9 +35,7 @@ public class EmpreendimentoFactory {
 
     public static Empreendimento criarEmpreendimentoMapeadoPadrao() {
         Empreendimento empreendimento = new Empreendimento();
-        empreendimento.setTipologia(TipologiaEmpreendimento.TORRE);
-        empreendimento.setSistemaConstrutivo(SistemaConstrutivo.PC);
-        empreendimento.setLinha(LinhaEmpreendimento.MAIS_VIVER);
+        empreendimento.setSegmento(SegmentoEmpreendimento.TORRE_PC_MAIS_VIVER);
         empreendimento.setNome("Empreendimento Teste");
         empreendimento.setLocalizacao("Localização Teste");
         empreendimento.setDescricao("Descrição do Empreendimento Teste");
@@ -55,9 +46,7 @@ public class EmpreendimentoFactory {
         List<String> observacoes = new ArrayList<>();
         return new EmpreendimentoResponse(
                 1,
-                TipologiaEmpreendimento.TORRE,
-                SistemaConstrutivo.PC,
-                LinhaEmpreendimento.MAIS_VIVER,
+                SegmentoEmpreendimento.TORRE_PC_MAIS_VIVER,
                 "Empreendimento Teste",
                 EmpreendimentoStatus.PENDENTE,
                 "Localização Teste",
@@ -88,9 +77,7 @@ public class EmpreendimentoFactory {
         List<String> observacoes = new ArrayList<>();
         return new EmpreendimentoResponse(
                 1,
-                TipologiaEmpreendimento.TORRE,
-                SistemaConstrutivo.PC,
-                LinhaEmpreendimento.MAIS_VIVER,
+                SegmentoEmpreendimento.TORRE_PC_MAIS_VIVER,
                 "Empreendimento Atualizado",
                 EmpreendimentoStatus.PENDENTE,
                 "Localização Atualizada",
