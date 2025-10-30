@@ -1,9 +1,6 @@
 package com.jotanunes.especificacoes.model;
 
-import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
-import com.jotanunes.especificacoes.enums.LinhaEmpreendimento;
-import com.jotanunes.especificacoes.enums.SistemaConstrutivo;
-import com.jotanunes.especificacoes.enums.TipologiaEmpreendimento;
+import com.jotanunes.especificacoes.enums.*;
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,18 +22,8 @@ public class Empreendimento {
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
-    @Column(columnDefinition = "tipologia_empreendimento", nullable = false)
-    private TipologiaEmpreendimento tipologia;
-
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
-    @Column(columnDefinition = "sistema_construtivo", nullable = false)
-    private SistemaConstrutivo sistemaConstrutivo;
-
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
-    @Column(columnDefinition = "linha_empreendimento", nullable = false)
-    private LinhaEmpreendimento linha;
+    @Column(columnDefinition = "segmento_empreendimento", nullable = false)
+    private SegmentoEmpreendimento segmento;
 
     @Column(nullable = false)
     private String nome;
@@ -68,10 +55,17 @@ public class Empreendimento {
     public Empreendimento() {
     }
 
-    public Empreendimento(TipologiaEmpreendimento tipologia, SistemaConstrutivo sistemaConstrutivo, LinhaEmpreendimento linha, String nome, String localizacao, String descricao, EmpreendimentoStatus status) {
-        this.tipologia = tipologia;
-        this.sistemaConstrutivo = sistemaConstrutivo;
-        this.linha = linha;
+    public Empreendimento(SegmentoEmpreendimento segmento, String nome, String localizacao, String descricao, EmpreendimentoStatus status) {
+        this.segmento = segmento;
+        this.nome = nome;
+        this.localizacao = localizacao;
+        this.descricao = descricao;
+        this.status = status;
+    }
+
+    public Empreendimento(Integer id, SegmentoEmpreendimento segmento, String nome, String localizacao, String descricao, EmpreendimentoStatus status) {
+        this.id = id;
+        this.segmento = segmento;
         this.nome = nome;
         this.localizacao = localizacao;
         this.descricao = descricao;
@@ -86,28 +80,12 @@ public class Empreendimento {
         this.id = id;
     }
 
-    public TipologiaEmpreendimento getTipologia() {
-        return tipologia;
+    public SegmentoEmpreendimento getSegmento() {
+        return segmento;
     }
 
-    public void setTipologia(TipologiaEmpreendimento tipologia) {
-        this.tipologia = tipologia;
-    }
-
-    public SistemaConstrutivo getSistemaConstrutivo() {
-        return sistemaConstrutivo;
-    }
-
-    public void setSistemaConstrutivo(SistemaConstrutivo sistemaConstrutivo) {
-        this.sistemaConstrutivo = sistemaConstrutivo;
-    }
-
-    public LinhaEmpreendimento getLinha() {
-        return linha;
-    }
-
-    public void setLinha(LinhaEmpreendimento linha) {
-        this.linha = linha;
+    public void setSegmento(SegmentoEmpreendimento segmento) {
+        this.segmento = segmento;
     }
 
     public String getNome() {
@@ -164,5 +142,16 @@ public class Empreendimento {
 
     public void setMateriaisPorMarca(Set<CombinacaoEMM> materiaisPorMarca) {
         this.materiaisPorMarca = materiaisPorMarca;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Empreendimento that)) return false;
+        return Objects.equals(id, that.id) && segmento == that.segmento && Objects.equals(nome, that.nome) && Objects.equals(localizacao, that.localizacao) && Objects.equals(descricao, that.descricao) && Objects.equals(observacoes, that.observacoes) && status == that.status && Objects.equals(ambientes, that.ambientes) && Objects.equals(materiaisPorMarca, that.materiaisPorMarca);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, segmento, nome, localizacao, descricao, observacoes, status, ambientes, materiaisPorMarca);
     }
 }
