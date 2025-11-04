@@ -6,9 +6,13 @@ import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
+import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
+import com.jotanunes.especificacoes.exception.EmpreendimentoNotApprovedException;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
+import com.jotanunes.especificacoes.model.Ambiente;
+import com.jotanunes.especificacoes.model.CombinacaoEMM;
 import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
 import org.slf4j.Logger;
@@ -67,6 +71,31 @@ public class EmpreendimentoService {
         System.out.println(empreendimentoPersistido.getSegmento());
         logger.info("Empreendimento criado com id: {}", empreendimentoPersistido.getId());
         return empreendimentoMapper.toDto(empreendimentoPersistido);
+    }
+
+    public EmpreendimentoResponse createEmpreendimentoCopia(EmpreendimentoRequest data, Integer idEmpreendimento) {
+        // Verificar se o empreendimento referência existe
+        Empreendimento empreendimentoReferencia = empreendimentoRepository.findById(idEmpreendimento)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + idEmpreendimento));
+        // Verifica se o empreendimento referência está aprovado
+        if (!empreendimentoReferencia.getStatus().equals(EmpreendimentoStatus.APROVADO)) {
+            throw new EmpreendimentoNotApprovedException();
+        }
+        // Preenche informações do empreendimento novo
+        Empreendimento empreendimentoMapped = empreendimentoMapper.requestToEntity(data);
+        // Pega o conjunto de ambientes do empreendimento novo
+        // Para cada ambiente dentro do conjunto de ambientes do empreendimento referencia, copiar e joga-lo no novo
+        for (Ambiente ambiente: empreendimentoReferencia.getAmbientes()) {
+            empreendimentoMapped.getAmbientes().add(new Ambiente(ambiente, empreendimentoMapped));
+        }
+        // Copia lista de EMM do empreendimento referência
+        for (CombinacaoEMM combinacao: empreendimentoReferencia.getMateriaisPorMarca()) {
+            empreendimentoMapped.getMateriaisPorMarca().add(new CombinacaoEMM(empreendimentoMapped, combinacao.getMaterial(), combinacao.getMarca()));
+        }
+
+        Empreendimento empreendimentoSalvo = empreendimentoRepository.save(empreendimentoMapped);
+        // retorna novo empreendimento copiado
+        return empreendimentoMapper.toDto(empreendimentoSalvo);
     }
 
     @Transactional
