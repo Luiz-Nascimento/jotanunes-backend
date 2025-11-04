@@ -80,6 +80,13 @@ public class EmpreendimentoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PostMapping("/copiar/{id}")
+    public ResponseEntity<EmpreendimentoResponse> createEmpreendimentoCopy(@RequestBody @Valid EmpreendimentoRequest data, @PathVariable
+                                                                           Integer id) {
+        EmpreendimentoResponse response = empreendimentoService.createEmpreendimentoCopia(data, id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @Operation(
             summary = "Atualiza um empreendimento",
             description = "Atualiza um empreendimento especificado apartir das informações fornecidas no JSON"
