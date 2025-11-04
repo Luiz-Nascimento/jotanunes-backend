@@ -32,6 +32,12 @@ public class Item {
     public Item() {
     }
 
+    public Item(Item outro, Ambiente novoAmbiente) {
+        this.ambiente = novoAmbiente;
+        this.catalogoItem = outro.catalogoItem;
+        this.descricaoCustomizada = outro.descricaoCustomizada;
+    }
+
     public Integer getId() {
         return id;
     }

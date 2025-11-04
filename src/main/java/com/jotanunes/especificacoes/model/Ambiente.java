@@ -46,6 +46,15 @@ public class Ambiente {
     public Ambiente() {
     }
 
+    public Ambiente(Ambiente outro, Empreendimento novoEmpreendimento) {
+        this.empreendimento = novoEmpreendimento;
+        this.catalogoAmbiente = outro.getCatalogoAmbiente();
+        for (Item item : outro.itens) {
+            this.itens.add(new Item(item, this));
+        }
+
+    }
+
     public CatalogoAmbiente getCatalogoAmbiente() {
         return catalogoAmbiente;
     }
