@@ -5,6 +5,12 @@ spring:
         url: jdbc:postgresql://jotanunes-db-get-info-database.b.aivencloud.com:21733/jotanunesdb?sslmode=require
         username: ${DB_USERNAME}
         password: ${DB_PASSWORD}
+        hikari:
+            maximum-pool-size: 10
+            minimum-idle: 1
+            idle-timeout: 60000
+            max-lifetime: 600000
+            connection-timeout: 30000
     jpa:
         properties:
             hibernate:
@@ -16,7 +22,6 @@ spring:
     flyway:
         enabled: true
         baseline-on-migrate: true
-
 ---
 spring:
     config:
