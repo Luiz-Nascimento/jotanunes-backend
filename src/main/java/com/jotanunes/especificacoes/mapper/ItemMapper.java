@@ -7,6 +7,8 @@ import com.jotanunes.especificacoes.model.Item;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
 
@@ -14,6 +16,8 @@ public interface ItemMapper {
     @Mapping(source = "catalogoItem.descricao", target = "descricao")
     @Mapping(source = "ambiente.id", target = "ambiente")
     ItemResponse toDto(Item item);
+
+    List<ItemResponse> toDtoList(List<Item> items);
 
     @Mapping(source = "catalogoItem.nome", target = "nome")
     @Mapping(source = "catalogoItem.descricao", target = "descricao")
