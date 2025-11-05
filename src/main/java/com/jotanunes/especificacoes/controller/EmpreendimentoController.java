@@ -101,6 +101,10 @@ public class EmpreendimentoController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Operation(
+            summary = "Aprova um empreendimento por completo",
+            description = "Endpoint para testes, aprova todo um empreendimento"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/aprovar/{id}")
     public ResponseEntity<Void> aprovarEmpreendimento(@PathVariable Integer id) {
