@@ -81,26 +81,19 @@ public class Ambiente {
     }
 
     public void setItens(Set<Item> itens) {
-        this.itens = itens;
+        if(!this.itens.isEmpty()) this.itens.clear();
+        this.itens.addAll(itens);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Ambiente ambiente = (Ambiente) o;
-        return Objects.equals(id, ambiente.id);
+        return this == o; // Identidade do objeto em memória
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return System.identityHashCode(this);
     }
 
-    @Override
-    public String toString() {
-        return "Ambiente{" +
-                "id=" + id +
-                ", empreendimento=" + empreendimento.getNome() +
-                '}';
-    }
+
 }

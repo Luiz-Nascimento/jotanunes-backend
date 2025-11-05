@@ -148,10 +148,6 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-
-
-
-
     public void deleteItem(Integer id) {
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Ambiente não encontrado com id: " + id);

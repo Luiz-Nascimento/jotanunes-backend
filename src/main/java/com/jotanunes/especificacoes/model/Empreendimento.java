@@ -50,7 +50,7 @@ public class Empreendimento {
     private Set<Ambiente> ambientes = new HashSet<>();
 
     @OneToMany(mappedBy = "empreendimento")
-    private Set<CombinacaoEMM> materiaisPorMarca;
+    private Set<CombinacaoEMM> materiaisPorMarca = new HashSet<>();
 
     public Empreendimento() {
     }
@@ -133,7 +133,8 @@ public class Empreendimento {
     }
 
     public void setAmbientes(Set<Ambiente> ambientes) {
-        this.ambientes = ambientes;
+        if(!this.ambientes.isEmpty()) this.ambientes.clear();
+        this.ambientes.addAll(ambientes);
     }
 
     public Set<CombinacaoEMM> getMateriaisPorMarca() {
@@ -141,17 +142,21 @@ public class Empreendimento {
     }
 
     public void setMateriaisPorMarca(Set<CombinacaoEMM> materiaisPorMarca) {
-        this.materiaisPorMarca = materiaisPorMarca;
+
+        if(!this.materiaisPorMarca.isEmpty()) this.materiaisPorMarca.clear();
+        this.materiaisPorMarca.addAll(materiaisPorMarca);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Empreendimento that)) return false;
-        return Objects.equals(id, that.id) && segmento == that.segmento && Objects.equals(nome, that.nome) && Objects.equals(localizacao, that.localizacao) && Objects.equals(descricao, that.descricao) && Objects.equals(observacoes, that.observacoes) && status == that.status && Objects.equals(ambientes, that.ambientes) && Objects.equals(materiaisPorMarca, that.materiaisPorMarca);
+        if (this == o) return true;
+        if (!(o instanceof Empreendimento)) return false;
+        Empreendimento that = (Empreendimento) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, segmento, nome, localizacao, descricao, observacoes, status, ambientes, materiaisPorMarca);
+        return Objects.hash(id);
     }
 }

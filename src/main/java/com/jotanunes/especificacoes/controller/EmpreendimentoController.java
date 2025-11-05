@@ -97,6 +97,13 @@ public class EmpreendimentoController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/aprovar/{id}")
+    public ResponseEntity<Void> aprovarEmpreendimento(@PathVariable Integer id) {
+        empreendimentoService.aprovarEmpreendimento(id);
+        return ResponseEntity.ok().build();
+    }
+
     @Operation(
             summary = "Deleta um empreendimento",
             description = "Deleta um empreendimento apartir de seu ID. Necessita de role de ADMIN"
