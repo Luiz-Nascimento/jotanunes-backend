@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.exception.handler;
 
+import com.jotanunes.especificacoes.exception.EmpreendimentoNotApprovedException;
 import com.jotanunes.especificacoes.exception.ExceptionResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.exception.UserAlreadyRegisteredException;
@@ -86,6 +87,15 @@ public class CustomEntityResponseHandler {
         ExceptionResponse response = new ExceptionResponse(
                 new Date(),
                 "Requisição malformada: " + exception.getMostSpecificCause().getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmpreendimentoNotApprovedException.class)
+    public final ResponseEntity<ExceptionResponse> handleEmpreendimentoNotApprovedExceptions(EmpreendimentoNotApprovedException exception, WebRequest request) {
+        ExceptionResponse response = new ExceptionResponse(
+                new Date(),
+                "Empreendimento em estado de aprovação, operação abortada!",
                 request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

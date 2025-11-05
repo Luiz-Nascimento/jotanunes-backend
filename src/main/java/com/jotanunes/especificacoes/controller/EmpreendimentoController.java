@@ -81,6 +81,17 @@ public class EmpreendimentoController {
     }
 
     @Operation(
+            summary = "Cria um novo empreendimento apartir de outro",
+            description = "Cria um novo empreendimentos com ambientes e itens padrões de um empreendimento especificado"
+    )
+    @PostMapping("/copiar/{id}")
+    public ResponseEntity<EmpreendimentoResponse> createEmpreendimentoCopy(@RequestBody @Valid EmpreendimentoRequest data, @PathVariable
+                                                                           Integer id) {
+        EmpreendimentoResponse response = empreendimentoService.createEmpreendimentoCopia(data, id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(
             summary = "Atualiza um empreendimento",
             description = "Atualiza um empreendimento especificado apartir das informações fornecidas no JSON"
     )
@@ -88,6 +99,13 @@ public class EmpreendimentoController {
      public ResponseEntity<EmpreendimentoResponse> updateEmpreendimento(@RequestBody @Valid EmpreendimentoUpdate data) {
         EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(data);
         return ResponseEntity.ok().body(response);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/aprovar/{id}")
+    public ResponseEntity<Void> aprovarEmpreendimento(@PathVariable Integer id) {
+        empreendimentoService.aprovarEmpreendimento(id);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
