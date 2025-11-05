@@ -80,6 +80,10 @@ public class EmpreendimentoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(
+            summary = "Cria um novo empreendimento apartir de outro",
+            description = "Cria um novo empreendimentos com ambientes e itens padrões de um empreendimento especificado"
+    )
     @PostMapping("/copiar/{id}")
     public ResponseEntity<EmpreendimentoResponse> createEmpreendimentoCopy(@RequestBody @Valid EmpreendimentoRequest data, @PathVariable
                                                                            Integer id) {
