@@ -19,9 +19,13 @@ spring:
                     batch_size: 50
                 order_inserts: true
                 order_updates: true
+        open-in-view: false
     flyway:
         enabled: true
         baseline-on-migrate: true
+logging:
+    level:
+      root: WARN
 ---
 spring:
     config:
@@ -35,7 +39,11 @@ spring:
         properties:
             hibernate:
                 ddl-auto: validate
+        open-in-view: false
     flyway:
         enabled: true
         clean-disabled: false
+logging:
+    level:
+      root: INFO
 
