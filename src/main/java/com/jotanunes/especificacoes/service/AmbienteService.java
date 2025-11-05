@@ -33,9 +33,8 @@ public class AmbienteService {
     private final StatusVerifyCascadeUtil statusVerifyCascadeUtil;
     private final CatalogoAmbienteRepository catalogoAmbienteRepository;
     private final CatalogoItemRepository catalogoItemRepository;
-    private final ItemRepository itemRepository;
 
-    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, ItemMapper itemMapper, StatusVerifyCascadeUtil statusVerifyCascadeUtil, CatalogoAmbienteRepository catalogoAmbienteRepository, CatalogoItemRepository catalogoItemRepository, ItemRepository itemRepository) {
+    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, ItemMapper itemMapper, StatusVerifyCascadeUtil statusVerifyCascadeUtil, CatalogoAmbienteRepository catalogoAmbienteRepository, CatalogoItemRepository catalogoItemRepository) {
         this.ambienteRepository = ambienteRepository;
         this.ambienteMapper = ambienteMapper;
         this.empreendimentoRepository = empreendimentoRepository;
@@ -43,57 +42,46 @@ public class AmbienteService {
         this.statusVerifyCascadeUtil = statusVerifyCascadeUtil;
         this.catalogoAmbienteRepository = catalogoAmbienteRepository;
         this.catalogoItemRepository = catalogoItemRepository;
-        this.itemRepository = itemRepository;
     }
 
     public List<AmbienteResponse> getAllAmbientes() {
-        return ambienteRepository.findAll().stream().map(ambienteMapper::toDto).toList();
+        return ambienteMapper.toDtoList(ambienteRepository.findAll());
     }
 
     public AmbienteResponse getAmbienteById(Integer id) {
-        return ambienteMapper.toDto(ambienteRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id)));
+        return ambienteMapper.toDto(findAmbienteOrThrow(id));
     }
     public AmbienteDocResponse getAmbienteDocResponse(Integer id) {
-        return ambienteMapper.toDocResponse(ambienteRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id)));
+        return ambienteMapper.toDocResponse(findAmbienteOrThrow(id));
     }
 
     public List<ItemResponse> getItensByAmbienteId(Integer id) {
-        Ambiente ambiente = ambienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id));
+        Ambiente ambiente = findAmbienteOrThrow(id);
         return ambiente.getItens().stream().map(itemMapper::toDto).toList();
     }
 
     @Transactional
     public AmbienteResponse createAmbienteVazio(AmbienteRequest data) {
-        Empreendimento empreendimento = empreendimentoRepository.findById(data.idEmpreendimento())
-                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com o id: " + data.idEmpreendimento()));
-        CatalogoAmbiente ambienteModelo = catalogoAmbienteRepository.findById(data.idCatalogoAmbiente())
-                .orElseThrow(() -> new ResourceNotFoundException("Catálogo de Ambiente não encontrado com o id: " + data.idCatalogoAmbiente()));
-        Ambiente ambiente = new Ambiente();
-        ambiente.setEmpreendimento(empreendimento);
-        ambiente.setCatalogoAmbiente(ambienteModelo);
+        Empreendimento empreendimento = findEmpreendimentoOrThrow(data.idEmpreendimento());
+        CatalogoAmbiente ambienteModelo = findCatalogoAmbienteOrThrow(data.idCatalogoAmbiente());
+
+        Ambiente ambiente = buildBaseAmbiente(empreendimento, ambienteModelo);
+
         Ambiente ambienteSalvo = ambienteRepository.save(ambiente);
-        statusVerifyCascadeUtil.atualizarStatusCascade(ambiente);
-        logger.info("Ambiente criado com id {} no empreendimento: {} ", ambiente.getId(), empreendimento.getId());
+        saveAndPostProcess(ambienteSalvo);
+
+        logger.info("Ambiente criado com id {} no empreendimento: {} ", ambienteSalvo.getId(), empreendimento.getId());
         return ambienteMapper.toDto(ambienteSalvo);
     }
 
     @Transactional
     public AmbienteResponse createAmbienteModelo(AmbienteRequest data) {
-        Empreendimento empreendimento = empreendimentoRepository.findById(data.idEmpreendimento())
-                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com o id: " + data.idEmpreendimento()));
-        CatalogoAmbiente ambienteModelo = catalogoAmbienteRepository.findById(data.idCatalogoAmbiente())
-                .orElseThrow(() -> new ResourceNotFoundException("Catálogo de Ambiente não encontrado com o id: " + data.idCatalogoAmbiente()));
-        Ambiente ambiente = new Ambiente();
-        ambiente.setEmpreendimento(empreendimento);
-        ambiente.setCatalogoAmbiente(ambienteModelo);
-        // Preencher itens do ambiente com base no catálogo
-        // Vou pegar a lista de itens do ambiente
-        // Chamar o conteudo usando o repository de catalogo de itens, baseado no id do ambienteModelo
-        // mapeando para formato de item e adicionando na lista de itens do ambiente
+        Empreendimento empreendimento = findEmpreendimentoOrThrow(data.idEmpreendimento());
+        CatalogoAmbiente ambienteModelo = findCatalogoAmbienteOrThrow(data.idCatalogoAmbiente());
 
+        Ambiente ambiente = buildBaseAmbiente(empreendimento, ambienteModelo);
+
+        // Preencher itens do ambiente com base no catálogo
         List<Item> itensModelo = catalogoItemRepository.findByAmbienteId(ambienteModelo.getId())
                 .stream()
                 .map(catalogoItem -> {
@@ -105,10 +93,11 @@ public class AmbienteService {
                 .toList();
 
         ambiente.getItens().addAll(itensModelo);
-        Ambiente ambienteSalvo = ambienteRepository.save(ambiente);
 
-        statusVerifyCascadeUtil.atualizarStatusCascade(ambiente);
-        logger.info("Ambiente criado com id {} no empreendimento: {} ", ambiente.getId(), empreendimento.getId());
+        Ambiente ambienteSalvo = ambienteRepository.save(ambiente);
+        saveAndPostProcess(ambienteSalvo);
+
+        logger.info("Ambiente criado com id {} no empreendimento: {} ", ambienteSalvo.getId(), empreendimento.getId());
 
         return ambienteMapper.toDto(ambienteSalvo);
 
@@ -120,6 +109,35 @@ public class AmbienteService {
         }
         ambienteRepository.deleteById(id);
         logger.info("Ambiente deletado com id: {}", id);
+    }
+
+    // -------------------------- Helpers (refatoração para clareza) --------------------------
+    private Ambiente findAmbienteOrThrow(Integer id) {
+        return ambienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id));
+    }
+
+    private Empreendimento findEmpreendimentoOrThrow(Integer id) {
+        return empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com o id: " + id));
+    }
+
+    private CatalogoAmbiente findCatalogoAmbienteOrThrow(Integer id) {
+        return catalogoAmbienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Catálogo de Ambiente não encontrado com o id: " + id));
+    }
+
+    private Ambiente buildBaseAmbiente(Empreendimento empreendimento, CatalogoAmbiente ambienteModelo) {
+        Ambiente ambiente = new Ambiente();
+        ambiente.setEmpreendimento(empreendimento);
+        ambiente.setCatalogoAmbiente(ambienteModelo);
+        return ambiente;
+    }
+
+    private void saveAndPostProcess(Ambiente ambienteSalvo) {
+        // atualizar status em cascade usando a entidade salva (com id)
+        statusVerifyCascadeUtil.atualizarStatusCascade(ambienteSalvo);
+        // caso precise salvar itens ou executar lógica adicional, fazê-lo aqui.
     }
 
 }
