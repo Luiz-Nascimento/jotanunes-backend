@@ -49,6 +49,10 @@ public class AmbienteController {
         return ResponseEntity.ok().body(service.getAmbienteDocResponse(id));
     }
 
+    @Operation(
+            summary = "Retorna os itens pertencentes ao ambiente especificado",
+            description = "Retorna uma lista de json dos itens cadastrado no ambiente"
+    )
     @GetMapping("/{id}/itens")
     public List<ItemResponse> getItensByAmbienteId(@PathVariable Integer id) {
         return service.getItensByAmbienteId(id);
@@ -63,6 +67,10 @@ public class AmbienteController {
         return ResponseEntity.ok().body(ambienteResponse);
     }
 
+    @Operation(
+            summary = "Cria um novo ambiente populado com itens padrão",
+            description = "Cria um novo ambiente já com itens cadastrados do catalogo"
+    )
     @PostMapping("/com-itens")
     public ResponseEntity<AmbienteResponse> createAmbienteComItens(@RequestBody AmbienteRequest request) {
         AmbienteResponse ambienteResponse = service.createAmbienteModelo(request);

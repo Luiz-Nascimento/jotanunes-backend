@@ -61,18 +61,29 @@ public class ItemController {
         ItemResponse response = service.createItem(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+    @Operation(
+            summary = "Atualiza um item",
+            description = "Atualiza dados de um item existente"
+    )
     @PutMapping("/{id}")
     public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer id, @RequestBody @Valid ItemUpdate data) {
         ItemResponse response = service.updateItem(id, data);
         return ResponseEntity.ok(response);
     }
+    @Operation(
+            summary = "Revisa um único item",
+            description = "Revisa um único item, podendo aprovar ou reprova-lo"
+    )
     @PreAuthorize("hasRole('GESTOR')")
     @PutMapping("/revisarItem")
     public ResponseEntity<RevisaoItemResponse> reviewItem(@RequestBody @Valid RevisaoItemRequest request) {
         RevisaoItemResponse response = service.reviewItem(request);
         return ResponseEntity.ok(response);
     }
-
+    @Operation(
+            summary = "Revisa vários itens",
+            description = "Revisa vários itens, podendo aprova-los ou reprova-los"
+    )
     @PreAuthorize("hasRole('GESTOR')")
     @PutMapping("/revisarItens")
     public ResponseEntity<List<RevisaoItemResponse>> reviewItems(@RequestBody @Valid List<RevisaoItemRequest> requests) {
