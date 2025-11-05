@@ -22,6 +22,9 @@ spring:
     flyway:
         enabled: true
         baseline-on-migrate: true
+logging:
+    level:
+      root: WARN
 ---
 spring:
     config:
@@ -38,4 +41,7 @@ spring:
     flyway:
         enabled: true
         clean-disabled: false
+logging:
+    level:
+      root: INFO
 
