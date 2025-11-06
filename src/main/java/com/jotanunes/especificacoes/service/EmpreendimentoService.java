@@ -124,9 +124,9 @@ public class EmpreendimentoService {
     }
 
     @Transactional
-    public EmpreendimentoResponse updateEmpreendimento(EmpreendimentoUpdate data) {
-        Empreendimento empreendimentoExistente = empreendimentoRepository.findById(data.idEmpreendimento())
-                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + data.idEmpreendimento()));
+    public EmpreendimentoResponse updateEmpreendimento(Integer id, EmpreendimentoUpdate data) {
+        Empreendimento empreendimentoExistente = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
         empreendimentoMapper.updateFromDto(data, empreendimentoExistente);
         Empreendimento empreendimentoAtualizado = empreendimentoRepository.save(empreendimentoExistente);
         logger.info("Empreendimento atualizado com id: {}", empreendimentoAtualizado.getId());
@@ -140,4 +140,6 @@ public class EmpreendimentoService {
         }
         empreendimentoRepository.deleteById(id);
     }
+
+
 }

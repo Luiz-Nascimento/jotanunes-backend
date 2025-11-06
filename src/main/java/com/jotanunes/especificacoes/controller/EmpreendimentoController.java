@@ -95,9 +95,9 @@ public class EmpreendimentoController {
             summary = "Atualiza um empreendimento",
             description = "Atualiza um empreendimento especificado apartir das informações fornecidas no JSON"
     )
-    @PutMapping
-     public ResponseEntity<EmpreendimentoResponse> updateEmpreendimento(@RequestBody @Valid EmpreendimentoUpdate data) {
-        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(data);
+    @PutMapping("/{id}")
+     public ResponseEntity<EmpreendimentoResponse> updateEmpreendimento(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoUpdate data) {
+        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(id, data);
         return ResponseEntity.ok().body(response);
     }
 
