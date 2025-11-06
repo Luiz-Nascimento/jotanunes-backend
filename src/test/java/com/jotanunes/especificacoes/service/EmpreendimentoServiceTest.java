@@ -46,7 +46,7 @@ public class EmpreendimentoServiceTest {
         when(empreendimentoRepository.findById(1)).thenReturn(Optional.of(empreendimento));
         when(empreendimentoMapper.toDto(empreendimento)).thenReturn(expectedResponse);
 
-        EmpreendimentoResponse response = empreendimentoService.getEmpreendimentoById(1);
+        EmpreendimentoResponse response = empreendimentoService.findById(1);
 
         assertEquals(expectedResponse, response);
 
@@ -58,7 +58,7 @@ public class EmpreendimentoServiceTest {
     @Test
     public void deveLancarExcecaoQuandoEmpreendimentoNaoEncontrado() {
         when(empreendimentoRepository.findById(99)).thenReturn(Optional.empty());
-        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> empreendimentoService.getEmpreendimentoById(99));
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> empreendimentoService.findById(99));
         assertTrue(ex.getMessage().contains("Empreendimento não encontrado com id: 99"));
         verify(empreendimentoRepository).findById(99);
     }
@@ -75,7 +75,7 @@ public class EmpreendimentoServiceTest {
         when(empreendimentoRepository.save(mappedEntity)).thenReturn(persistedEntity);
         when(empreendimentoMapper.toDto(persistedEntity)).thenReturn(expectedResponse);
 
-        EmpreendimentoResponse response = empreendimentoService.createEmpreendimento(request);
+        EmpreendimentoResponse response = empreendimentoService.create(request);
 
         assertEquals(expectedResponse, response);
         verify(empreendimentoMapper).requestToEntity(request);
@@ -95,7 +95,7 @@ public class EmpreendimentoServiceTest {
         when(empreendimentoRepository.save(mappedEntity)).thenThrow(new RuntimeException());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            empreendimentoService.createEmpreendimento(request);
+            empreendimentoService.create(request);
         });
 
         verify(empreendimentoMapper).requestToEntity(request);
@@ -115,7 +115,7 @@ public class EmpreendimentoServiceTest {
         when(empreendimentoRepository.save(existingEntity)).thenReturn(updatedEntity);
         when(empreendimentoMapper.toDto(updatedEntity)).thenReturn(expectedResponse);
 
-        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(1, updateDTO);
+        EmpreendimentoResponse response = empreendimentoService.update(1, updateDTO);
 
         assertEquals(expectedResponse, response);
         verify(empreendimentoRepository).findById(1);
@@ -131,7 +131,7 @@ public class EmpreendimentoServiceTest {
         when(empreendimentoRepository.existsById(1)).thenReturn(true);
         doNothing().when(empreendimentoRepository).deleteById(1);
 
-        empreendimentoService.deleteEmpreendimento(1);
+        empreendimentoService.delete(1);
 
         verify(empreendimentoRepository).existsById(1);
         verify(empreendimentoRepository).deleteById(1);
@@ -143,7 +143,7 @@ public class EmpreendimentoServiceTest {
         when(empreendimentoRepository.existsById(99)).thenReturn(false);
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            empreendimentoService.deleteEmpreendimento(99);
+            empreendimentoService.delete(99);
         });
 
         assertTrue(exception.getMessage().contains("Empreendimento não encontrado com id: 99"));

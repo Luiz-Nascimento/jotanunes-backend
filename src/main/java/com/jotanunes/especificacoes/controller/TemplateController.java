@@ -25,7 +25,7 @@ public class TemplateController {
     )
     @GetMapping("/template/{empreendimentoId}")
     public String getTemplate(@PathVariable Integer empreendimentoId, Model model) {
-        EmpreendimentoDocResponse data = empreendimentoService.getEmpreendimentoDocResponse(empreendimentoId);
+        EmpreendimentoDocResponse data = empreendimentoService.findByIdAsDocument(empreendimentoId);
         model.addAttribute("template", data);
         return "template";
 

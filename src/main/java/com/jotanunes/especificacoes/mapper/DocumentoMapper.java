@@ -2,7 +2,6 @@ package com.jotanunes.especificacoes.mapper;
 
 import com.jotanunes.especificacoes.dto.documento.DocumentoResponse;
 import com.jotanunes.especificacoes.dto.documento.DocumentoResumidoResponse;
-import com.jotanunes.especificacoes.model.Documento;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

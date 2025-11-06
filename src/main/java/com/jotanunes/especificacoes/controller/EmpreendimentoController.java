@@ -1,12 +1,12 @@
 package com.jotanunes.especificacoes.controller;
 
+import com.jotanunes.especificacoes.controller.openapi.EmpreendimentoControllerOpenApi;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ import java.util.List;
 @Tag(name = "Empreendimentos", description = "Operações relacionadas a empreendimentos.")
 @RestController
 @RequestMapping("/empreendimentos")
-public class EmpreendimentoController {
+public class EmpreendimentoController implements EmpreendimentoControllerOpenApi {
 
     private final EmpreendimentoService empreendimentoService;
 
@@ -33,94 +33,67 @@ public class EmpreendimentoController {
         this.empreendimentoService = empreendimentoService;
     }
 
-    @Operation(
-            summary = "Retornar dados de todos empreendimentos",
-            description = "Retorna dados de todos empreendimentos cadastrados"
-    )
+    @Override
     @GetMapping
-    public List<EmpreendimentoResponse> listEmpreendimentos() {
-        return empreendimentoService.getAllEmpreendimentos();
+    public List<EmpreendimentoResponse> findAll() {
+        return empreendimentoService.findAll();
     }
 
-    @Operation(
-            summary = "Retornar dados de um empreendimento",
-            description = "Retorna dados do empreendimento com ID especificado "
-    )
+    @Override
     @GetMapping("/{id}")
-    public ResponseEntity<EmpreendimentoResponse> getEmpreendimento(@PathVariable Integer id) {
-        EmpreendimentoResponse response = empreendimentoService.getEmpreendimentoById(id);
+    public ResponseEntity<EmpreendimentoResponse> findById(@PathVariable Integer id) {
+        EmpreendimentoResponse response = empreendimentoService.findById(id);
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(
-            summary = "Retornar dados de um empreendimento, formatados para documento",
-            description = "Retorna dados do empreendimento com ID especificado formatados para documento"
-    )
-    @GetMapping("/doc/{id}")
-    public ResponseEntity<EmpreendimentoDocResponse> getEmpreendimentoDocResponse(@PathVariable Integer id) {
-        EmpreendimentoDocResponse response = empreendimentoService.getEmpreendimentoDocResponse(id);
+    @Override
+    @GetMapping("/{id}/documento")
+    public ResponseEntity<EmpreendimentoDocResponse> findByIdAsDocument(@PathVariable Integer id) {
+        EmpreendimentoDocResponse response = empreendimentoService.findByIdAsDocument(id);
         return ResponseEntity.ok().body(response);
     }
+
+    @Override
     @GetMapping("/{id}/ambientes")
-    @Operation(
-            summary = "Retornar todos os ambientes de um empreendimento",
-            description = "Retorna todos os ambientes associados ao empreendimento com ID especificado"
-    )
-    public List<AmbienteResponse> getAmbientesByEmpreendimentoId(@PathVariable Integer id) {
-        return empreendimentoService.getAmbientesByEmpreendimentoId(id);
+    public List<AmbienteResponse> listAmbientes(@PathVariable Integer id) {
+        return empreendimentoService.listAmbientes(id);
     }
 
-    @Operation(
-            summary = "Criação de um novo empreendimento",
-            description = "Cria um novo empreendimento apartir das informações fornecidas no JSON"
-    )
+    @Override
     @PostMapping
-    public ResponseEntity<EmpreendimentoResponse> createEmpreendimento(@RequestBody @Valid EmpreendimentoRequest data) {
-        EmpreendimentoResponse response = empreendimentoService.createEmpreendimento(data);
+    public ResponseEntity<EmpreendimentoResponse> create(@RequestBody @Valid EmpreendimentoRequest data) {
+        EmpreendimentoResponse response = empreendimentoService.create(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Operation(
-            summary = "Cria um novo empreendimento apartir de outro",
-            description = "Cria um novo empreendimentos com ambientes e itens padrões de um empreendimento especificado"
-    )
+    @Override
     @PostMapping("/copiar/{id}")
-    public ResponseEntity<EmpreendimentoResponse> createEmpreendimentoCopy(@RequestBody @Valid EmpreendimentoRequest data, @PathVariable
-                                                                           Integer id) {
-        EmpreendimentoResponse response = empreendimentoService.createEmpreendimentoCopia(data, id);
+    public ResponseEntity<EmpreendimentoResponse> copy(@RequestBody @Valid EmpreendimentoRequest data, @PathVariable Integer id) {
+        EmpreendimentoResponse response = empreendimentoService.copy(data, id);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Operation(
-            summary = "Atualiza um empreendimento",
-            description = "Atualiza um empreendimento especificado apartir das informações fornecidas no JSON"
-    )
+    @Override
     @PutMapping("/{id}")
-     public ResponseEntity<EmpreendimentoResponse> updateEmpreendimento(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoUpdate data) {
-        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(id, data);
+     public ResponseEntity<EmpreendimentoResponse> update(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoUpdate data) {
+        EmpreendimentoResponse response = empreendimentoService.update(id, data);
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(
-            summary = "Aprova um empreendimento por completo",
-            description = "Endpoint para testes, aprova todo um empreendimento"
-    )
+    @Override
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/aprovar/{id}")
-    public ResponseEntity<Void> aprovarEmpreendimento(@PathVariable Integer id) {
-        empreendimentoService.aprovarEmpreendimento(id);
+    public ResponseEntity<Void> forceAprovacao(@PathVariable Integer id) {
+        empreendimentoService.forceAprovacao(id);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(
-            summary = "Deleta um empreendimento",
-            description = "Deleta um empreendimento apartir de seu ID. Necessita de role de ADMIN"
-    )
+    @Override
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmpreendimento(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        empreendimentoService.deleteEmpreendimento(id);
+        empreendimentoService.delete(id);
         logger.info("User: {} deletou o empreendimento {}", auth.getName(), id);
         return ResponseEntity.noContent().build();
     }
