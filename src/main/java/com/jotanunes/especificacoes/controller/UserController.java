@@ -70,7 +70,12 @@ public class UserController {
     public ResponseEntity<Void> adminSetPassword(@PathVariable UUID id, @RequestBody UserPasswordResetRequest request) {
         userService.adminSetPassword(id, request);
         return ResponseEntity.noContent().build();
-
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping
+    public ResponseEntity<Void> deleteUser(@Valid @RequestBody UserDeleteRequest request) {
+        userService.deleteUser(request);
+        return ResponseEntity.noContent().build();
+    }
 }
