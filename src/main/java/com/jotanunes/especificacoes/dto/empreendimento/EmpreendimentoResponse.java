@@ -11,6 +11,8 @@ public record EmpreendimentoResponse(
         EmpreendimentoStatus status,
         String localizacao,
         String descricao,
-        List<String> observacoes
+        List<String> observacoes,
+        String criadoPor,
+        String dataCriacao
 ) {
 }
