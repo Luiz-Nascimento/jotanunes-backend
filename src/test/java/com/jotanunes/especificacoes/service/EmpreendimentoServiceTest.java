@@ -111,14 +111,14 @@ public class EmpreendimentoServiceTest {
         Empreendimento updatedEntity = EmpreendimentoFactory.criarEmpreendimentoAtualizado();
         EmpreendimentoResponse expectedResponse = EmpreendimentoFactory.criarEmpreendimentoResponseAtualizado();
 
-        when(empreendimentoRepository.findById(updateDTO.idEmpreendimento())).thenReturn(Optional.of(existingEntity));
+        when(empreendimentoRepository.findById(1)).thenReturn(Optional.of(existingEntity));
         when(empreendimentoRepository.save(existingEntity)).thenReturn(updatedEntity);
         when(empreendimentoMapper.toDto(updatedEntity)).thenReturn(expectedResponse);
 
-        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(updateDTO);
+        EmpreendimentoResponse response = empreendimentoService.updateEmpreendimento(1, updateDTO);
 
         assertEquals(expectedResponse, response);
-        verify(empreendimentoRepository).findById(updateDTO.idEmpreendimento());
+        verify(empreendimentoRepository).findById(1);
         verify(empreendimentoMapper).updateFromDto(updateDTO, existingEntity);
         verify(empreendimentoRepository).save(existingEntity);
         verify(empreendimentoMapper).toDto(updatedEntity);
