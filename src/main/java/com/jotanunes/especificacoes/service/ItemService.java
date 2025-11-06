@@ -16,11 +16,12 @@ import com.jotanunes.especificacoes.util.StatusVerifyCascadeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,8 +51,9 @@ public class ItemService {
         this.ambienteRepository = ambienteRepository;
     }
 
-    public List<ItemResponse> getAllItens() {
-        return repository.findAll().stream().map(mapper::toDto).toList();
+    public Page<ItemResponse> getAllItens(Pageable pageable) {
+        Page<Item> itens = repository.findAll(pageable);
+        return itens.map(mapper::toDto);
     }
 
     public ItemResponse getItemById(Integer id) {
