@@ -2,10 +2,7 @@ package com.jotanunes.especificacoes.controller;
 
 import com.jotanunes.especificacoes.controller.openapi.EmpreendimentoControllerOpenApi;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
+import com.jotanunes.especificacoes.dto.empreendimento.*;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -78,6 +75,12 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
      public ResponseEntity<EmpreendimentoResponse> update(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoUpdate data) {
         EmpreendimentoResponse response = empreendimentoService.update(id, data);
         return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/observacao/{id}")
+    public ResponseEntity<EmpreendimentoResponse> adicionarObservacao(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoObservacao data) {
+        EmpreendimentoResponse response = empreendimentoService.adicionarObservacao(id, data);
+        return ResponseEntity.ok(response);
     }
 
     @Override

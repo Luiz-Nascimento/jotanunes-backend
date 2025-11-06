@@ -2,10 +2,7 @@ package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
+import com.jotanunes.especificacoes.dto.empreendimento.*;
 import com.jotanunes.especificacoes.enums.AmbienteStatus;
 import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
 import com.jotanunes.especificacoes.enums.ItemStatus;
@@ -132,6 +129,14 @@ public class EmpreendimentoService {
         logger.info("Empreendimento atualizado com id: {}", empreendimentoAtualizado.getId());
 
         return empreendimentoMapper.toDto(empreendimentoAtualizado);
+    }
+
+    @Transactional
+    public EmpreendimentoResponse adicionarObservacao(Integer id, EmpreendimentoObservacao data) {
+        Empreendimento empreendimento = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
+        empreendimento.getObservacoes().add(data.observacao());
+        return empreendimentoMapper.toDto(empreendimento);
     }
 
     public void delete(Integer id) {
