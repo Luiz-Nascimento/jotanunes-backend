@@ -57,7 +57,6 @@ public class EmpreendimentoFactory {
 
     public static EmpreendimentoUpdate criarEmpreendimentoUpdate() {
         return new EmpreendimentoUpdate(
-                1,
                 "Empreendimento Atualizado",
                 "Localização Atualizada",
                 "Descrição do Empreendimento Atualizado"
