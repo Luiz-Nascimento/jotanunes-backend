@@ -48,23 +48,23 @@ public class EmpreendimentoService {
 
 
 
-    public List<EmpreendimentoResponse> getAllEmpreendimentos() {
+    public List<EmpreendimentoResponse> findAll() {
         return empreendimentoMapper.toDtoList(empreendimentoRepository.findAll());
     }
 
-    public EmpreendimentoResponse getEmpreendimentoById(Integer id) {
+    public EmpreendimentoResponse findById(Integer id) {
         return empreendimentoMapper.toDto(empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id)));
     }
 
-    public EmpreendimentoDocResponse getEmpreendimentoDocResponse(Integer id) {
+    public EmpreendimentoDocResponse findByIdAsDocument(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
         List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
         return empreendimentoMapper.toDocResponse(empreendimento, marcas);
     }
 
-    public List<AmbienteResponse> getAmbientesByEmpreendimentoId(Integer id) {
+    public List<AmbienteResponse> listAmbientes(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
         return empreendimento.getAmbientes().stream()
@@ -72,14 +72,14 @@ public class EmpreendimentoService {
                 .toList();
     }
 
-    public EmpreendimentoResponse createEmpreendimento(EmpreendimentoRequest data) {
+    public EmpreendimentoResponse create(EmpreendimentoRequest data) {
         Empreendimento empreendimento = empreendimentoMapper.requestToEntity(data);
         Empreendimento empreendimentoPersistido = empreendimentoRepository.save(empreendimento);
         System.out.println(empreendimentoPersistido.getSegmento());
         logger.info("Empreendimento criado com id: {}", empreendimentoPersistido.getId());
         return empreendimentoMapper.toDto(empreendimentoPersistido);
     }
-    public EmpreendimentoResponse createEmpreendimentoCopia(EmpreendimentoRequest data, Integer idEmpreendimento) {
+    public EmpreendimentoResponse copy(EmpreendimentoRequest data, Integer idEmpreendimento) {
         // Verificar se o empreendimento referência existe
         Empreendimento empreendimentoReferencia = empreendimentoRepository.findById(idEmpreendimento)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + idEmpreendimento));
@@ -108,7 +108,7 @@ public class EmpreendimentoService {
         return empreendimentoMapper.toDto(empreendimentoSalvo);
     }
     @Transactional
-    public void aprovarEmpreendimento(Integer idEmpreendimento) {
+    public void forceAprovacao(Integer idEmpreendimento) {
         Empreendimento empreendimento = empreendimentoRepository.findById(idEmpreendimento)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + idEmpreendimento));
         // Para cada ambiente do empreendimento
@@ -124,7 +124,7 @@ public class EmpreendimentoService {
     }
 
     @Transactional
-    public EmpreendimentoResponse updateEmpreendimento(Integer id, EmpreendimentoUpdate data) {
+    public EmpreendimentoResponse update(Integer id, EmpreendimentoUpdate data) {
         Empreendimento empreendimentoExistente = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
         empreendimentoMapper.updateFromDto(data, empreendimentoExistente);
@@ -134,7 +134,7 @@ public class EmpreendimentoService {
         return empreendimentoMapper.toDto(empreendimentoAtualizado);
     }
 
-    public void deleteEmpreendimento(Integer id) {
+    public void delete(Integer id) {
         if (!empreendimentoRepository.existsById(id)) {
             throw new ResourceNotFoundException("Empreendimento não encontrado com id: " + id);
         }
