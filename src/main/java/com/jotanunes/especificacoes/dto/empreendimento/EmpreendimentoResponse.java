@@ -1,7 +1,9 @@
 package com.jotanunes.especificacoes.dto.empreendimento;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jotanunes.especificacoes.enums.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record EmpreendimentoResponse(
@@ -13,6 +15,7 @@ public record EmpreendimentoResponse(
         String descricao,
         List<String> observacoes,
         String criadoPor,
-        String dataCriacao
+        @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+        LocalDateTime dataCriacao
 ) {
 }

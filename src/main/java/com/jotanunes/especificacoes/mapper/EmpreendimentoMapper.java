@@ -7,8 +7,6 @@ import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
 import com.jotanunes.especificacoes.model.Empreendimento;
 import org.mapstruct.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import java.util.List;
 
@@ -22,8 +20,6 @@ public interface EmpreendimentoMapper {
     void updateFromDto(EmpreendimentoUpdate dto, @MappingTarget Empreendimento empreendimento);
 
     @Mapping(source = "criadoPor.nome", target = "criadoPor")
-    @Mapping(source = "dataCriacao", target = "dataCriacao", qualifiedByName = "formatar-data")
-
     EmpreendimentoResponse toDto(Empreendimento empreendimento);
 
     List<EmpreendimentoResponse> toDtoList(List<Empreendimento> entities);
@@ -46,11 +42,5 @@ public interface EmpreendimentoMapper {
                 marcas // campo manual
         );
     }
-    @Named("formatar-data")
-    default String formatarData(LocalDateTime data) {
-        if (data == null) {
-            return null;
-        }
-        return data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        }
+
 }

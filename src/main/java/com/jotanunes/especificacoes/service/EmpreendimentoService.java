@@ -73,19 +73,12 @@ public class EmpreendimentoService {
                 .toList();
     }
 
-    public EmpreendimentoResponse createEmpreendimentoCriadoPor(EmpreendimentoRequest request) {
-        Empreendimento empreendimento = empreendimentoMapper.requestToEntity(request);
+    public EmpreendimentoResponse create(EmpreendimentoRequest data) {
+        Empreendimento empreendimento = empreendimentoMapper.requestToEntity(data);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User usuario = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         empreendimento.setCriadoPor(usuario);
-        empreendimento.setDataCriacao(LocalDateTime.now());
-        empreendimento = empreendimentoRepository.save(empreendimento);
-        return empreendimentoMapper.toDto(empreendimento);
-    }
-
-    public EmpreendimentoResponse create(EmpreendimentoRequest data) {
-        Empreendimento empreendimento = empreendimentoMapper.requestToEntity(data);
         Empreendimento empreendimentoPersistido = empreendimentoRepository.save(empreendimento);
         System.out.println(empreendimentoPersistido.getSegmento());
         logger.info("Empreendimento criado com id: {}", empreendimentoPersistido.getId());

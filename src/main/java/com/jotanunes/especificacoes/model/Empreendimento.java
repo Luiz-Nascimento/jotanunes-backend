@@ -4,6 +4,7 @@ import com.jotanunes.especificacoes.enums.*;
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
@@ -36,9 +37,10 @@ public class Empreendimento {
     private String descricao;
 
     @ManyToOne
-    @JoinColumn(name = "criado_por_id")
+    @JoinColumn(name = "criado_por")
     private User criadoPor;
 
+    @CreationTimestamp
     private LocalDateTime dataCriacao;
 
 
