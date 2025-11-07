@@ -42,15 +42,6 @@ public class CombinacaoEMMController {
     }
 
     @Operation(
-            summary = "Retornar nomes de materiais e marcas por empreendimento",
-            description = "Retorna os nomes dos materiais e marcas associados às combinações EMM para o empreendimento com ID especificado"
-    )
-    @GetMapping("/empreendimento/{empreendimentoID}/nomes")
-    public List<MaterialMarcasNomeResponse> findMaterialMarcasNomeByEmpreendimentoId(@PathVariable Integer empreendimentoID) {
-        return service.findMaterialMarcasNomeByEmpreendimentoId(empreendimentoID);
-    }
-
-    @Operation(
             summary = "Adicionar novas combinações EMM para um empreendimento",
             description = "Adiciona novas combinações EMM ao empreendimento com ID especificado"
     )
