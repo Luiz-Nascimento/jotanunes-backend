@@ -32,17 +32,13 @@ public class EmpreendimentoService {
     private final EmpreendimentoRepository empreendimentoRepository;
     private final EmpreendimentoMapper empreendimentoMapper;
     private final CombinacaoEMMService combinacaoEMMService;
-    private final AmbienteMapper ambienteMapper;
-    private final ItemService itemService;
     private final UserRepository userRepository;
 
-    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, UserRepository userRepository, EmpreendimentoMapper empreendimentoMapper, CombinacaoEMMService combinacaoEMMService, AmbienteMapper ambienteMapper, ItemService itemService) {
+    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, UserRepository userRepository, EmpreendimentoMapper empreendimentoMapper, CombinacaoEMMService combinacaoEMMService) {
         this.empreendimentoRepository = empreendimentoRepository;
         this.userRepository = userRepository;
         this.empreendimentoMapper = empreendimentoMapper;
         this.combinacaoEMMService = combinacaoEMMService;
-        this.ambienteMapper = ambienteMapper;
-        this.itemService = itemService;
     }
 
 
@@ -64,14 +60,6 @@ public class EmpreendimentoService {
         return empreendimentoMapper.toDocResponse(empreendimento, marcas);
     }
 
-    @Transactional
-    public List<AmbienteResponse> listAmbientes(Integer id) {
-        Empreendimento empreendimento = empreendimentoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
-        return empreendimento.getAmbientes().stream()
-                .map(ambienteMapper::toDto)
-                .toList();
-    }
 
     public EmpreendimentoResponse create(EmpreendimentoRequest data) {
         Empreendimento empreendimento = empreendimentoMapper.requestToEntity(data);
