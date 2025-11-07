@@ -4,7 +4,6 @@ package com.jotanunes.especificacoes.service;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteDocResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
-import com.jotanunes.especificacoes.dto.item.ItemResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
 import com.jotanunes.especificacoes.mapper.ItemMapper;
@@ -29,16 +28,14 @@ public class AmbienteService {
     private final EmpreendimentoRepository empreendimentoRepository;
 
     private final Logger logger = LoggerFactory.getLogger(AmbienteService.class);
-    private final ItemMapper itemMapper;
     private final StatusVerifyCascadeUtil statusVerifyCascadeUtil;
     private final CatalogoAmbienteRepository catalogoAmbienteRepository;
     private final CatalogoItemRepository catalogoItemRepository;
 
-    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, ItemMapper itemMapper, StatusVerifyCascadeUtil statusVerifyCascadeUtil, CatalogoAmbienteRepository catalogoAmbienteRepository, CatalogoItemRepository catalogoItemRepository) {
+    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, StatusVerifyCascadeUtil statusVerifyCascadeUtil, CatalogoAmbienteRepository catalogoAmbienteRepository, CatalogoItemRepository catalogoItemRepository) {
         this.ambienteRepository = ambienteRepository;
         this.ambienteMapper = ambienteMapper;
         this.empreendimentoRepository = empreendimentoRepository;
-        this.itemMapper = itemMapper;
         this.statusVerifyCascadeUtil = statusVerifyCascadeUtil;
         this.catalogoAmbienteRepository = catalogoAmbienteRepository;
         this.catalogoItemRepository = catalogoItemRepository;
@@ -65,7 +62,7 @@ public class AmbienteService {
     }
 
     @Transactional
-    public AmbienteResponse createAmbienteVazio(AmbienteRequest data) {
+    public AmbienteResponse create(AmbienteRequest data) {
         Empreendimento empreendimento = findEmpreendimentoOrThrow(data.idEmpreendimento());
         CatalogoAmbiente ambienteModelo = findCatalogoAmbienteOrThrow(data.idCatalogoAmbiente());
 
@@ -79,7 +76,7 @@ public class AmbienteService {
     }
 
     @Transactional
-    public AmbienteResponse createAmbienteModelo(AmbienteRequest data) {
+    public AmbienteResponse createWithItens(AmbienteRequest data) {
         Empreendimento empreendimento = findEmpreendimentoOrThrow(data.idEmpreendimento());
         CatalogoAmbiente ambienteModelo = findCatalogoAmbienteOrThrow(data.idCatalogoAmbiente());
 
@@ -107,7 +104,7 @@ public class AmbienteService {
 
     }
 
-    public void deleteAmbiente(Integer id) {
+    public void delete(Integer id) {
         if (!ambienteRepository.existsById(id)) {
             throw new ResourceNotFoundException("Ambiente não encontrado com id: " + id);
         }

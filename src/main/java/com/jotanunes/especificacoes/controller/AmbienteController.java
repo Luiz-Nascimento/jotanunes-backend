@@ -67,7 +67,7 @@ public class AmbienteController {
     )
     @PostMapping
     public ResponseEntity<AmbienteResponse> createAmbiente(@RequestBody @Valid AmbienteRequest data) {
-        AmbienteResponse ambienteResponse = ambienteService.createAmbienteVazio(data);
+        AmbienteResponse ambienteResponse = ambienteService.create(data);
         return ResponseEntity.ok().body(ambienteResponse);
     }
 
@@ -77,7 +77,7 @@ public class AmbienteController {
     )
     @PostMapping("/com-itens")
     public ResponseEntity<AmbienteResponse> createAmbienteComItens(@RequestBody AmbienteRequest request) {
-        AmbienteResponse ambienteResponse = ambienteService.createAmbienteModelo(request);
+        AmbienteResponse ambienteResponse = ambienteService.createWithItens(request);
         return ResponseEntity.ok().body(ambienteResponse);
     }
     @Operation(
@@ -86,7 +86,7 @@ public class AmbienteController {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAmbiente(@PathVariable Integer id) {
-        ambienteService.deleteAmbiente(id);
+        ambienteService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
