@@ -51,6 +51,7 @@ public class AmbienteService {
     public AmbienteResponse getAmbienteById(Integer id) {
         return ambienteMapper.toDto(findAmbienteOrThrow(id));
     }
+    @Transactional
     public AmbienteDocResponse getAmbienteDocResponse(Integer id) {
         return ambienteMapper.toDocResponse(findAmbienteOrThrow(id));
     }
