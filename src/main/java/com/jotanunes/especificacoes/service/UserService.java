@@ -81,14 +81,4 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional
-    public void deleteUser(UserDeleteRequest request) {
-        User user = userRepository.findById(request.id())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com ID: " + request.id()));
-
-        user.setAtivo(false);
-        userRepository.save(user);
-
-        logger.info("Usuário {} desativado. Motivo: {}", user.getEmail(), request.motivo());
-    }
 }

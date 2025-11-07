@@ -71,11 +71,5 @@ public class UserController {
         userService.adminSetPassword(id, request);
         return ResponseEntity.noContent().build();
     }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping
-    public ResponseEntity<Void> deleteUser(@Valid @RequestBody UserDeleteRequest request) {
-        userService.deleteUser(request);
-        return ResponseEntity.noContent().build();
-    }
+    
 }
