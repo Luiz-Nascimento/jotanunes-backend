@@ -54,6 +54,7 @@ public class EmpreendimentoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id)));
     }
 
+    @Transactional
     public EmpreendimentoDocResponse findByIdAsDocument(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
