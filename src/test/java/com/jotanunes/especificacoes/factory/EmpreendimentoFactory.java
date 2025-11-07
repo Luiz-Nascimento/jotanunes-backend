@@ -7,6 +7,7 @@ import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
 import com.jotanunes.especificacoes.enums.*;
 import com.jotanunes.especificacoes.model.Empreendimento;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +52,9 @@ public class EmpreendimentoFactory {
                 EmpreendimentoStatus.PENDENTE,
                 "Localização Teste",
                 "Descrição do Empreendimento Teste",
-                observacoes
+                observacoes,
+                "admin",
+                LocalDateTime.now()
         );
     }
 
@@ -81,7 +84,9 @@ public class EmpreendimentoFactory {
                 EmpreendimentoStatus.PENDENTE,
                 "Localização Atualizada",
                 "Descrição do Empreendimento Atualizado",
-                observacoes
+                observacoes,
+                "admin",
+                LocalDateTime.now()
         );
     }
 }
