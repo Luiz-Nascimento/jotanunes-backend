@@ -54,7 +54,7 @@ public class AmbienteService {
     public AmbienteDocResponse getAmbienteDocResponse(Integer id) {
         return ambienteMapper.toDocResponse(findAmbienteOrThrow(id));
     }
-
+    @Transactional
     public List<ItemResponse> getItensByAmbienteId(Integer id) {
         Ambiente ambiente = findAmbienteOrThrow(id);
         return ambiente.getItens().stream().map(itemMapper::toDto).toList();
