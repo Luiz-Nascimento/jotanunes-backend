@@ -4,12 +4,14 @@ import com.jotanunes.especificacoes.enums.*;
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -34,6 +36,14 @@ public class Empreendimento {
     @Column(nullable = false)
     private String descricao;
 
+    @ManyToOne
+    @JoinColumn(name = "criado_por")
+    private User criadoPor;
+
+    @CreationTimestamp
+    private LocalDateTime dataCriacao;
+
+
     @Type(ListArrayType.class)
     @Column(
             name = "observacoes",
@@ -55,12 +65,14 @@ public class Empreendimento {
     public Empreendimento() {
     }
 
-    public Empreendimento(SegmentoEmpreendimento segmento, String nome, String localizacao, String descricao, EmpreendimentoStatus status) {
+    public Empreendimento(SegmentoEmpreendimento segmento, String nome, String localizacao, String descricao, EmpreendimentoStatus status, User criadoPor, LocalDateTime dataCriacao) {
         this.segmento = segmento;
         this.nome = nome;
         this.localizacao = localizacao;
         this.descricao = descricao;
         this.status = status;
+        this.criadoPor = criadoPor;
+        this.dataCriacao = dataCriacao;
     }
 
     public Empreendimento(Integer id, SegmentoEmpreendimento segmento, String nome, String localizacao, String descricao, EmpreendimentoStatus status) {
@@ -130,6 +142,22 @@ public class Empreendimento {
 
     public Set<Ambiente> getAmbientes() {
         return ambientes;
+    }
+
+    public User getCriadoPor() {
+        return criadoPor;
+    }
+
+    public void setCriadoPor(User criadoPor) {
+        this.criadoPor = criadoPor;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 
     public void setAmbientes(Set<Ambiente> ambientes) {

@@ -10,16 +10,16 @@ import com.jotanunes.especificacoes.exception.EmpreendimentoNotApprovedException
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
-import com.jotanunes.especificacoes.model.Ambiente;
-import com.jotanunes.especificacoes.model.CombinacaoEMM;
-import com.jotanunes.especificacoes.model.Empreendimento;
-import com.jotanunes.especificacoes.model.Item;
+import com.jotanunes.especificacoes.model.*;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
+import com.jotanunes.especificacoes.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,9 +34,11 @@ public class EmpreendimentoService {
     private final CombinacaoEMMService combinacaoEMMService;
     private final AmbienteMapper ambienteMapper;
     private final ItemService itemService;
+    private final UserRepository userRepository;
 
-    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, EmpreendimentoMapper empreendimentoMapper, CombinacaoEMMService combinacaoEMMService, AmbienteMapper ambienteMapper, ItemService itemService) {
+    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, UserRepository userRepository, EmpreendimentoMapper empreendimentoMapper, CombinacaoEMMService combinacaoEMMService, AmbienteMapper ambienteMapper, ItemService itemService) {
         this.empreendimentoRepository = empreendimentoRepository;
+        this.userRepository = userRepository;
         this.empreendimentoMapper = empreendimentoMapper;
         this.combinacaoEMMService = combinacaoEMMService;
         this.ambienteMapper = ambienteMapper;
@@ -73,6 +75,10 @@ public class EmpreendimentoService {
 
     public EmpreendimentoResponse create(EmpreendimentoRequest data) {
         Empreendimento empreendimento = empreendimentoMapper.requestToEntity(data);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User usuario = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        empreendimento.setCriadoPor(usuario);
         Empreendimento empreendimentoPersistido = empreendimentoRepository.save(empreendimento);
         System.out.println(empreendimentoPersistido.getSegmento());
         logger.info("Empreendimento criado com id: {}", empreendimentoPersistido.getId());

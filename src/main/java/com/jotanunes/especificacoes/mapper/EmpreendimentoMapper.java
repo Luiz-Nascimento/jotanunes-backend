@@ -19,6 +19,7 @@ public interface EmpreendimentoMapper {
     )
     void updateFromDto(EmpreendimentoUpdate dto, @MappingTarget Empreendimento empreendimento);
 
+    @Mapping(source = "criadoPor.nome", target = "criadoPor")
     EmpreendimentoResponse toDto(Empreendimento empreendimento);
 
     List<EmpreendimentoResponse> toDtoList(List<Empreendimento> entities);
@@ -41,4 +42,5 @@ public interface EmpreendimentoMapper {
                 marcas // campo manual
         );
     }
+
 }
