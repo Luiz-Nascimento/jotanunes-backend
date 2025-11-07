@@ -46,7 +46,7 @@ public class Empreendimento {
     @Column(columnDefinition = "empreendimento_status", nullable = false)
     private EmpreendimentoStatus status = EmpreendimentoStatus.PENDENTE;
 
-    @OneToMany(mappedBy = "empreendimento",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "empreendimento", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Ambiente> ambientes = new HashSet<>();
 
     @OneToMany(mappedBy = "empreendimento")

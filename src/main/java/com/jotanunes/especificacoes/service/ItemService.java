@@ -61,6 +61,7 @@ public class ItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Item nao encontrado com id: " + id)));
     }
 
+    @Transactional
     public ItemDocResponse getItemDocResponse(Integer id) {
         return mapper.toDocResponse(repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id)));

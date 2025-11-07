@@ -54,6 +54,7 @@ public class EmpreendimentoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id)));
     }
 
+    @Transactional
     public EmpreendimentoDocResponse findByIdAsDocument(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
@@ -61,6 +62,7 @@ public class EmpreendimentoService {
         return empreendimentoMapper.toDocResponse(empreendimento, marcas);
     }
 
+    @Transactional
     public List<AmbienteResponse> listAmbientes(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
