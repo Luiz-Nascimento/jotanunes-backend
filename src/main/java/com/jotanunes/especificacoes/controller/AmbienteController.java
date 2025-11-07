@@ -5,6 +5,7 @@ import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.item.ItemResponse;
 import com.jotanunes.especificacoes.service.AmbienteService;
+import com.jotanunes.especificacoes.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,18 +19,21 @@ import java.util.List;
 @RequestMapping("/ambientes")
 public class AmbienteController {
 
-    private final AmbienteService service;
+    private final AmbienteService ambienteService;
+    private final ItemService itemService;
 
-    public AmbienteController(AmbienteService service) {
-        this.service = service;
+    public AmbienteController(AmbienteService ambienteService, ItemService itemService) {
+        this.ambienteService = ambienteService;
+        this.itemService = itemService;
     }
+
     @Operation(
             summary = "Retornar dados de todos ambientes",
             description = "Retorna dados de todos ambientes cadastrados"
     )
     @GetMapping
-    public List<AmbienteResponse> listAllAmbientes() {
-        return service.getAllAmbientes();
+    public List<AmbienteResponse> findAll() {
+        return ambienteService.findAll();
     }
 
     @Operation(
@@ -38,7 +42,7 @@ public class AmbienteController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<AmbienteResponse> getAmbiente(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(service.getAmbienteById(id));
+        return ResponseEntity.ok().body(ambienteService.findById(id));
     }
     @Operation(
             summary = "Retornar dados de um ambiente formatados para documento",
@@ -46,7 +50,7 @@ public class AmbienteController {
     )
     @GetMapping("/doc/{id}")
     public ResponseEntity<AmbienteDocResponse> getAmbienteDocResponse(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(service.getAmbienteDocResponse(id));
+        return ResponseEntity.ok().body(ambienteService.findByIdAsDocument(id));
     }
 
     @Operation(
@@ -55,7 +59,7 @@ public class AmbienteController {
     )
     @GetMapping("/{id}/itens")
     public List<ItemResponse> getItensByAmbienteId(@PathVariable Integer id) {
-        return service.getItensByAmbienteId(id);
+        return itemService.findByAmbienteId(id);
     }
     @Operation(
             summary = "Criar um novo ambiente",
@@ -63,7 +67,7 @@ public class AmbienteController {
     )
     @PostMapping
     public ResponseEntity<AmbienteResponse> createAmbiente(@RequestBody @Valid AmbienteRequest data) {
-        AmbienteResponse ambienteResponse = service.createAmbienteVazio(data);
+        AmbienteResponse ambienteResponse = ambienteService.createAmbienteVazio(data);
         return ResponseEntity.ok().body(ambienteResponse);
     }
 
@@ -73,7 +77,7 @@ public class AmbienteController {
     )
     @PostMapping("/com-itens")
     public ResponseEntity<AmbienteResponse> createAmbienteComItens(@RequestBody AmbienteRequest request) {
-        AmbienteResponse ambienteResponse = service.createAmbienteModelo(request);
+        AmbienteResponse ambienteResponse = ambienteService.createAmbienteModelo(request);
         return ResponseEntity.ok().body(ambienteResponse);
     }
     @Operation(
@@ -82,7 +86,7 @@ public class AmbienteController {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAmbiente(@PathVariable Integer id) {
-        service.deleteAmbiente(id);
+        ambienteService.deleteAmbiente(id);
         return ResponseEntity.noContent().build();
     }
 

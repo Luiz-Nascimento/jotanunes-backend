@@ -38,7 +38,7 @@ public class ItemController {
     public ResponseEntity<Page<ItemResponse>> getAllItens(
         @PageableDefault(size = 25, page = 0, sort = "id", direction = Sort.Direction.ASC)
         Pageable pageable) {
-        Page<ItemResponse> response = service.getAllItens(pageable);
+        Page<ItemResponse> response = service.findAll(pageable);
         return ResponseEntity.ok(response);
     }
     @Operation(
@@ -47,7 +47,7 @@ public class ItemController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<ItemResponse> getItem(@PathVariable Integer id) {
-        ItemResponse response = service.getItemById(id);
+        ItemResponse response = service.findById(id);
         return ResponseEntity.ok(response);
     }
     @Operation(
@@ -56,7 +56,7 @@ public class ItemController {
     )
     @GetMapping("/doc/{id}")
     public ResponseEntity<ItemDocResponse> getItemDocResponse(@PathVariable Integer id) {
-        ItemDocResponse response = service.getItemDocResponse(id);
+        ItemDocResponse response = service.findByIdAsDocument(id);
         return ResponseEntity.ok(response);
     }
     @Operation(
@@ -65,7 +65,7 @@ public class ItemController {
     )
     @PostMapping
     public ResponseEntity<ItemResponse> createItem(@RequestBody @Valid ItemRequest data) {
-        ItemResponse response = service.createItem(data);
+        ItemResponse response = service.create(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @Operation(
@@ -74,7 +74,7 @@ public class ItemController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer id, @RequestBody @Valid ItemUpdate data) {
-        ItemResponse response = service.updateItem(id, data);
+        ItemResponse response = service.update(id, data);
         return ResponseEntity.ok(response);
     }
     @Operation(
@@ -84,7 +84,7 @@ public class ItemController {
     @PreAuthorize("hasRole('GESTOR')")
     @PutMapping("/revisarItem")
     public ResponseEntity<RevisaoItemResponse> reviewItem(@RequestBody @Valid RevisaoItemRequest request) {
-        RevisaoItemResponse response = service.reviewItem(request);
+        RevisaoItemResponse response = service.review(request);
         return ResponseEntity.ok(response);
     }
     @Operation(
@@ -94,7 +94,7 @@ public class ItemController {
     @PreAuthorize("hasRole('GESTOR')")
     @PutMapping("/revisarItens")
     public ResponseEntity<List<RevisaoItemResponse>> reviewItems(@RequestBody @Valid List<RevisaoItemRequest> requests) {
-        List<RevisaoItemResponse> responses = service.reviewItemsBulk(requests);
+        List<RevisaoItemResponse> responses = service.reviewMultiple(requests);
         return ResponseEntity.ok(responses);
     }
     @Operation(
@@ -103,7 +103,7 @@ public class ItemController {
     )
                                               @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Integer id) {
-        service.deleteItem(id);
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

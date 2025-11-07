@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.controller.openapi.EmpreendimentoControllerOpenApi;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.*;
+import com.jotanunes.especificacoes.service.AmbienteService;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,11 +24,13 @@ import java.util.List;
 public class EmpreendimentoController implements EmpreendimentoControllerOpenApi {
 
     private final EmpreendimentoService empreendimentoService;
+    private final AmbienteService ambienteService;
 
     private static final Logger logger = LoggerFactory.getLogger(EmpreendimentoController.class);
 
-    public EmpreendimentoController(EmpreendimentoService empreendimentoService) {
+    public EmpreendimentoController(EmpreendimentoService empreendimentoService, AmbienteService ambienteService) {
         this.empreendimentoService = empreendimentoService;
+        this.ambienteService = ambienteService;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
     @Override
     @GetMapping("/{id}/ambientes")
     public List<AmbienteResponse> listAmbientes(@PathVariable Integer id) {
-        return empreendimentoService.listAmbientes(id);
+        return ambienteService.listByEmpreendimento(id);
     }
 
     @Override

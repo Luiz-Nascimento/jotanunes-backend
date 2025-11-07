@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 @Service
 public class ItemService {
 
-    private final ItemRepository repository;
-    private final ItemMapper mapper;
+    private final ItemRepository itemRepository;
+    private final ItemMapper itemMapper;
     private final AmbienteRepository ambienteRepository;
     @Autowired
     UserRepository userRepository;
@@ -45,30 +45,38 @@ public class ItemService {
     @Autowired
     private CatalogoItemRepository catalogoItemRepository;
 
-    public ItemService(ItemRepository repository, ItemMapper mapper, AmbienteRepository ambienteRepository) {
-        this.repository = repository;
-        this.mapper = mapper;
+    public ItemService(ItemRepository itemRepository, ItemMapper itemMapper, AmbienteRepository ambienteRepository) {
+        this.itemRepository = itemRepository;
+        this.itemMapper = itemMapper;
         this.ambienteRepository = ambienteRepository;
     }
 
-    public Page<ItemResponse> getAllItens(Pageable pageable) {
-        Page<Item> itens = repository.findAll(pageable);
-        return itens.map(mapper::toDto);
+    public Page<ItemResponse> findAll(Pageable pageable) {
+        Page<Item> itens = itemRepository.findAll(pageable);
+        return itens.map(itemMapper::toDto);
     }
 
-    public ItemResponse getItemById(Integer id) {
-        return mapper.toDto(repository.findById(id)
+    public ItemResponse findById(Integer id) {
+        return itemMapper.toDto(itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item nao encontrado com id: " + id)));
     }
 
     @Transactional
-    public ItemDocResponse getItemDocResponse(Integer id) {
-        return mapper.toDocResponse(repository.findById(id)
+    public ItemDocResponse findByIdAsDocument(Integer id) {
+        return itemMapper.toDocResponse(itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id)));
     }
 
     @Transactional
-    public ItemResponse createItem(ItemRequest data) {
+    public List<ItemResponse> findByAmbienteId(Integer id) {
+        if(!ambienteRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Ambiente não encontrado com id: " + id);
+        }
+        return itemMapper.toDtoList(itemRepository.findByAmbienteId(id));
+    }
+
+    @Transactional
+    public ItemResponse create(ItemRequest data) {
         Ambiente ambiente = ambienteRepository.findById(data.idAmbiente())
                 .orElseThrow(() -> new ResourceNotFoundException("Ambiente nao encontrado com id: " + data.idAmbiente()));
         CatalogoItem itemReferencia = catalogoItemRepository.findById(data.idItemCatalogo())
@@ -76,26 +84,26 @@ public class ItemService {
         Item item = new Item();
         item.setCatalogoItem(itemReferencia);
         item.setAmbiente(ambiente);
-        Item itemSalvo = repository.save(item);
+        Item itemSalvo = itemRepository.save(item);
         verifyCascadeUtil.atualizarStatusCascade(item);
         logger.info("Novo item criado com id {}, associado ao ambiente: {}", itemSalvo.getId(), data.idAmbiente());
-        return mapper.toDto(item);
+        return itemMapper.toDto(item);
     }
 
     @Transactional
-    public ItemResponse updateItem(Integer id, ItemUpdate data) {
-        Item item = repository.findById(id)
+    public ItemResponse update(Integer id, ItemUpdate data) {
+        Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
         item.setDescricaoCustomizada(data.descricaoCustomizada());
         item.setStatus(ItemStatus.PENDENTE);
         verifyCascadeUtil.atualizarStatusCascade(item);
         logger.info("Item com id {} atualizado", id);
-        return mapper.toDto(item);
+        return itemMapper.toDto(item);
     }
 
     @Transactional
-    public RevisaoItemResponse reviewItem(RevisaoItemRequest data) {
-        Item item = repository.findById(data.itemId())
+    public RevisaoItemResponse review(RevisaoItemRequest data) {
+        Item item = itemRepository.findById(data.itemId())
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + data.itemId()));
         if (item.getStatus() == com.jotanunes.especificacoes.enums.ItemStatus.APROVADO ||
             item.getStatus() == com.jotanunes.especificacoes.enums.ItemStatus.REPROVADO) {
@@ -121,7 +129,7 @@ public class ItemService {
     }
 
     @Transactional
-    public List<RevisaoItemResponse> reviewItemsBulk(List<RevisaoItemRequest> requests) {
+    public List<RevisaoItemResponse> reviewMultiple(List<RevisaoItemRequest> requests) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
@@ -129,7 +137,7 @@ public class ItemService {
 
         List<RevisaoItem> revisoes = new ArrayList<>();
         for (RevisaoItemRequest data : requests) {
-            Item item = repository.findById(data.itemId())
+            Item item = itemRepository.findById(data.itemId())
                     .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + data.itemId()));
             if (item.getStatus() == ItemStatus.APROVADO || item.getStatus() == ItemStatus.REPROVADO) {
                 throw new IllegalStateException("Item já foi revisado com status: " + item.getStatus());
@@ -151,11 +159,11 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteItem(Integer id) {
-        if (!repository.existsById(id)) {
+    public void delete(Integer id) {
+        if (!itemRepository.existsById(id)) {
             throw new ResourceNotFoundException("Ambiente não encontrado com id: " + id);
         }
-        repository.deleteById(id);
+        itemRepository.deleteById(id);
         logger.info("Deletado item com id {}", id);
     }
 }

@@ -44,21 +44,24 @@ public class AmbienteService {
         this.catalogoItemRepository = catalogoItemRepository;
     }
 
-    public List<AmbienteResponse> getAllAmbientes() {
+    public List<AmbienteResponse> findAll() {
         return ambienteMapper.toDtoList(ambienteRepository.findAll());
     }
 
-    public AmbienteResponse getAmbienteById(Integer id) {
+    public AmbienteResponse findById(Integer id) {
         return ambienteMapper.toDto(findAmbienteOrThrow(id));
     }
     @Transactional
-    public AmbienteDocResponse getAmbienteDocResponse(Integer id) {
+    public AmbienteDocResponse findByIdAsDocument(Integer id) {
         return ambienteMapper.toDocResponse(findAmbienteOrThrow(id));
     }
+
     @Transactional
-    public List<ItemResponse> getItensByAmbienteId(Integer id) {
-        Ambiente ambiente = findAmbienteOrThrow(id);
-        return ambiente.getItens().stream().map(itemMapper::toDto).toList();
+    public List<AmbienteResponse> listByEmpreendimento(Integer id) {
+        if (!empreendimentoRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Empreendimento não encontrado com id: " + id);
+        }
+        return ambienteMapper.toDtoList(ambienteRepository.findByEmpreendimentoId(id));
     }
 
     @Transactional
