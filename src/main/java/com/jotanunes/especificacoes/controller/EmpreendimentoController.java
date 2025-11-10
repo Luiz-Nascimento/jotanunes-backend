@@ -53,7 +53,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
     @Override
     @GetMapping("/{id}/documento")
     public ResponseEntity<EspecificacaTecnicaDTO> findByIdAsDocument(@PathVariable Integer id) {
-        EspecificacaTecnicaDTO response = empreendimentoService.findByIdAsDocument(id);
+        EspecificacaTecnicaDTO response = empreendimentoService.getDadosParaRelatorio(id);
         return ResponseEntity.ok().body(response);
     }
 

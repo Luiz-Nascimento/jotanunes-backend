@@ -5,6 +5,7 @@ import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
 import com.jotanunes.especificacoes.service.DocumentService;
+import com.jotanunes.especificacoes.service.EmpreendimentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,40 +13,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/documentos")
+@RequestMapping("/documentos")
 public class DocumentController {
 
     @Autowired
-    private EmpreendimentoRepository empreendimentoRepository;
-    @Autowired
-    private EmpreendimentoMapper empreendimentoMapper;
+    private EmpreendimentoService empreendimentoService;
     @Autowired
     private DocumentService docGeneratorService;
 
-    @GetMapping("/{id}/docx")
+    @GetMapping("/{id}/especificacao-tecnica")
     public ResponseEntity<byte[]> downloadDocx(@PathVariable Integer id) {
         try {
-            // 1. Buscar dados (seu fluxo normal)
-            Empreendimento empreendimento = empreendimentoRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Empreendimento não encontrado"));
+            // 1. Busca os dados JÁ PRONTOS do Service.
+            // O Service que cuida da transação e de carregar tudo do banco.
+            EspecificacaTecnicaDTO dto = empreendimentoService.getDadosParaRelatorio(id);
 
-            // 2. Mapear para o DTO que o relatório usa
-            EspecificacaTecnicaDTO dto = empreendimentoMapper.toEspecificacaoTecnica(empreendimento);
-
-            // 3. Chamar o serviço gerador
+            // 2. Chama o gerador de DOCX
             byte[] docxBytes = docGeneratorService.gerarDocx(dto);
 
-            // 4. Preparar nome do arquivo para download
-            String filename = "Especificacao_" + empreendimento.getNome().replaceAll("\\s+", "_") + ".docx";
+            // 3. Prepara o nome do arquivo (sanitizado)
+            String filename = "Especificacao_" + dto.nome().replaceAll("[^a-zA-Z0-9.-]", "_") + ".docx";
 
-            // 5. Retornar como download
+            // 4. Retorna o download
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
                     .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
                     .body(docxBytes);
 
         } catch (Exception e) {
-            e.printStackTrace(); // Melhor usar um logger aqui
+            e.printStackTrace(); // Em produção, use Logger!
             return ResponseEntity.internalServerError().build();
         }
     }

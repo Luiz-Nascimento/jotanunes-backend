@@ -1,6 +1,5 @@
 package com.jotanunes.especificacoes.service;
 
-import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.*;
 import com.jotanunes.especificacoes.enums.AmbienteStatus;
 import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
@@ -52,11 +51,10 @@ public class EmpreendimentoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id)));
     }
 
-    @Transactional
-    public EspecificacaTecnicaDTO findByIdAsDocument(Integer id) {
+    @Transactional(readOnly = true)
+    public EspecificacaTecnicaDTO getDadosParaRelatorio(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
-        List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
         return empreendimentoMapper.toEspecificacaoTecnica(empreendimento);
     }
 
