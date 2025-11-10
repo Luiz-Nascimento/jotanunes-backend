@@ -1,7 +1,6 @@
 package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
-import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.*;
 import com.jotanunes.especificacoes.enums.AmbienteStatus;
 import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
@@ -19,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,12 +31,14 @@ public class EmpreendimentoService {
     private final EmpreendimentoMapper empreendimentoMapper;
     private final CombinacaoEMMService combinacaoEMMService;
     private final UserRepository userRepository;
+    private final AmbienteMapper ambienteMapper;
 
-    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, UserRepository userRepository, EmpreendimentoMapper empreendimentoMapper, CombinacaoEMMService combinacaoEMMService) {
+    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, UserRepository userRepository, EmpreendimentoMapper empreendimentoMapper, CombinacaoEMMService combinacaoEMMService, AmbienteMapper ambienteMapper) {
         this.empreendimentoRepository = empreendimentoRepository;
         this.userRepository = userRepository;
         this.empreendimentoMapper = empreendimentoMapper;
         this.combinacaoEMMService = combinacaoEMMService;
+        this.ambienteMapper = ambienteMapper;
     }
 
 
@@ -53,11 +53,11 @@ public class EmpreendimentoService {
     }
 
     @Transactional
-    public EmpreendimentoDocResponse findByIdAsDocument(Integer id) {
+    public EspecificacaTecnicaDTO findByIdAsDocument(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
         List<MaterialMarcasNomeResponse> marcas = combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
-        return empreendimentoMapper.toDocResponse(empreendimento, marcas);
+        return empreendimentoMapper.toEspecificacaoTecnica(empreendimento);
     }
 
 

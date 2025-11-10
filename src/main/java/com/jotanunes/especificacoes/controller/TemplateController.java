@@ -1,6 +1,6 @@
 package com.jotanunes.especificacoes.controller;
 
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
+import com.jotanunes.especificacoes.dto.empreendimento.EspecificacaTecnicaDTO;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +25,7 @@ public class TemplateController {
     )
     @GetMapping("/template/{empreendimentoId}")
     public String getTemplate(@PathVariable Integer empreendimentoId, Model model) {
-        EmpreendimentoDocResponse data = empreendimentoService.findByIdAsDocument(empreendimentoId);
+        EspecificacaTecnicaDTO data = empreendimentoService.findByIdAsDocument(empreendimentoId);
         model.addAttribute("template", data);
         return "template";
 

@@ -2,18 +2,14 @@ package com.jotanunes.especificacoes.controller.openapi;
 
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoDocResponse;
+import com.jotanunes.especificacoes.dto.empreendimento.EspecificacaTecnicaDTO;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.xml.validation.Schema;
 import java.util.List;
 
 @Tag(name = "Empreendimentos", description = "Operações relacionadas a empreendimentos.")
@@ -35,7 +31,7 @@ public interface EmpreendimentoControllerOpenApi {
             summary = "Retornar dados de um empreendimento, formatados para documento",
             description = "Retorna dados do empreendimento com ID especificado formatados para documento"
     )
-    ResponseEntity<EmpreendimentoDocResponse> findByIdAsDocument(Integer id);
+    ResponseEntity<EspecificacaTecnicaDTO> findByIdAsDocument(Integer id);
 
     @Operation(
             summary = "Retornar todos os ambientes de um empreendimento",

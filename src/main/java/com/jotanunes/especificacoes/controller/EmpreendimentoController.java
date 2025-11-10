@@ -52,8 +52,8 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
 
     @Override
     @GetMapping("/{id}/documento")
-    public ResponseEntity<EmpreendimentoDocResponse> findByIdAsDocument(@PathVariable Integer id) {
-        EmpreendimentoDocResponse response = empreendimentoService.findByIdAsDocument(id);
+    public ResponseEntity<EspecificacaTecnicaDTO> findByIdAsDocument(@PathVariable Integer id) {
+        EspecificacaTecnicaDTO response = empreendimentoService.findByIdAsDocument(id);
         return ResponseEntity.ok().body(response);
     }
 
