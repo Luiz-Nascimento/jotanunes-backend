@@ -23,7 +23,7 @@ public class DocumentService {
     // Funciona localmente e no Heroku.
     private static final String NODE_PROJECT_PATH = "./docx-gen";
     private static final String NODE_SCRIPT_NAME = "gerar-doc-api.js";
-    private static final String NODE_COMMAND = "C:\\Program Files\\nodejs\\node.exe";
+    private static final String NODE_COMMAND = "node";
 
     public byte[] gerarDocx(EspecificacaTecnicaDTO dados) throws IOException, InterruptedException {
         // Validação de segurança para não ficar batendo cabeça se a pasta não existir
