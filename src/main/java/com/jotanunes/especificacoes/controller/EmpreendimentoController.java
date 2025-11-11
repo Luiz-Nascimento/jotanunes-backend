@@ -3,14 +3,18 @@ package com.jotanunes.especificacoes.controller;
 import com.jotanunes.especificacoes.controller.openapi.EmpreendimentoControllerOpenApi;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
+import com.jotanunes.especificacoes.dto.documento.DocumentoGeradoDTO;
 import com.jotanunes.especificacoes.dto.empreendimento.*;
 import com.jotanunes.especificacoes.service.AmbienteService;
 import com.jotanunes.especificacoes.service.CombinacaoEMMService;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
+import com.jotanunes.especificacoes.service.RelatorioService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Empreendimentos", description = "Operações relacionadas a empreendimentos.")
@@ -28,13 +33,15 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
     private final EmpreendimentoService empreendimentoService;
     private final AmbienteService ambienteService;
     private final CombinacaoEMMService combinacaoEMMService;
+    private final RelatorioService relatorioService;
 
     private static final Logger logger = LoggerFactory.getLogger(EmpreendimentoController.class);
 
-    public EmpreendimentoController(EmpreendimentoService empreendimentoService, AmbienteService ambienteService, CombinacaoEMMService combinacaoEMMService) {
+    public EmpreendimentoController(EmpreendimentoService empreendimentoService, AmbienteService ambienteService, CombinacaoEMMService combinacaoEMMService, RelatorioService relatorioService) {
         this.empreendimentoService = empreendimentoService;
         this.ambienteService = ambienteService;
         this.combinacaoEMMService = combinacaoEMMService;
+        this.relatorioService = relatorioService;
     }
 
     @Override
@@ -67,6 +74,16 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
     @GetMapping("/{id}/material-marcas")
     public List<MaterialMarcasNomeResponse> findMaterialMarcas(@PathVariable Integer id) {
         return combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
+    }
+
+    @GetMapping("/{id}/docx")
+    public ResponseEntity<byte[]> downloadAsDocx(@PathVariable Integer id) throws IOException, InterruptedException {
+        DocumentoGeradoDTO documento = relatorioService.gerarEspecificacaoTecnica(id);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + documento.filename() + "\"")
+                .contentType(documento.contentType())
+                .body(documento.bytes());
     }
 
     @Override

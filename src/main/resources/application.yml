@@ -1,3 +1,4 @@
+# Perfil de produção
 spring:
     data:
       web:
@@ -31,7 +32,18 @@ spring:
 logging:
     level:
       root: WARN
+
+#Config do serviço de geração de documentos no ambiente de produção
+app:
+    docs:
+        node-command: node
+        project-path: /app/docx-gen
+        script-name: gerar-doc-api.js
+        timeout-seconds: 30
+        max-concurrent: 5
+
 ---
+# Perfil de desenvolvimento(dev)
 spring:
     config:
       activate:
@@ -50,5 +62,13 @@ spring:
         clean-disabled: false
 logging:
     level:
-      root: INFO
+        root: INFO
+        org.hibernate.SQL: DEBUG
+        com.jotanunes.especificacoes.service.com.jotanunes.especificacoes.service.DocGenerateService: DEBUG
+
+# Config do serviço de geração de documentos no ambiente de desenvolvimento
+app:
+    docs:
+        node-command: C:/Program Files/nodejs/node.exe
+        project-path: ./docx-gen
 
