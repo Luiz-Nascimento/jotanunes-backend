@@ -37,7 +37,8 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
 
     private static final Logger logger = LoggerFactory.getLogger(EmpreendimentoController.class);
 
-    public EmpreendimentoController(EmpreendimentoService empreendimentoService, AmbienteService ambienteService, CombinacaoEMMService combinacaoEMMService, RelatorioService relatorioService) {
+    public EmpreendimentoController(EmpreendimentoService empreendimentoService, AmbienteService ambienteService,
+                                    CombinacaoEMMService combinacaoEMMService, RelatorioService relatorioService) {
         this.empreendimentoService = empreendimentoService;
         this.ambienteService = ambienteService;
         this.combinacaoEMMService = combinacaoEMMService;
@@ -81,7 +82,8 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
         DocumentoGeradoDTO documento = relatorioService.gerarEspecificacaoTecnica(id);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + documento.filename() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + documento.filename()
+                        + "\"")
                 .contentType(documento.contentType())
                 .body(documento.bytes());
     }
@@ -95,20 +97,23 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
 
     @Override
     @PostMapping("/copiar/{id}")
-    public ResponseEntity<EmpreendimentoResponse> copy(@RequestBody @Valid EmpreendimentoRequest data, @PathVariable Integer id) {
+    public ResponseEntity<EmpreendimentoResponse> copy(@RequestBody @Valid EmpreendimentoRequest data,
+                                                       @PathVariable Integer id) {
         EmpreendimentoResponse response = empreendimentoService.copy(data, id);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Override
     @PutMapping("/{id}")
-     public ResponseEntity<EmpreendimentoResponse> update(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoUpdate data) {
+     public ResponseEntity<EmpreendimentoResponse> update(@PathVariable Integer id,
+                                                          @RequestBody @Valid EmpreendimentoUpdate data) {
         EmpreendimentoResponse response = empreendimentoService.update(id, data);
         return ResponseEntity.ok().body(response);
     }
 
     @PutMapping("/observacao/{id}")
-    public ResponseEntity<EmpreendimentoResponse> adicionarObservacao(@PathVariable Integer id, @RequestBody @Valid EmpreendimentoObservacao data) {
+    public ResponseEntity<EmpreendimentoResponse> adicionarObservacao(@PathVariable Integer id,
+                                                                      @RequestBody @Valid EmpreendimentoObservacao data) {
         EmpreendimentoResponse response = empreendimentoService.adicionarObservacao(id, data);
         return ResponseEntity.ok(response);
     }

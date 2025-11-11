@@ -36,7 +36,8 @@ public class CatalogoAmbienteController {
             description = "Adiciona um novo ambiente ao catálogo de ambientes."
     )
     @PostMapping
-    public ResponseEntity<CatalogoAmbienteResponse> createCatalogoAmbiente(@RequestBody @Valid CatalogoAmbienteRequest request) {
+    public ResponseEntity<CatalogoAmbienteResponse> createCatalogoAmbiente(
+            @RequestBody @Valid CatalogoAmbienteRequest request) {
         CatalogoAmbienteResponse response = service.createCatalogoAmbiente(request);
         return ResponseEntity.ok(response);
     }
