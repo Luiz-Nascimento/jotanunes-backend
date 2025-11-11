@@ -2,7 +2,11 @@ package com.jotanunes.especificacoes.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jotanunes.especificacoes.dto.empreendimento.EspecificacaTecnicaDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -10,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -18,60 +24,75 @@ public class DocumentService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // === CORREÇÃO PRINCIPAL AQUI ===
-    // Usa caminho relativo. O "." representa a raiz do projeto onde o Java está rodando.
-    // Funciona localmente e no Heroku.
-    private static final String NODE_PROJECT_PATH = "./docx-gen";
-    private static final String NODE_SCRIPT_NAME = "gerar-doc-api.js";
-    private static final String NODE_COMMAND = "node";
+    private static final Logger logger = LoggerFactory.getLogger(DocumentService.class);
+
+    @Value("${app.docs.project-path:./docx-gen}")
+    private String nodeProjectPath;
+    @Value("${app.docs.script-name:gerar-doc-api.js}")
+    private String nodeScriptname;
+    @Value("${app.docs.node-command:node}")
+    private String nodeCommand;
+    @Value("${app.docs.timeout-seconds:30}")
+    private int timeoutSeconds;
+
 
     public byte[] gerarDocx(EspecificacaTecnicaDTO dados) throws IOException, InterruptedException {
-        // Validação de segurança para não ficar batendo cabeça se a pasta não existir
-        File nodeDir = new File(NODE_PROJECT_PATH);
-        if (!nodeDir.exists() || !nodeDir.isDirectory()) {
-            throw new IllegalStateException("Pasta '" + NODE_PROJECT_PATH + "' não encontrada na raiz do projeto. Verifique se ela existe.");
+
+        Path nodeDirectory = Paths.get(nodeProjectPath).toAbsolutePath().normalize();
+        if (!Files.isDirectory(nodeDirectory)) {
+            logger.error("Diretório do projeto node não encontrado: {}", nodeDirectory);
+            throw new IllegalStateException("Pasta '" + nodeProjectPath + "' não encontrada.");
         }
 
-        File tempJson = File.createTempFile("dados-", ".json");
-        File tempDocx = File.createTempFile("especificacao-", ".docx");
+        Path tempJson = Files.createTempFile("dados-", ".json");
+        Path tempDocx = Files.createTempFile("especificacao-", ".docx");
 
-        try {
-            objectMapper.writeValue(tempJson, dados);
+        logger.debug("Arquivos temporários criados: JSON={}, DOCX={}", tempJson, tempDocx);
 
-            ProcessBuilder pb = new ProcessBuilder(
-                    NODE_COMMAND,
-                    NODE_SCRIPT_NAME, // Usa apenas o nome do script
-                    tempJson.getAbsolutePath(),
-                    tempDocx.getAbsolutePath()
-            );
+       try {
+           Files.write(tempJson, objectMapper.writeValueAsBytes(dados));
 
-            // Define que o comando 'node' vai rodar DENTRO da pasta 'docx-gen'
-            pb.directory(nodeDir);
-            pb.redirectErrorStream(true);
+           ProcessBuilder pb = new ProcessBuilder(
+                   nodeCommand,
+                   nodeScriptname,
+                   tempJson.toString(),
+                   tempDocx.toString()
+           );
 
-            Process process = pb.start();
+           pb.directory(nodeDirectory.toFile());
+           pb.redirectErrorStream(true);
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Dica: Em produção, use um Logger (ex: slf4j) em vez de System.out
-                    System.out.println("[NodeJS]: " + line);
-                }
-            }
+           logger.info("Iniciando processo Node.js para gerar DOCX...");
+           Process process = pb.start();
 
-            boolean finished = process.waitFor(30, TimeUnit.SECONDS);
-            if (!finished || process.exitValue() != 0) {
-                // Se falhar, destrói o processo para não ficar pendurado
-                if (!finished) process.destroyForcibly();
-                throw new RuntimeException("Erro na geração do DOCX. Código de saída: " + (finished ? process.exitValue() : "TIMEOUT"));
-            }
+           try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+               String line;
+               while ((line = reader.readLine()) != null) {
+                   logger.debug("[NodeJS]: {}", line);
+               }
+           }
 
-            return Files.readAllBytes(tempDocx.toPath());
+           boolean finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
 
-        } finally {
-            // Tenta deletar, mas não falha o request se não conseguir (apenas loga o erro se quiser)
-            if (tempJson.exists()) tempJson.delete();
-            if (tempDocx.exists()) tempDocx.delete();
-        }
+           if (!finished || process.exitValue() != 0) {
+               if (!finished) {
+                   process.destroyForcibly();
+                   logger.error("Time ao gerar DOCX após {}s", timeoutSeconds);
+               } else {
+                   logger.error("Processo Node falhou com código de saída: {}", process.exitValue());
+               }
+               throw new RuntimeException("Falha na geração do DOCX. Verfique os logs para detalhes");
+           }
+           logger.info("DOCX gerado com sucesso!");
+           return Files.readAllBytes(tempDocx);
+
+       } finally {
+           try {
+               Files.deleteIfExists(tempJson);
+               Files.deleteIfExists(tempDocx);
+           } catch (IOException e) {
+               logger.warn("Não foi possível limpar alguns arquivos temporários: {}", e.getMessage());
+           }
+       }
     }
 }
