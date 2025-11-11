@@ -1,9 +1,6 @@
 package com.jotanunes.especificacoes.exception.handler;
 
-import com.jotanunes.especificacoes.exception.EmpreendimentoNotApprovedException;
-import com.jotanunes.especificacoes.exception.ExceptionResponse;
-import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
-import com.jotanunes.especificacoes.exception.UserAlreadyRegisteredException;
+import com.jotanunes.especificacoes.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -92,12 +89,21 @@ public class CustomEntityResponseHandler {
     }
 
     @ExceptionHandler(EmpreendimentoNotApprovedException.class)
-    public final ResponseEntity<ExceptionResponse> handleEmpreendimentoNotApprovedExceptions(EmpreendimentoNotApprovedException exception, WebRequest request) {
+    public final ResponseEntity<ExceptionResponse> handleEmpreendimentoNotApprovedExceptions(WebRequest request) {
         ExceptionResponse response = new ExceptionResponse(
                 new Date(),
                 "Empreendimento em estado de aprovação, operação abortada!",
                 request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DocumentGenerationException.class)
+    public final ResponseEntity<ExceptionResponse> handleDocumentGenerationExceptions(WebRequest request) {
+        ExceptionResponse response = new ExceptionResponse(
+                new Date(),
+                "Erro interno ao processar documento",
+                request.getDescription(false));
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

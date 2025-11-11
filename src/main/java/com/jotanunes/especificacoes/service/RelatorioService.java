@@ -3,6 +3,7 @@ package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.documento.DocumentoGeradoDTO;
 import com.jotanunes.especificacoes.dto.empreendimento.EspecificacaTecnicaDTO;
+import com.jotanunes.especificacoes.exception.DocumentGenerationException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +22,18 @@ public class RelatorioService {
 
     private static final MediaType DOCX_MEDIA_TYPE = MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
-    public DocumentoGeradoDTO gerarEspecificacaoTecnica(Integer id) throws IOException, InterruptedException {
+    public DocumentoGeradoDTO gerarEspecificacaoTecnica(Integer id) {
 
         EspecificacaTecnicaDTO dados = empreendimentoService.getDadosParaRelatorio(id);
+        try {
+            byte[] docxBytes = docGenerateService.gerarDocx(dados);
 
-        byte[] docxBytes = docGenerateService.gerarDocx(dados);
+            String nomeDoDocumento = "Especificacao_" + dados.nome().replaceAll("[^a-zA-Z0-9.-]", "_") + ".docx";
 
-        String nomeDoDocumento = "Especificacao_" + dados.nome().replaceAll("[^a-zA-Z0-9.-]", "_") + ".docx";
-
-        return new DocumentoGeradoDTO(docxBytes, nomeDoDocumento, DOCX_MEDIA_TYPE);
-
+            return new DocumentoGeradoDTO(docxBytes, nomeDoDocumento, DOCX_MEDIA_TYPE);
+        } catch (IOException | InterruptedException e) {
+            throw new DocumentGenerationException("Falhar ao gerar documento", e);
+        }
     }
 
 }

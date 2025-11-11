@@ -78,7 +78,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
     }
 
     @GetMapping("/{id}/docx")
-    public ResponseEntity<byte[]> downloadAsDocx(@PathVariable Integer id) throws IOException, InterruptedException {
+    public ResponseEntity<byte[]> downloadAsDocx(@PathVariable Integer id) {
         DocumentoGeradoDTO documento = relatorioService.gerarEspecificacaoTecnica(id);
 
         return ResponseEntity.ok()
