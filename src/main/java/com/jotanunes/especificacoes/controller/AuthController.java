@@ -2,6 +2,7 @@ package com.jotanunes.especificacoes.controller;
 
 import com.jotanunes.especificacoes.dto.auth.LoginRequest;
 import com.jotanunes.especificacoes.dto.auth.LoginResponse;
+import com.jotanunes.especificacoes.service.AuthenticationService;
 import com.jotanunes.especificacoes.service.AuthorizationService;
 import com.jotanunes.especificacoes.infra.security.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,14 +20,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    public AuthController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
-    @Autowired
-    private AuthorizationService authorizationService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final AuthenticationService authenticationService;
 
     @Operation(
             summary = "Login de usuário",
@@ -34,12 +32,8 @@ public class AuthController {
     )
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.senha())
-        );
-        UserDetails userDetails = authorizationService.loadUserByUsername(request.email());
-        String token = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new LoginResponse(token));
+        LoginResponse response = authenticationService.login(request);
+        return ResponseEntity.ok(response);
     }
 
 }
