@@ -63,7 +63,7 @@ logging:
     level:
         root: INFO
         org.hibernate.SQL: DEBUG
-        com.jotanunes.especificacoes.service.DocumentService: DEBUG
+        com.jotanunes.especificacoes.service.com.jotanunes.especificacoes.service.DocGenerateService: DEBUG
 
 # Config do serviço de geração de documentos no ambiente de desenvolvimento
 app:
