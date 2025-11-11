@@ -40,6 +40,7 @@ app:
         project-path: /app/docx-gen
         script-name: gerar-doc-api.js
         timeout-seconds: 30
+        max-concurrent: 5
 
 ---
 # Perfil de desenvolvimento(dev)
