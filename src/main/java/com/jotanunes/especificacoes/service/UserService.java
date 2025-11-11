@@ -81,4 +81,23 @@ public class UserService {
         userRepository.save(user);
 
     }
+
+    @Transactional
+    public void changePasswordFirstLogin(FirstLoginPasswordChangeRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com email: " + request.getEmail()));
+
+        if (!user.isAlterarSenha()) {
+            throw new IllegalStateException("Usuário não está obrigado a alterar a senha.");
+        }
+
+        if (!passwordEncoder.matches(request.getSenhaAtual(), user.getSenha())) {
+            throw new IllegalArgumentException("Senha atual incorreta.");
+        }
+
+        user.setSenha(passwordEncoder.encode(request.getNovaSenha()));
+        user.setAlterarSenha(false);
+
+        userRepository.save(user);
+    }
 }
