@@ -24,19 +24,29 @@ public class UserController {
 
     @Operation(
             summary = "Listar todos os usuários",
-            description = "Retorna uma lista de todos os usuários cadastrados no sistema. Apenas administradores podem acessar essa informação."
+            description = "Retorna uma lista de todos os usuários cadastrados no sistema."
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USUARIO_LISTAR')")
     @GetMapping
     public List<UserResponse> findAll() {
         return userService.findAll();
     }
 
     @Operation(
-            summary = "Alterar o papel de um usuário",
-            description = "Permite alterar o papel (role) de um usuário específico. Apenas administradores podem realizar essa ação."
+            summary = "Criar novo usuário",
+            description = "Permite criar um novo usuário no sistema."
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USUARIO_CRIAR')")
+    @PostMapping
+    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserCreateRequest request) {
+        UserResponse response = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(summary = "Alterar papel de um usuário",
+               description = "Permite alterar o papel (nível de acesso) de um usuário."
+    )
+    @PreAuthorize("hasAuthority('USUARIO_EDITAR')")
     @PutMapping("/{id}/role")
     public ResponseEntity<UserResponse> updateUserRole(@PathVariable UUID id, @RequestBody RoleChangeRequest role) {
         UserResponse response = userService.updateUserRole(id, role);
@@ -44,32 +54,25 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Criar um usuário",
-            description = "Permite um ADMIN cadastrar um novo usuário no sistema"
+            summary = "Ativar/Inativar usuário",
+            description = "Permite ativar ou inativar um usuário existente."
     )
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserCreateRequest request) {
-        UserResponse response = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @Operation(
-            summary = "Atualizar status de um usuário",
-            description = "Permite um ADMIN atualizar o status de um usuário de email e novo status especificado."
-    )
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USUARIO_EDITAR')")
     @PatchMapping("/atualizar-status")
     public ResponseEntity<UserResponse> updateStatusUser(@RequestBody @Valid UserUpdateStatusRequest request) {
         UserResponse response = userService.updateStatus(request);
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Definir senha de um usuário",
+            description = "Permite redefinir a senha de um usuário específico."
+    )
+    @PreAuthorize("hasAuthority('USUARIO_EDITAR')")
     @PostMapping("/{id}/definir-senha")
     public ResponseEntity<Void> adminSetPassword(@PathVariable UUID id, @RequestBody UserPasswordResetRequest request) {
         userService.adminSetPassword(id, request);
         return ResponseEntity.noContent().build();
     }
-    
+
 }
