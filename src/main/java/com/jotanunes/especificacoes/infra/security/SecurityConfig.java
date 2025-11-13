@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-resources/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/first-login-password-change").permitAll()
                         .requestMatchers("/template/**").permitAll()
                         .anyRequest().authenticated()
                 )
