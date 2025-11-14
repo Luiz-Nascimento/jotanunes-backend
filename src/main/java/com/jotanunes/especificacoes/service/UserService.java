@@ -48,6 +48,7 @@ public class UserService {
     public UserResponse createUser(UserCreateRequest request) {
         User userMapped = userMapper.toEntityCreated(request);
         userMapped.setSenha(passwordEncoder.encode(request.senha()));
+        userMapped.setAlterarSenha(true);
         User userCreating = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userMapped.setCriadoPor(userCreating);
         User userPersisted = userRepository.save(userMapped);
@@ -78,6 +79,24 @@ public class UserService {
 
         user.setAlterarSenha(true);
 
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void changePasswordOnFirstLogin(FirstLoginPasswordChangeRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com este email."));
+
+        if (!passwordEncoder.matches(request.getSenhaAtual(), user.getSenha())) {
+            throw new IllegalArgumentException("A senha atual está incorreta.");
+        }
+
+        if (!user.isAlterarSenha()) {
+            throw new IllegalStateException("A troca de senha não é obrigatória para este usuário.");
+        }
+
+        user.setSenha(passwordEncoder.encode(request.getNovaSenha()));
+        user.setAlterarSenha(false);
         userRepository.save(user);
     }
 

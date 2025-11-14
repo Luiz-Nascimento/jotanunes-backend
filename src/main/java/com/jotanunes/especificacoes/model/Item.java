@@ -3,6 +3,8 @@ package com.jotanunes.especificacoes.model;
 
 import com.jotanunes.especificacoes.enums.ItemStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.util.Objects;
 
@@ -26,7 +28,8 @@ public class Item {
     private String descricaoCustomizada;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(columnDefinition= "item_status", nullable = false)
     private ItemStatus status = ItemStatus.PENDENTE;
 
     public Item() {
