@@ -5,16 +5,13 @@ import java.util.List;
 public enum NivelAcesso {
 
     PADRAO("ROLE_PADRAO", List.of(
-            "EMPREENDEDIMENTO_CRIAR",
-            "EMPREENDEDIMENTO_EDITAR",
-            "EMPREENDEDIMENTO_DELETAR"
+            "EMPREENDIMENTO_CRIAR",
+            "EMPREENDIMENTO_EDITAR",
+            "EMPREENDIMENTO_DELETAR"
     )),
 
     GESTOR("ROLE_GESTOR", List.of(
-            "EMPREENDEDIMENTO_CRIAR",
-            "EMPREENDEDIMENTO_EDITAR",
-            "EMPREENDEDIMENTO_DELETAR",
-            "EMPREENDEDIMENTO_APROVAR"
+            "EMPREENDIMENTO_REVISAR"
     )),
 
     ADMIN("ROLE_ADMIN", List.of(
@@ -22,10 +19,10 @@ public enum NivelAcesso {
             "USUARIO_EDITAR",
             "USUARIO_DELETAR",
             "USUARIO_LISTAR",
-            "EMPREENDEDIMENTO_CRIAR",
-            "EMPREENDEDIMENTO_EDITAR",
-            "EMPREENDEDIMENTO_DELETAR",
-            "EMPREENDEDIMENTO_APROVAR"
+            "EMPREENDIMENTO_CRIAR",
+            "EMPREENDIMENTO_EDITAR",
+            "EMPREENDIMENTO_DELETAR",
+            "EMPREENDIMENTO_REVISAR"
     ));
 
     private final String role;
