@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -147,13 +148,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.nivelAcesso == NivelAcesso.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN")
-                , new SimpleGrantedAuthority("ROLE_GESTOR"),
-                new SimpleGrantedAuthority("ROLE_PADRAO"));
-        else if (this.nivelAcesso == NivelAcesso.GESTOR) return List.of(new SimpleGrantedAuthority("ROLE_GESTOR")
-        , new SimpleGrantedAuthority("ROLE_PADRAO"));
-
-        return List.of(new SimpleGrantedAuthority("ROLE_PADRAO"));
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(this.nivelAcesso.getRole()));
+        this.nivelAcesso.getPermissoes()
+                .forEach(p -> authorities.add(new SimpleGrantedAuthority(p)));
+        return authorities;
     }
 
     @Override
