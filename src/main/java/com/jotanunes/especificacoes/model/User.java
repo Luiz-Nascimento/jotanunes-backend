@@ -151,7 +151,7 @@ public class User implements UserDetails {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(this.nivelAcesso.getRole()));
         this.nivelAcesso.getPermissoes()
-                .forEach(p -> authorities.add(new SimpleGrantedAuthority(p)));
+                .forEach(p -> authorities.add(new SimpleGrantedAuthority(p.name())));
         return authorities;
     }
 

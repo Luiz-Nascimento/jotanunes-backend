@@ -90,6 +90,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
 
     @Override
     @PostMapping
+    @PreAuthorize("hasAuthority('CRIAR_EMPREENDIMENTOS')")
     public ResponseEntity<EmpreendimentoResponse> create(@RequestBody @Valid EmpreendimentoRequest data) {
         EmpreendimentoResponse response = empreendimentoService.create(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -97,6 +98,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
 
     @Override
     @PostMapping("/copiar/{id}")
+    @PreAuthorize("hasAuthority('CRIAR_EMPREENDIMENTOS')")
     public ResponseEntity<EmpreendimentoResponse> copy(@RequestBody @Valid EmpreendimentoRequest data,
                                                        @PathVariable Integer id) {
         EmpreendimentoResponse response = empreendimentoService.copy(data, id);
@@ -105,6 +107,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
 
     @Override
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
      public ResponseEntity<EmpreendimentoResponse> update(@PathVariable Integer id,
                                                           @RequestBody @Valid EmpreendimentoUpdate data) {
         EmpreendimentoResponse response = empreendimentoService.update(id, data);
@@ -112,6 +115,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
     }
 
     @PutMapping("/observacao/{id}")
+    @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
     public ResponseEntity<EmpreendimentoResponse> adicionarObservacao(@PathVariable Integer id,
                                                                       @RequestBody @Valid EmpreendimentoObservacao data) {
         EmpreendimentoResponse response = empreendimentoService.adicionarObservacao(id, data);

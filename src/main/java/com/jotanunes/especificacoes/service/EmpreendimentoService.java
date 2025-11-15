@@ -76,7 +76,7 @@ public class EmpreendimentoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + idEmpreendimento));
         // Verifica se o empreendimento referência está aprovado
         if (!empreendimentoReferencia.getStatus().equals(EmpreendimentoStatus.APROVADO)) {
-            throw new EmpreendimentoNotApprovedException();
+            throw new EmpreendimentoNotApprovedException("Empreendimento não aprovado");
         }
         // Preenche informações do empreendimento novo
         Empreendimento empreendimentoMapped = empreendimentoMapper.requestToEntity(data);

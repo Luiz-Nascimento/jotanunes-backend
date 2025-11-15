@@ -32,7 +32,7 @@ public class RelatorioService {
 
             return new DocumentoGeradoDTO(docxBytes, nomeDoDocumento, DOCX_MEDIA_TYPE);
         } catch (IOException | InterruptedException e) {
-            throw new DocumentGenerationException("Falhar ao gerar documento", e);
+            throw new DocumentGenerationException("Falhar ao gerar documento");
         }
     }
 
