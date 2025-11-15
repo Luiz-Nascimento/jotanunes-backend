@@ -1,34 +1,28 @@
 package com.jotanunes.especificacoes.enums;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 public enum NivelAcesso {
 
-    PADRAO("ROLE_PADRAO", List.of(
-            "EMPREENDIMENTO_CRIAR",
-            "EMPREENDIMENTO_EDITAR",
-            "EMPREENDIMENTO_DELETAR"
+    PADRAO("ROLE_PADRAO", Set.of(
+            Permissoes.CRIAR_EMPREENDIMENTOS,
+            Permissoes.EDITAR_EMPREENDIMENTOS,
+            Permissoes.DESATIVAR_EMPREENDIMENTOS
     )),
 
-    GESTOR("ROLE_GESTOR", List.of(
-            "EMPREENDIMENTO_REVISAR"
+    GESTOR("ROLE_GESTOR", Set.of(
+            Permissoes.REVISAR_EMPREENDIMENTOS,
+            Permissoes.POPULAR_CATALOGOS
     )),
 
-    ADMIN("ROLE_ADMIN", List.of(
-            "USUARIO_CRIAR",
-            "USUARIO_EDITAR",
-            "USUARIO_DELETAR",
-            "USUARIO_LISTAR",
-            "EMPREENDIMENTO_CRIAR",
-            "EMPREENDIMENTO_EDITAR",
-            "EMPREENDIMENTO_DELETAR",
-            "EMPREENDIMENTO_REVISAR"
-    ));
+    ADMIN("ROLE_ADMIN", EnumSet.allOf(Permissoes.class));
 
     private final String role;
-    private final List<String> permissoes;
+    private final Set<Permissoes> permissoes;
 
-    NivelAcesso(String role, List<String> permissoes) {
+    NivelAcesso(String role, Set<Permissoes> permissoes) {
         this.role = role;
         this.permissoes = permissoes;
     }
@@ -37,7 +31,7 @@ public enum NivelAcesso {
         return role;
     }
 
-    public List<String> getPermissoes() {
+    public Set<Permissoes> getPermissoes() {
         return permissoes;
     }
 }
