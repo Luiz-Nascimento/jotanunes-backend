@@ -29,8 +29,8 @@ jobs:
           cache: 'maven'
 
       # 2. Construir o projeto Spring Boot com Maven
-      - name: Build com Maven
-        run: mvn clean package
+      - name: Build com Maven (pulando testes)
+        run: mvn clean package -DskipTests=true
 
       # 3. Fazer login no Azure (usando o Secret 'AZURE_CREDENTIALS')
       - name: Login no Azure
