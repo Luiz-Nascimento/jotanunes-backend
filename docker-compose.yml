@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   especificacoes-app:
-    image: especificacoes-app
+    image: acrjotanunes.azurecr.io/minha-api:v2.1
     ports:
       - "8080:8080"
     environment:
