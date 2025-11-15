@@ -63,7 +63,7 @@ jobs:
       - name: Deploy no Azure Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          appName: ${{ env.AZURE_CONTAINER_APP_NAME }}
+          containerAppName: ${{ env.AZURE_CONTAINER_APP_NAME }}
           resourceGroup: ${{ env.AZURE_RESOURCE_GROUP }}
           # Diz ao Container App para usar a nova imagem que acabamos de enviar
           imageToDeploy: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
