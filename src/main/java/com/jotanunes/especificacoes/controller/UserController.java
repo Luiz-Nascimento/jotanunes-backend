@@ -26,7 +26,7 @@ public class UserController {
             summary = "Listar todos os usuários",
             description = "Retorna uma lista de todos os usuários cadastrados no sistema."
     )
-    @PreAuthorize("hasAuthority('USUARIO_LISTAR')")
+    @PreAuthorize("hasAuthority('LISTAR_USUARIOS')")
     @GetMapping
     public List<UserResponse> findAll() {
         return userService.findAll();
@@ -36,7 +36,7 @@ public class UserController {
             summary = "Criar novo usuário",
             description = "Permite criar um novo usuário no sistema."
     )
-    @PreAuthorize("hasAuthority('USUARIO_CRIAR')")
+    @PreAuthorize("hasAuthority('CRIAR_USUARIOS')")
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserCreateRequest request) {
         UserResponse response = userService.createUser(request);
@@ -46,7 +46,7 @@ public class UserController {
     @Operation(summary = "Alterar papel de um usuário",
                description = "Permite alterar o papel (nível de acesso) de um usuário."
     )
-    @PreAuthorize("hasAuthority('USUARIO_EDITAR')")
+    @PreAuthorize("hasAuthority('EDITAR_USUARIOS')")
     @PutMapping("/{id}/role")
     public ResponseEntity<UserResponse> updateUserRole(@PathVariable UUID id, @RequestBody RoleChangeRequest role) {
         UserResponse response = userService.updateUserRole(id, role);
@@ -57,7 +57,7 @@ public class UserController {
             summary = "Ativar/Inativar usuário",
             description = "Permite ativar ou inativar um usuário existente."
     )
-    @PreAuthorize("hasAuthority('USUARIO_EDITAR')")
+    @PreAuthorize("hasAuthority('EDITAR_USUARIOS')")
     @PatchMapping("/atualizar-status")
     public ResponseEntity<UserResponse> updateStatusUser(@RequestBody @Valid UserUpdateStatusRequest request) {
         UserResponse response = userService.updateStatus(request);
@@ -68,7 +68,7 @@ public class UserController {
             summary = "Definir senha de um usuário",
             description = "Permite redefinir a senha de um usuário específico."
     )
-    @PreAuthorize("hasAuthority('USUARIO_EDITAR')")
+    @PreAuthorize("hasAuthority('EDITAR_USUARIOS')")
     @PostMapping("/{id}/definir-senha")
     public ResponseEntity<Void> adminSetPassword(@PathVariable UUID id, @RequestBody UserPasswordResetRequest request) {
         userService.adminSetPassword(id, request);
