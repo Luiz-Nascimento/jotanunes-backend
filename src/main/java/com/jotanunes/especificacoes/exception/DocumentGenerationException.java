@@ -1,23 +1,9 @@
 package com.jotanunes.especificacoes.exception;
 
-public class DocumentGenerationException extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
+public class DocumentGenerationException extends ApiBusinessException {
     public DocumentGenerationException(String message) {
-        super(message);
+        super(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-  public DocumentGenerationException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public DocumentGenerationException(Throwable cause) {
-    super(cause);
-  }
-
-  public DocumentGenerationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
-
-  public DocumentGenerationException() {
-  }
 }

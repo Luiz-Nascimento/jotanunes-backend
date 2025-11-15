@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,6 +21,16 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class CustomEntityResponseHandler {
+
+    @ExceptionHandler(ApiBusinessException.class)
+    public final ResponseEntity<ExceptionResponse> handleApiBusinessException(ApiBusinessException ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return new ResponseEntity<>(exceptionResponse, ex.getHttpStatus());
+    }
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex, WebRequest request) {
@@ -37,26 +48,6 @@ public class CustomEntityResponseHandler {
         exception.getBindingResult().getFieldErrors().forEach(
                 error -> errors.put(error.getField(), error.getDefaultMessage()));
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public final ResponseEntity<ExceptionResponse> handleNotFoundExceptions(
-            ResourceNotFoundException exception, WebRequest request) {
-        ExceptionResponse response = new ExceptionResponse(
-                new Date(),
-                exception.getMessage(),
-                request.getDescription(false));
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(UserAlreadyRegisteredException.class)
-    public final ResponseEntity<ExceptionResponse> handleUserAlreadyFoundExceptions(
-            UserAlreadyRegisteredException exception, WebRequest request) {
-        ExceptionResponse response = new ExceptionResponse(
-                new Date(),
-                exception.getMessage(),
-                request.getDescription(false));
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -84,15 +75,6 @@ public class CustomEntityResponseHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoResourceFoundException.class)
-    public final ResponseEntity<ExceptionResponse> handleNoResourceFoundExceptions(
-            NoResourceFoundException exception, WebRequest request) {
-        ExceptionResponse response = new ExceptionResponse(
-                new Date(),
-                "Recurso não encontrado: " + exception.getResourcePath(), "Método : " + exception.getHttpMethod() + " - " +
-                request.getDescription(false));
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public final ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableExceptions(
@@ -104,22 +86,16 @@ public class CustomEntityResponseHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(EmpreendimentoNotApprovedException.class)
-    public final ResponseEntity<ExceptionResponse> handleEmpreendimentoNotApprovedExceptions(WebRequest request) {
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public final ResponseEntity<ExceptionResponse> handleAuthorizationDeniedException(
+            AuthorizationDeniedException exception, WebRequest request) {
         ExceptionResponse response = new ExceptionResponse(
                 new Date(),
-                "Empreendimento em estado de aprovação, operação abortada!",
-                request.getDescription(false));
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                exception.getMessage(),
+                request.getDescription(false)
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(DocumentGenerationException.class)
-    public final ResponseEntity<ExceptionResponse> handleDocumentGenerationExceptions(WebRequest request) {
-        ExceptionResponse response = new ExceptionResponse(
-                new Date(),
-                "Erro interno ao processar documento",
-                request.getDescription(false));
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
 }
