@@ -12,17 +12,16 @@ import com.jotanunes.especificacoes.mapper.ItemMapper;
 import com.jotanunes.especificacoes.mapper.RevisaoItemMapper;
 import com.jotanunes.especificacoes.model.*;
 import com.jotanunes.especificacoes.repository.*;
-import com.jotanunes.especificacoes.util.StatusVerifyCascadeUtil;
+import com.jotanunes.especificacoes.util.AtualizadorStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,7 @@ public class ItemService {
     @Autowired
     RevisaoItemRepository revisaoItemRepository;
     @Autowired
-    StatusVerifyCascadeUtil verifyCascadeUtil;
+    AtualizadorStatus verifyCascadeUtil;
 
     private final Logger logger = LoggerFactory.getLogger(ItemService.class);
     @Autowired
@@ -85,7 +84,7 @@ public class ItemService {
         item.setCatalogoItem(itemReferencia);
         item.setAmbiente(ambiente);
         Item itemSalvo = itemRepository.save(item);
-        verifyCascadeUtil.atualizarStatusCascade(item);
+        verifyCascadeUtil.atualizarStatusAmbiente(item);
         logger.info("Novo item criado com id {}, associado ao ambiente: {}", itemSalvo.getId(), data.idAmbiente());
         return itemMapper.toDto(item);
     }
@@ -96,7 +95,7 @@ public class ItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
         item.setDescricaoCustomizada(data.descricaoCustomizada());
         item.setStatus(ItemStatus.PENDENTE);
-        verifyCascadeUtil.atualizarStatusCascade(item);
+        verifyCascadeUtil.atualizarStatusAmbiente(item);
         logger.info("Item com id {} atualizado", id);
         return itemMapper.toDto(item);
     }
@@ -119,7 +118,7 @@ public class ItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com email: " + email));
         item.setStatus(data.status());
 
-        verifyCascadeUtil.atualizarStatusCascade(item);
+        verifyCascadeUtil.atualizarStatusAmbiente(item);
 
         RevisaoItem revisao = new RevisaoItem(item, data.status(), data.motivo(), user);
         RevisaoItem revisaoSalva = revisaoItemRepository.save(revisao);
@@ -129,34 +128,10 @@ public class ItemService {
     }
 
     @Transactional
-    public List<RevisaoItemResponse> reviewMultiple(List<RevisaoItemRequest> requests) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com email: " + email));
-
-        List<RevisaoItem> revisoes = new ArrayList<>();
-        for (RevisaoItemRequest data : requests) {
-            Item item = itemRepository.findById(data.itemId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + data.itemId()));
-            if (item.getStatus() == ItemStatus.APROVADO || item.getStatus() == ItemStatus.REPROVADO) {
-                throw new IllegalStateException("Item já foi revisado com status: " + item.getStatus());
-            }
-            if (data.status() == ItemStatus.REPROVADO && data.motivo() == null) {
-                throw new IllegalArgumentException("Motivo é obrigatório para itens reprovados.");
-            }
-            item.setStatus(data.status());
-            revisoes.add(new RevisaoItem(item, data.status(), data.motivo(), user));
-            verifyCascadeUtil.atualizarStatusCascade(item);
-        }
-        List<RevisaoItem> revisoesSalvas = revisaoItemRepository.saveAll(revisoes);
-        revisoesSalvas.forEach(revisao ->
-                logger.info("Item com id {} revisado para o status {} por usuario {}",
-                        revisao.getItem().getId(), revisao.getStatus(), email)
-        );
-        return revisoesSalvas.stream()
-                .map(revisaoItemMapper::toDto)
+    public List<RevisaoItemResponse> reviewMultiple(List<RevisaoItemRequest> revisoes) {
+        return revisoes.stream().map(this::review)
                 .collect(Collectors.toList());
+
     }
 
     public void delete(Integer id) {
