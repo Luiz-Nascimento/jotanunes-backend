@@ -1,45 +1,55 @@
 package com.jotanunes.especificacoes.util;
 
-import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
+import com.jotanunes.especificacoes.enums.AmbienteStatus;
+import com.jotanunes.especificacoes.enums.ItemStatus;
 import com.jotanunes.especificacoes.model.Ambiente;
-import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.model.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StatusVerifyCascadeUtil {
+public class AtualizadorStatus {
 
-    private static final Logger logger = LoggerFactory.getLogger(StatusVerifyCascadeUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(AtualizadorStatus.class);
 
-    public void atualizarStatusCascade(Item item) {
+    public void atualizarStatusAmbiente(Item item) {
         Ambiente ambiente = item.getAmbiente();
-        // Verifica se todos os itens do ambiente estão aprovados
-        boolean allApproved = ambiente.getItens().stream()
-                .allMatch(i -> i.getStatus() == com.jotanunes.especificacoes.enums.ItemStatus.APROVADO);
-        boolean anyPendente = ambiente.getItens().stream()
-                .anyMatch(i -> i.getStatus() == com.jotanunes.especificacoes.enums.ItemStatus.PENDENTE);
-        boolean anyReprovado = ambiente.getItens().stream()
-                .anyMatch(i -> i.getStatus() == com.jotanunes.especificacoes.enums.ItemStatus.REPROVADO);
-        // Caso todos itens estejam aprovados
-        if (allApproved) {
-            // Atualiza o status do ambiente para APROVADO
-            ambiente.setStatus(com.jotanunes.especificacoes.enums.AmbienteStatus.APROVADO);
+        Integer ambienteId = ambiente.getId();
+        var itens = ambiente.getItens();
+        //Regras de atualização:
+        //Caso um ambiente contenha todos itens aprovados ele está aprovado.
+        //Caso um ambiente contenha algum item pendente, ele está pendente.
+        //Caso um ambiente contenha algum item reprovado e nenhum pendente, ele está reprovado.
+        // Verificação de aprovação:
+        boolean todosItensAprovados = itens.stream().allMatch
+                (i -> i.getStatus() == ItemStatus.APROVADO);
+        if (todosItensAprovados) {
+            if (ambiente.getStatus() != AmbienteStatus.APROVADO) {
+                ambiente.setStatus(AmbienteStatus.APROVADO);
+                logger.info("Ambiente {} aprovado", ambienteId);
+            }
+            return;
         }
-        // Se não, caso algum item esteja pendente
-        else if (anyPendente) {
-            // Atualiza o status do ambiente para PENDENTE
-            ambiente.setStatus(com.jotanunes.especificacoes.enums.AmbienteStatus.PENDENTE);
-            logger.info("Ambiente ID {} status atualizado para PENDENTE", ambiente.getId());
+        boolean algumItemPendente = itens.stream().anyMatch(
+                i -> i.getStatus() == ItemStatus.PENDENTE);
+        //Verificação de pendência:
+        if (algumItemPendente) {
+            if (ambiente.getStatus() != AmbienteStatus.PENDENTE) {
+                ambiente.setStatus(AmbienteStatus.PENDENTE);
+                logger.info("Ambiente {} pendente", ambienteId);
+            }
+            return;
         }
-        // Se não, caso algum item esteja reprovado
-        else if (anyReprovado) {
-            // Atualiza o status do ambiente para REPROVADO
-            ambiente.setStatus(com.jotanunes.especificacoes.enums.AmbienteStatus.REPROVADO);
-            logger.info("Ambiente ID {} status atualizado para REPROVADO", ambiente.getId());
+        //Verificação de reprovação:
+        boolean algumItemReprovado = itens.stream().anyMatch(
+                i -> i.getStatus() == ItemStatus.REPROVADO);
+        if (algumItemReprovado) {
+            if (ambiente.getStatus() != AmbienteStatus.REPROVADO) {
+                ambiente.setStatus(AmbienteStatus.REPROVADO);
+                logger.info("Ambiente {} reprovado", ambienteId);
+            }
         }
-
     }
 
 }
