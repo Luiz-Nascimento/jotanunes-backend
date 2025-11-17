@@ -3,13 +3,10 @@ package com.jotanunes.especificacoes.model;
 import com.jotanunes.especificacoes.enums.*;
 import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
-import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -54,7 +51,7 @@ public class Empreendimento {
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(columnDefinition = "empreendimento_status", nullable = false)
-    private EmpreendimentoStatus status = EmpreendimentoStatus.PENDENTE;
+    private EmpreendimentoStatus status = EmpreendimentoStatus.RASCUNHO;
 
     @OneToMany(mappedBy = "empreendimento", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Ambiente> ambientes = new HashSet<>();
