@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.DocFlavor;
 import java.io.IOException;
 import java.util.List;
 
@@ -103,6 +104,25 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
                                                        @PathVariable Integer id) {
         EmpreendimentoResponse response = empreendimentoService.copy(data, id);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PatchMapping("/{id}/submeter")
+    public ResponseEntity<Void> submeter(@PathVariable Integer id) {
+        empreendimentoService.enviarParaRevisao(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/aprovar")
+    @PreAuthorize("hasAuthority('REVISAR_EMPREENDIMENTOS')")
+    public ResponseEntity<Void> aprovar(@PathVariable Integer id) {
+        empreendimentoService.aprovar(id);
+        return ResponseEntity.ok().build();
+    }
+    @PatchMapping("/{id}/reprovar")
+    @PreAuthorize("hasAuthority('REVISAR_EMPREENDIMENTOS')")
+    public ResponseEntity<Void> reprovar(@PathVariable Integer id) {
+        empreendimentoService.reprovar(id);
+        return ResponseEntity.ok().build();
     }
 
     @Override
