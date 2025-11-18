@@ -6,13 +6,12 @@ import com.jotanunes.especificacoes.dto.ambiente.AmbienteRequest;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
-import com.jotanunes.especificacoes.mapper.ItemMapper;
 import com.jotanunes.especificacoes.model.Ambiente;
 import com.jotanunes.especificacoes.model.CatalogoAmbiente;
 import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.model.Item;
 import com.jotanunes.especificacoes.repository.*;
-import com.jotanunes.especificacoes.util.StatusVerifyCascadeUtil;
+import com.jotanunes.especificacoes.util.AtualizadorStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,15 +27,15 @@ public class AmbienteService {
     private final EmpreendimentoRepository empreendimentoRepository;
 
     private final Logger logger = LoggerFactory.getLogger(AmbienteService.class);
-    private final StatusVerifyCascadeUtil statusVerifyCascadeUtil;
+    private final AtualizadorStatus atualizadorStatus;
     private final CatalogoAmbienteRepository catalogoAmbienteRepository;
     private final CatalogoItemRepository catalogoItemRepository;
 
-    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, StatusVerifyCascadeUtil statusVerifyCascadeUtil, CatalogoAmbienteRepository catalogoAmbienteRepository, CatalogoItemRepository catalogoItemRepository) {
+    public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, AtualizadorStatus atualizadorStatus, CatalogoAmbienteRepository catalogoAmbienteRepository, CatalogoItemRepository catalogoItemRepository) {
         this.ambienteRepository = ambienteRepository;
         this.ambienteMapper = ambienteMapper;
         this.empreendimentoRepository = empreendimentoRepository;
-        this.statusVerifyCascadeUtil = statusVerifyCascadeUtil;
+        this.atualizadorStatus = atualizadorStatus;
         this.catalogoAmbienteRepository = catalogoAmbienteRepository;
         this.catalogoItemRepository = catalogoItemRepository;
     }
@@ -69,8 +68,6 @@ public class AmbienteService {
         Ambiente ambiente = buildBaseAmbiente(empreendimento, ambienteModelo);
 
         Ambiente ambienteSalvo = ambienteRepository.save(ambiente);
-        saveAndPostProcess(ambienteSalvo);
-
         logger.info("Ambiente criado com id {} no empreendimento: {} ", ambienteSalvo.getId(), empreendimento.getId());
         return ambienteMapper.toDto(ambienteSalvo);
     }
@@ -96,8 +93,6 @@ public class AmbienteService {
         ambiente.getItens().addAll(itensModelo);
 
         Ambiente ambienteSalvo = ambienteRepository.save(ambiente);
-        saveAndPostProcess(ambienteSalvo);
-
         logger.info("Ambiente criado com id {} no empreendimento: {} ", ambienteSalvo.getId(), empreendimento.getId());
 
         return ambienteMapper.toDto(ambienteSalvo);
@@ -112,7 +107,6 @@ public class AmbienteService {
         logger.info("Ambiente deletado com id: {}", id);
     }
 
-    // -------------------------- Helpers (refatoração para clareza) --------------------------
     private Ambiente findAmbienteOrThrow(Integer id) {
         return ambienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id));
@@ -135,10 +129,5 @@ public class AmbienteService {
         return ambiente;
     }
 
-    private void saveAndPostProcess(Ambiente ambienteSalvo) {
-        // atualizar status em cascade usando a entidade salva (com id)
-        statusVerifyCascadeUtil.atualizarStatusCascade(ambienteSalvo);
-        // caso precise salvar itens ou executar lógica adicional, fazê-lo aqui.
-    }
 
 }
