@@ -4,6 +4,8 @@ import com.jotanunes.especificacoes.dto.empreendimento.*;
 import com.jotanunes.especificacoes.enums.AmbienteStatus;
 import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
 import com.jotanunes.especificacoes.enums.ItemStatus;
+import com.jotanunes.especificacoes.exception.ApiBusinessException;
+import com.jotanunes.especificacoes.exception.EmpreendimentoBusinessLogicException;
 import com.jotanunes.especificacoes.exception.EmpreendimentoNotApprovedException;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.AmbienteMapper;
@@ -13,6 +15,7 @@ import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
 import com.jotanunes.especificacoes.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,6 +73,55 @@ public class EmpreendimentoService {
         logger.info("Empreendimento criado com id: {}", empreendimentoPersistido.getId());
         return empreendimentoMapper.toDto(empreendimentoPersistido);
     }
+    //Função para enviar um empreendimento para revisão (Deixar pendente)
+    @Transactional
+    public void enviarParaRevisao(Integer id) {
+        Empreendimento empreendimento = empreendimentoRepository.findById((id))
+                .orElseThrow(() -> new ResourceNotFoundException(("Empreendimento não encontrado com id: " + id)));
+
+        // Verificar se não está aprovado
+        if (empreendimento.getStatus().equals(EmpreendimentoStatus.APROVADO)) {
+            throw new EmpreendimentoBusinessLogicException("Empreendimento já foi aprovado, alteração bloqueada");
+        }
+        else if(empreendimento.getStatus() == EmpreendimentoStatus.PENDENTE) {
+            throw new EmpreendimentoBusinessLogicException("Empreendimento já foi enviado para revisão!");
+        }
+        // Verificar se há algum ambiente reprovado e armazena a resposta
+        boolean anyAmbienteReprovado = empreendimento.getAmbientes().stream().anyMatch(
+                ambiente -> ambiente.getStatus() == AmbienteStatus.REPROVADO);
+        if (anyAmbienteReprovado) {
+            throw new EmpreendimentoBusinessLogicException("Empreendimento ainda não corrigido");
+        }
+        empreendimento.setStatus(EmpreendimentoStatus.PENDENTE);
+    }
+    //Função para aprovar um empreendimento
+    @Transactional
+    public void aprovar(Integer id) {
+        Empreendimento empreendimento = empreendimentoRepository.findById((id))
+                .orElseThrow(() -> new ResourceNotFoundException(("Empreendimento não encontrado com id: " + id)));
+
+        boolean allAmbientesApproved = empreendimento.getAmbientes().stream().allMatch(
+                ambiente -> ambiente.getStatus() == AmbienteStatus.APROVADO);
+        if (!allAmbientesApproved) {
+            throw new EmpreendimentoBusinessLogicException("Empreendimento ainda não devidamente revisado");
+        }
+        empreendimento.setStatus(EmpreendimentoStatus.APROVADO);
+    }
+    //Função para reprovar um empreendimento
+    @Transactional
+    public void reprovar(Integer id) {
+        Empreendimento empreendimento = empreendimentoRepository.findById((id))
+                .orElseThrow(() -> new ResourceNotFoundException(("Empreendimento não encontrado com id: " + id)));
+
+        boolean anyAmbienteNaoRevisado = empreendimento.getAmbientes().stream()
+                .anyMatch(ambiente -> ambiente.getStatus() == AmbienteStatus.PENDENTE);
+
+        if (anyAmbienteNaoRevisado) {
+            throw new EmpreendimentoBusinessLogicException("Empreendimento não devidamente revisado");
+        }
+        empreendimento.setStatus(EmpreendimentoStatus.REPROVADO);
+    }
+
     public EmpreendimentoResponse copy(EmpreendimentoRequest data, Integer idEmpreendimento) {
         // Verificar se o empreendimento referência existe
         Empreendimento empreendimentoReferencia = empreendimentoRepository.findById(idEmpreendimento)

@@ -82,7 +82,7 @@ public class ItemController {
             description = "Revisa um único item, podendo aprovar ou reprova-lo"
     )
     @PreAuthorize("hasAuthority('REVISAR_EMPREENDIMENTOS')")
-    @PutMapping("/revisarItem")
+    @PutMapping("/revisar")
     public ResponseEntity<RevisaoItemResponse> reviewItem(@RequestBody @Valid RevisaoItemRequest request) {
         RevisaoItemResponse response = service.review(request);
         return ResponseEntity.ok(response);
@@ -92,7 +92,7 @@ public class ItemController {
             description = "Revisa vários itens, podendo aprova-los ou reprova-los"
     )
     @PreAuthorize("hasAuthority('REVISAR_EMPREENDIMENTOS')")
-    @PutMapping("/revisarItens")
+    @PutMapping("/revisar-varios")
     public ResponseEntity<List<RevisaoItemResponse>> reviewItems(@RequestBody @Valid List<RevisaoItemRequest> requests) {
         List<RevisaoItemResponse> responses = service.reviewMultiple(requests);
         return ResponseEntity.ok(responses);
