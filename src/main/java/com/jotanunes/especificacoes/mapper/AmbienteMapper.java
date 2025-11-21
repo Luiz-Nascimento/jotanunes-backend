@@ -12,6 +12,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {ItemMapper.class})
 public interface AmbienteMapper {
+    @Mapping(source = "catalogoAmbiente.id", target = "catalogoAmbienteId")
     @Mapping(source = "catalogoAmbiente.nome", target = "catalogoAmbienteNome")
     @Mapping(source = "catalogoAmbiente.tipo", target = "tipoAmbienteCatalogo")
     @Mapping(source = "empreendimento.id", target = "idEmpreendimento")
