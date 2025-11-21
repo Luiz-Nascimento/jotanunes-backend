@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface AmbienteRepository extends JpaRepository<Ambiente, Integer> {
     List<Ambiente> findByEmpreendimentoId(Integer id);
+    long countByEmpreendimentoId(Integer empreendimentoId);
 }

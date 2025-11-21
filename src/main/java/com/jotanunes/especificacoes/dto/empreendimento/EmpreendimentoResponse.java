@@ -16,6 +16,10 @@ public record EmpreendimentoResponse(
         List<String> observacoes,
         String criadoPor,
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-        LocalDateTime dataCriacao
+        LocalDateTime dataCriacao,
+        Integer totalAmbientes,
+        Integer totalItens,
+        Integer totalMarcas,
+        Integer totalMateriais
 ) {
 }
