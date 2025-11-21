@@ -2,6 +2,7 @@ package com.jotanunes.especificacoes.model;
 
 
 import com.jotanunes.especificacoes.enums.AmbienteStatus;
+import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
@@ -84,6 +85,10 @@ public class Ambiente {
         if(!this.itens.isEmpty()) this.itens.clear();
         this.itens.addAll(itens);
     }
+    public boolean isApprovedOrPending() {
+        return status == AmbienteStatus.APROVADO || status == AmbienteStatus.PENDENTE;
+    }
+
 
     @Override
     public boolean equals(Object o) {

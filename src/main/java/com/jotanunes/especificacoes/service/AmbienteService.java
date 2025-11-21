@@ -32,9 +32,6 @@ public class AmbienteService {
     private final CatalogoAmbienteRepository catalogoAmbienteRepository;
     private final CatalogoItemRepository catalogoItemRepository;
 
-    private static final EnumSet<EmpreendimentoStatus> STATUS_INVALIDOS_ALTERACAO =
-            EnumSet.of(EmpreendimentoStatus.PENDENTE, EmpreendimentoStatus.APROVADO);
-
     public AmbienteService(AmbienteRepository ambienteRepository, AmbienteMapper ambienteMapper, EmpreendimentoRepository empreendimentoRepository, CatalogoAmbienteRepository catalogoAmbienteRepository, CatalogoItemRepository catalogoItemRepository) {
         this.ambienteRepository = ambienteRepository;
         this.ambienteMapper = ambienteMapper;
@@ -66,10 +63,8 @@ public class AmbienteService {
     @Transactional
     public AmbienteResponse create(AmbienteRequest data) {
         Empreendimento empreendimento = findEmpreendimentoOrThrow(data.idEmpreendimento());
-        boolean isApprovedOrPending = empreendimento.getStatus() == EmpreendimentoStatus.APROVADO ||
-                empreendimento.getStatus() == EmpreendimentoStatus.PENDENTE;
-        if (isApprovedOrPending) {
-            throw new EmpreendimentoBusinessLogicException("Status do empreendimento não pode sofrer alterações");
+        if (empreendimento.isApprovedOrPending()) {
+            throw new EmpreendimentoBusinessLogicException("Empreendimento não pode sofrer alterações");
         }
         CatalogoAmbiente ambienteModelo = findCatalogoAmbienteOrThrow(data.idCatalogoAmbiente());
 
@@ -83,8 +78,7 @@ public class AmbienteService {
     @Transactional
     public AmbienteResponse createWithItens(AmbienteRequest data) {
         Empreendimento empreendimento = findEmpreendimentoOrThrow(data.idEmpreendimento());
-        boolean isApprovedOrPending = STATUS_INVALIDOS_ALTERACAO.contains(empreendimento.getStatus());
-        if (isApprovedOrPending) {
+        if (empreendimento.isApprovedOrPending()) {
             throw new EmpreendimentoBusinessLogicException("Status do empreendimento não pode sofrer alterações");
         }
         CatalogoAmbiente ambienteModelo = findCatalogoAmbienteOrThrow(data.idCatalogoAmbiente());
@@ -114,9 +108,7 @@ public class AmbienteService {
     public void delete(Integer id) {
         Ambiente ambiente = ambienteRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Ambiente não encontrado com id: " + id));
-        boolean isEmpreendimentoApprovedOrPending = STATUS_INVALIDOS_ALTERACAO
-                .contains(ambiente.getEmpreendimento().getStatus());
-        if (isEmpreendimentoApprovedOrPending) {
+        if (ambiente.getEmpreendimento().isApprovedOrPending()) {
             throw new EmpreendimentoBusinessLogicException("Status do empreendimento não pode sofrer alterações");
         }
         ambienteRepository.deleteById(id);
