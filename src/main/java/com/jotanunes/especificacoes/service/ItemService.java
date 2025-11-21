@@ -7,15 +7,15 @@ import com.jotanunes.especificacoes.dto.item.ItemUpdate;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemRequest;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
 import com.jotanunes.especificacoes.enums.ItemStatus;
+import com.jotanunes.especificacoes.event.ItemAtualizadoEvent;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.ItemMapper;
 import com.jotanunes.especificacoes.mapper.RevisaoItemMapper;
 import com.jotanunes.especificacoes.model.*;
 import com.jotanunes.especificacoes.repository.*;
-import com.jotanunes.especificacoes.util.AtualizadorStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,26 +28,26 @@ import java.util.stream.Collectors;
 @Service
 public class ItemService {
 
+    private final Logger logger = LoggerFactory.getLogger(ItemService.class);
+
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
     private final AmbienteRepository ambienteRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RevisaoItemRepository revisaoItemRepository;
-    @Autowired
-    AtualizadorStatus verifyCascadeUtil;
+    private final UserRepository userRepository;
+    private final RevisaoItemRepository revisaoItemRepository;
+    private final RevisaoItemMapper revisaoItemMapper;
+    private final CatalogoItemRepository catalogoItemRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    private final Logger logger = LoggerFactory.getLogger(ItemService.class);
-    @Autowired
-    private RevisaoItemMapper revisaoItemMapper;
-    @Autowired
-    private CatalogoItemRepository catalogoItemRepository;
-
-    public ItemService(ItemRepository itemRepository, ItemMapper itemMapper, AmbienteRepository ambienteRepository) {
+    public ItemService(ItemRepository itemRepository, ItemMapper itemMapper, AmbienteRepository ambienteRepository, UserRepository userRepository, RevisaoItemRepository revisaoItemRepository, RevisaoItemMapper revisaoItemMapper, CatalogoItemRepository catalogoItemRepository, ApplicationEventPublisher eventPublisher) {
         this.itemRepository = itemRepository;
         this.itemMapper = itemMapper;
         this.ambienteRepository = ambienteRepository;
+        this.userRepository = userRepository;
+        this.revisaoItemRepository = revisaoItemRepository;
+        this.revisaoItemMapper = revisaoItemMapper;
+        this.catalogoItemRepository = catalogoItemRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public Page<ItemResponse> findAll(Pageable pageable) {
@@ -84,7 +84,6 @@ public class ItemService {
         item.setCatalogoItem(itemReferencia);
         item.setAmbiente(ambiente);
         Item itemSalvo = itemRepository.save(item);
-        verifyCascadeUtil.atualizarStatusAmbiente(item);
         logger.info("Novo item criado com id {}, associado ao ambiente: {}", itemSalvo.getId(), data.idAmbiente());
         return itemMapper.toDto(item);
     }
@@ -95,7 +94,7 @@ public class ItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
         item.setDescricaoCustomizada(data.descricaoCustomizada());
         item.setStatus(ItemStatus.PENDENTE);
-        verifyCascadeUtil.atualizarStatusAmbiente(item);
+        eventPublisher.publishEvent(new ItemAtualizadoEvent(item));
         logger.info("Item com id {} atualizado", id);
         return itemMapper.toDto(item);
     }
@@ -117,9 +116,7 @@ public class ItemService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com email: " + email));
         item.setStatus(data.status());
-
-        verifyCascadeUtil.atualizarStatusAmbiente(item);
-
+        eventPublisher.publishEvent(new ItemAtualizadoEvent(item));
         RevisaoItem revisao = new RevisaoItem(item, data.status(), data.motivo(), user);
         RevisaoItem revisaoSalva = revisaoItemRepository.save(revisao);
 
