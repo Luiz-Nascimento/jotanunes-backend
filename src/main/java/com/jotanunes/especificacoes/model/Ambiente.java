@@ -85,8 +85,8 @@ public class Ambiente {
         if(!this.itens.isEmpty()) this.itens.clear();
         this.itens.addAll(itens);
     }
-    public boolean isApprovedOrPending() {
-        return status == AmbienteStatus.APROVADO || status == AmbienteStatus.PENDENTE;
+    public boolean isApproved() {
+        return status == AmbienteStatus.APROVADO;
     }
 
 

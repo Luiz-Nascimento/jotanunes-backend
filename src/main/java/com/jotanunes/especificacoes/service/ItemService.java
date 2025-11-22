@@ -80,7 +80,7 @@ public class ItemService {
     public ItemResponse create(ItemRequest data) {
         Ambiente ambiente = ambienteRepository.findById(data.idAmbiente())
                 .orElseThrow(() -> new ResourceNotFoundException("Ambiente nao encontrado com id: " + data.idAmbiente()));
-        if (ambiente.isApprovedOrPending()) {
+        if (ambiente.isApproved()) {
             throw new EmpreendimentoBusinessLogicException("Status do ambiente não permite alterações");
         }
         CatalogoItem itemReferencia = catalogoItemRepository.findById(data.idItemCatalogo())
@@ -97,7 +97,7 @@ public class ItemService {
     public ItemResponse update(Integer id, ItemUpdate data) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
-        if (item.getAmbiente().isApprovedOrPending()) {
+        if (item.getAmbiente().isApproved()) {
             throw new EmpreendimentoBusinessLogicException("Status do ambiente, não pode sofrer alterações");
         }
         item.setDescricaoCustomizada(data.descricaoCustomizada());
@@ -142,7 +142,7 @@ public class ItemService {
     public void delete(Integer id) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado"));
-        if (item.getAmbiente().isApprovedOrPending()) {
+        if (item.getAmbiente().isApproved()) {
             throw new EmpreendimentoBusinessLogicException("Item não pode ser deletado, ambiente pendente ou aprovado");
         }
         itemRepository.deleteById(id);
