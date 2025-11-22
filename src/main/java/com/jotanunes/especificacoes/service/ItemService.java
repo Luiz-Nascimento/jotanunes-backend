@@ -8,6 +8,7 @@ import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemRequest;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
 import com.jotanunes.especificacoes.enums.ItemStatus;
 import com.jotanunes.especificacoes.event.ItemAtualizadoEvent;
+import com.jotanunes.especificacoes.exception.EmpreendimentoBusinessLogicException;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.ItemMapper;
 import com.jotanunes.especificacoes.mapper.RevisaoItemMapper;
@@ -38,6 +39,7 @@ public class ItemService {
     private final RevisaoItemMapper revisaoItemMapper;
     private final CatalogoItemRepository catalogoItemRepository;
     private final ApplicationEventPublisher eventPublisher;
+
 
     public ItemService(ItemRepository itemRepository, ItemMapper itemMapper, AmbienteRepository ambienteRepository, UserRepository userRepository, RevisaoItemRepository revisaoItemRepository, RevisaoItemMapper revisaoItemMapper, CatalogoItemRepository catalogoItemRepository, ApplicationEventPublisher eventPublisher) {
         this.itemRepository = itemRepository;
@@ -78,6 +80,9 @@ public class ItemService {
     public ItemResponse create(ItemRequest data) {
         Ambiente ambiente = ambienteRepository.findById(data.idAmbiente())
                 .orElseThrow(() -> new ResourceNotFoundException("Ambiente nao encontrado com id: " + data.idAmbiente()));
+        if (ambiente.isApproved()) {
+            throw new EmpreendimentoBusinessLogicException("Status do ambiente não permite alterações");
+        }
         CatalogoItem itemReferencia = catalogoItemRepository.findById(data.idItemCatalogo())
                 .orElseThrow(() -> new ResourceNotFoundException("Item de catálogo não encontrado com id: " + data.idItemCatalogo()));
         Item item = new Item();
@@ -92,6 +97,9 @@ public class ItemService {
     public ItemResponse update(Integer id, ItemUpdate data) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
+        if (item.getAmbiente().isApproved()) {
+            throw new EmpreendimentoBusinessLogicException("Status do ambiente, não pode sofrer alterações");
+        }
         item.setDescricaoCustomizada(data.descricaoCustomizada());
         item.setStatus(ItemStatus.PENDENTE);
         eventPublisher.publishEvent(new ItemAtualizadoEvent(item));
@@ -132,10 +140,13 @@ public class ItemService {
     }
 
     public void delete(Integer id) {
-        if (!itemRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Ambiente não encontrado com id: " + id);
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado"));
+        if (item.getAmbiente().isApproved()) {
+            throw new EmpreendimentoBusinessLogicException("Item não pode ser deletado, ambiente pendente ou aprovado");
         }
         itemRepository.deleteById(id);
         logger.info("Deletado item com id {}", id);
     }
+
 }

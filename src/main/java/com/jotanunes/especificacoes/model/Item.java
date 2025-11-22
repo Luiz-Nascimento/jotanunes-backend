@@ -79,12 +79,16 @@ public class Item {
         this.catalogoItem = catalogoItem;
     }
 
+    public boolean isApprovedOrPending() {
+        return status == ItemStatus.APROVADO || status == ItemStatus.PENDENTE;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Item item)) return false;
         return Objects.equals(id, item.id) && Objects.equals(ambiente, item.ambiente) && Objects.equals(catalogoItem, item.catalogoItem) && Objects.equals(descricaoCustomizada, item.descricaoCustomizada) && status == item.status;
     }
+
 
     @Override
     public int hashCode() {

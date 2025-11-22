@@ -147,6 +147,10 @@
 			<artifactId>hypersistence-utils-hibernate-63</artifactId>
 			<version>3.8.2</version>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
     </dependencies>
 
 	<build>

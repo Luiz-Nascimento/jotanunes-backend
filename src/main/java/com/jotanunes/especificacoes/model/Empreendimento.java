@@ -172,6 +172,10 @@ public class Empreendimento {
         this.materiaisPorMarca.addAll(materiaisPorMarca);
     }
 
+    public boolean isApprovedOrPending() {
+        return status != EmpreendimentoStatus.RASCUNHO && status != EmpreendimentoStatus.REPROVADO;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
