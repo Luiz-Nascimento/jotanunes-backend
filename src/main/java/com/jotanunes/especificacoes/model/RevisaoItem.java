@@ -2,7 +2,9 @@ package com.jotanunes.especificacoes.model;
 
 import com.jotanunes.especificacoes.enums.ItemStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +21,8 @@ public class RevisaoItem {
     private Item item;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(columnDefinition= "item_status", nullable = false)
     private ItemStatus status;
 
     @Column(name = "motivo")
