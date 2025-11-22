@@ -45,8 +45,32 @@ public class EmpreendimentoService {
     }
 
     public EmpreendimentoResponse findById(Integer id) {
-        return empreendimentoMapper.toDto(empreendimentoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id)));
+        Empreendimento empreendimento = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
+
+        int totalAmbientes = empreendimento.getAmbientes().size();
+
+        int totalItens = empreendimento.getAmbientes().stream()
+                .mapToInt(a -> a.getItens().size())
+                .sum();
+
+        int totalMarcas = (int) empreendimento.getMateriaisPorMarca().stream()
+                .map(CombinacaoEMM::getMarca)
+                .distinct()
+                .count();
+
+        int totalMateriais = (int) empreendimento.getMateriaisPorMarca().stream()
+                .map(CombinacaoEMM::getMaterial)
+                .distinct()
+                .count();
+
+        return empreendimentoMapper.toDtoDetalhado(
+                empreendimento,
+                totalAmbientes,
+                totalItens,
+                totalMarcas,
+                totalMateriais
+        );
     }
 
     @Transactional(readOnly = true)

@@ -34,6 +34,18 @@ public abstract class EmpreendimentoMapper {
     @Mapping(source = "criadoPor.nome", target = "criadoPor")
     public abstract EmpreendimentoResponse toDto(Empreendimento empreendimento);
 
+    @Mapping(source = "empreendimento.criadoPor.nome", target = "criadoPor")
+    @Mapping(target = "totalAmbientes", source = "totalAmbientes")
+    @Mapping(target = "totalItens", source = "totalItens")
+    @Mapping(target = "totalMarcas", source = "totalMarcas")
+    @Mapping(target = "totalMateriais", source = "totalMateriais")
+    public abstract EmpreendimentoResponse toDtoDetalhado(Empreendimento empreendimento,
+                                                          Integer totalAmbientes,
+                                                          Integer totalItens,
+                                                          Integer totalMarcas,
+                                                          Integer totalMateriais);
+
+
     public abstract List<EmpreendimentoResponse> toDtoList(List<Empreendimento> entities);
 
     public abstract Empreendimento requestToEntity(EmpreendimentoRequest empreendimentoRequest);

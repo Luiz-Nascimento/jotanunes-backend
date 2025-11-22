@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface CombinacaoEMMRepository extends JpaRepository<CombinacaoEMM, Integer> {
     List<CombinacaoEMM> findByEmpreendimentoId(Integer empreendimentoId);
+    long countByEmpreendimento_Id(Integer idEmpreendimento);
 }

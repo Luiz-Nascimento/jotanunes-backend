@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MarcaRepository extends JpaRepository<Marca, Integer> {
+    long countByMateriaisPorEmpreendimento_Empreendimento_Id(Integer idEmpreendimento);
 }
