@@ -2,9 +2,13 @@ version: '3.8'
 
 services:
   especificacoes-app:
+    build: .
     image: acrjotanunes.azurecr.io/minha-api:v2.1
     ports:
       - "8080:8080"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     environment:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
