@@ -54,7 +54,11 @@ public class EmpreendimentoFactory {
                 "Descrição do Empreendimento Teste",
                 observacoes,
                 "admin",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                1,
+                10,
+                6,
+                5
         );
     }
 
@@ -86,7 +90,11 @@ public class EmpreendimentoFactory {
                 "Descrição do Empreendimento Atualizado",
                 observacoes,
                 "admin",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                10,
+                50,
+                10,
+                10
         );
     }
 }
