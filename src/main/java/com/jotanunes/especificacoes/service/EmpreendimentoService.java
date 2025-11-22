@@ -44,6 +44,7 @@ public class EmpreendimentoService {
         return empreendimentoMapper.toDtoList(empreendimentoRepository.findAll());
     }
 
+    @Transactional
     public EmpreendimentoResponse findById(Integer id) {
         Empreendimento empreendimento = empreendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
