@@ -29,9 +29,25 @@ spring:
     flyway:
         enabled: true
         baseline-on-migrate: true
+    mail:
+      host: smtp.gmail.com
+      port: 587
+      username: ${EMAIL_USERNAME}
+      password: ${EMAIL_SENHA}
+      properties:
+        mail:
+          transport:
+            protocol: smtp
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+              required: true
+        test-connection: true
 logging:
     level:
       root: WARN
+
 
 #Config do serviço de geração de documentos no ambiente de produção
 app:

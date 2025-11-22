@@ -6,7 +6,6 @@ import com.jotanunes.especificacoes.dto.item.ItemResponse;
 import com.jotanunes.especificacoes.dto.item.ItemUpdate;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemRequest;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
-import com.jotanunes.especificacoes.enums.AmbienteStatus;
 import com.jotanunes.especificacoes.enums.ItemStatus;
 import com.jotanunes.especificacoes.event.ItemAtualizadoEvent;
 import com.jotanunes.especificacoes.exception.EmpreendimentoBusinessLogicException;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
 
-import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
