@@ -44,18 +44,6 @@ public class CombinacaoEMMService {
         return emmMapper.toDto(combinacaoEMM);
     }
 
-    public List<MaterialMarcasNomeResponse> findMaterialMarcasNomeByEmpreendimentoId(Integer empreendimentoID) {
-        List<CombinacaoEMM> registros = repository.findByEmpreendimentoId(empreendimentoID);
-        Map<String, Set<String>> agrupamento = registros.stream()
-                .collect(Collectors.groupingBy(combinacao ->
-                                combinacao.getMaterial().getNome(),
-                        Collectors.mapping(combinacao -> combinacao.getMarca().getNome(),
-                                Collectors.toSet())));
-
-        return agrupamento.entrySet().stream()
-                .map(entry -> new MaterialMarcasNomeResponse(entry.getKey(), entry.getValue()))
-                .toList();
-    }
     public CombinacaoEMMResponse create(Integer empreendimentoID, CombinacaoEMMRequest request) {
         Empreendimento empreendimento = empreendimentoRepository.findById(empreendimentoID)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + empreendimentoID));
