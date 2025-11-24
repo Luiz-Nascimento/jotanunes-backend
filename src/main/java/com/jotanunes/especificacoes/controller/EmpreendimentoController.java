@@ -160,4 +160,33 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}/observacoes/{index}")
+    @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
+    public ResponseEntity<EmpreendimentoResponse> atualizarObservacao(
+            @PathVariable Integer id,
+            @PathVariable int index,
+            @RequestBody @Valid EmpreendimentoObservacao data) {
+
+        EmpreendimentoResponse response = empreendimentoService.atualizarObservacao(id, index, data);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}/observacoes/{index}")
+    @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
+    public ResponseEntity<EmpreendimentoResponse> removerObservacao(
+            @PathVariable Integer id,
+            @PathVariable int index) {
+
+        EmpreendimentoResponse response = empreendimentoService.removerObservacao(id, index);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}/observacoes")
+    @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
+    public ResponseEntity<EmpreendimentoResponse> limparObservacoes(@PathVariable Integer id) {
+        EmpreendimentoResponse response = empreendimentoService.limparObservacoes(id);
+        return ResponseEntity.ok(response);
+    }
+
+
 }
