@@ -1,12 +1,14 @@
 package com.jotanunes.especificacoes.controller;
 
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMBulkRequest;
+import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMRequest;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasIdsResponse;
 import com.jotanunes.especificacoes.service.CombinacaoEMMService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,8 +54,21 @@ public class CombinacaoEMMController {
         return service.createCombinacoes(empreendimentoID, requests);
     }
 
+    @Operation(
+            summary = "Adiciona uma nova combinação para o empreendimento",
+            description = "Cria uma nova combinação EMM para um empreendimento"
+    )
     @PostMapping("/empreendimento/{empreendimentoID}")
+    public ResponseEntity<CombinacaoEMMResponse> add(@PathVariable Integer empreendimentoID,
+                                                     @RequestBody @Valid CombinacaoEMMRequest request) {
+        CombinacaoEMMResponse response = service.create(empreendimentoID, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
+    @Operation(
+            summary = "Remove uma única combinação",
+            description = "Remova uma combinação EMM apartir o ID"
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.delete(id);

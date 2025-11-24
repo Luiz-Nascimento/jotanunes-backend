@@ -2,16 +2,13 @@ package com.jotanunes.especificacoes.controller;
 
 import com.jotanunes.especificacoes.controller.openapi.EmpreendimentoControllerOpenApi;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
-import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.documento.DocumentoGeradoDTO;
 import com.jotanunes.especificacoes.dto.empreendimento.*;
 import com.jotanunes.especificacoes.service.AmbienteService;
-import com.jotanunes.especificacoes.service.CombinacaoEMMService;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
 import com.jotanunes.especificacoes.service.RelatorioService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.DocFlavor;
-import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Empreendimentos", description = "Operações relacionadas a empreendimentos.")
@@ -34,16 +29,15 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
 
     private final EmpreendimentoService empreendimentoService;
     private final AmbienteService ambienteService;
-    private final CombinacaoEMMService combinacaoEMMService;
+
     private final RelatorioService relatorioService;
 
     private static final Logger logger = LoggerFactory.getLogger(EmpreendimentoController.class);
 
     public EmpreendimentoController(EmpreendimentoService empreendimentoService, AmbienteService ambienteService,
-                                    CombinacaoEMMService combinacaoEMMService, RelatorioService relatorioService) {
+                                    RelatorioService relatorioService) {
         this.empreendimentoService = empreendimentoService;
         this.ambienteService = ambienteService;
-        this.combinacaoEMMService = combinacaoEMMService;
         this.relatorioService = relatorioService;
     }
 
@@ -79,6 +73,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
         return empreendimentoService.findCombinacoes(id);
     }
 
+    @Override
     @GetMapping("/{id}/docx")
     public ResponseEntity<byte[]> downloadAsDocx(@PathVariable Integer id) {
         DocumentoGeradoDTO documento = relatorioService.gerarEspecificacaoTecnica(id);
@@ -107,18 +102,21 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Override
     @PatchMapping("/{id}/submeter")
     public ResponseEntity<Void> submeter(@PathVariable Integer id) {
         empreendimentoService.enviarParaRevisao(id);
         return ResponseEntity.ok().build();
     }
 
+    @Override
     @PatchMapping("/{id}/aprovar")
     @PreAuthorize("hasAuthority('REVISAR_EMPREENDIMENTOS')")
     public ResponseEntity<Void> aprovar(@PathVariable Integer id) {
         empreendimentoService.aprovar(id);
         return ResponseEntity.ok().build();
     }
+    @Override
     @PatchMapping("/{id}/reprovar")
     @PreAuthorize("hasAuthority('REVISAR_EMPREENDIMENTOS')")
     public ResponseEntity<Void> reprovar(@PathVariable Integer id) {
@@ -135,6 +133,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
         return ResponseEntity.ok().body(response);
     }
 
+    @Override
     @PutMapping("/observacao/{id}")
     @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
     public ResponseEntity<EmpreendimentoResponse> adicionarObservacao(@PathVariable Integer id,
@@ -161,6 +160,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
         return ResponseEntity.noContent().build();
     }
 
+    @Override
     @PutMapping("/{id}/observacoes/{index}")
     @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
     public ResponseEntity<EmpreendimentoResponse> atualizarObservacao(
@@ -172,6 +172,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
         return ResponseEntity.ok(response);
     }
 
+    @Override
     @DeleteMapping("/{id}/observacoes/{index}")
     @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
     public ResponseEntity<EmpreendimentoResponse> removerObservacao(
@@ -182,6 +183,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
         return ResponseEntity.ok(response);
     }
 
+    @Override
     @DeleteMapping("/{id}/observacoes")
     @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
     public ResponseEntity<EmpreendimentoResponse> limparObservacoes(@PathVariable Integer id) {

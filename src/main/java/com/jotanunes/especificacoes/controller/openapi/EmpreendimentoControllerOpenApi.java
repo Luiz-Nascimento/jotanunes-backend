@@ -3,13 +3,13 @@ package com.jotanunes.especificacoes.controller.openapi;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
-import com.jotanunes.especificacoes.dto.empreendimento.EspecificacaTecnicaDTO;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoRequest;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoResponse;
-import com.jotanunes.especificacoes.dto.empreendimento.EmpreendimentoUpdate;
+import com.jotanunes.especificacoes.dto.empreendimento.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -75,5 +75,53 @@ public interface EmpreendimentoControllerOpenApi {
             description = "Deleta um empreendimento apartir de seu ID. Necessita de role de ADMIN"
     )
     ResponseEntity<Void> delete(Integer id);
+
+    @Operation(
+            summary = "Submete um empreendimento para revisão",
+            description = "Muda o status do empreendimento para pendente, necessita permissão de operacional"
+    )
+    public ResponseEntity<Void> submeter(Integer id);
+
+    @Operation(
+            summary = "Aprova um empreendimento",
+            description = "Muda o status do empreendimento para aprovado, necessita permissão de gestor"
+    )
+    public ResponseEntity<Void> aprovar(Integer id);
+
+    @Operation(
+            summary = "Reprova um empreendimento",
+            description = "Muda o status do empreendimento para reprovado, necessita permissão de gestor"
+    )
+    public ResponseEntity<Void> reprovar(Integer id);
+
+    @Operation(
+            summary = "Adiciona uma observação sobre o empreendimento",
+            description = "Adiciona um texto de observação na lista de observações"
+    )
+    public ResponseEntity<EmpreendimentoResponse> adicionarObservacao(Integer id, EmpreendimentoObservacao data);
+
+    @Operation(
+            summary = "Atualiza uma observação sobre o empreendimento",
+            description = "Atualiza uma observação sobre o empreendimento, especificando sua posição na lista"
+    )
+    public ResponseEntity<EmpreendimentoResponse> atualizarObservacao(Integer id, int index, EmpreendimentoObservacao data);
+
+    @Operation(
+            summary = "Deleta uma observação sobre o empreendimento",
+            description = "Remove uma observação apartir de seu índice na lista de observações"
+    )
+    public ResponseEntity<EmpreendimentoResponse> removerObservacao(Integer id, int index);
+
+    @Operation(
+            summary = "Limpa todas observações sobre o empreendimento",
+            description = "Remove todas as observações sobre o empreendimento"
+    )
+    public ResponseEntity<EmpreendimentoResponse> limparObservacoes(@PathVariable Integer id);
+
+    @Operation(
+            summary = "Gera um documento de especificação técnica no formato DOCX",
+            description = "Apartir do id do empreendimento, faz o download e geração do documento sobre o empreendimento"
+    )
+    public ResponseEntity<byte[]> downloadAsDocx(Integer id);
 
 }
