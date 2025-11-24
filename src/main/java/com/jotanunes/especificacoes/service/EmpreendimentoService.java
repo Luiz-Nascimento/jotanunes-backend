@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.service;
 
+import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.*;
 import com.jotanunes.especificacoes.enums.AmbienteStatus;
 import com.jotanunes.especificacoes.enums.EmpreendimentoStatus;
@@ -8,6 +9,7 @@ import com.jotanunes.especificacoes.event.EmpreendimentoPendenteEvent;
 import com.jotanunes.especificacoes.exception.EmpreendimentoBusinessLogicException;
 import com.jotanunes.especificacoes.exception.EmpreendimentoNotApprovedException;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
+import com.jotanunes.especificacoes.mapper.CombinacaoEMMMapper;
 import com.jotanunes.especificacoes.mapper.EmpreendimentoMapper;
 import com.jotanunes.especificacoes.model.*;
 import com.jotanunes.especificacoes.repository.EmpreendimentoRepository;
@@ -32,12 +34,14 @@ public class EmpreendimentoService {
     private final EmpreendimentoMapper empreendimentoMapper;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final CombinacaoEMMMapper combinacaoEMMMapper;
 
-    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, UserRepository userRepository, EmpreendimentoMapper empreendimentoMapper, ApplicationEventPublisher eventPublisher) {
+    public EmpreendimentoService(EmpreendimentoRepository empreendimentoRepository, UserRepository userRepository, EmpreendimentoMapper empreendimentoMapper, ApplicationEventPublisher eventPublisher, CombinacaoEMMMapper combinacaoEMMMapper) {
         this.empreendimentoRepository = empreendimentoRepository;
         this.userRepository = userRepository;
         this.empreendimentoMapper = empreendimentoMapper;
         this.eventPublisher = eventPublisher;
+        this.combinacaoEMMMapper = combinacaoEMMMapper;
     }
 
     public List<EmpreendimentoResponse> findAll() {
@@ -72,6 +76,14 @@ public class EmpreendimentoService {
                 totalMarcas,
                 totalMateriais
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<CombinacaoEMMResponse> findCombinacoes(Integer id) {
+        Empreendimento empreendimento = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + id));
+        List<CombinacaoEMM> combinacoesEMM = empreendimento.getMateriaisPorMarca().stream().toList();
+        return combinacaoEMMMapper.toDtoList(combinacoesEMM);
     }
 
     @Transactional(readOnly = true)
