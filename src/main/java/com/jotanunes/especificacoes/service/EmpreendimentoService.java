@@ -198,5 +198,52 @@ public class EmpreendimentoService {
         empreendimentoRepository.deleteById(id);
     }
 
+    @Transactional
+    public EmpreendimentoResponse atualizarObservacao(Integer id, int index, EmpreendimentoObservacao data) {
+        Empreendimento empreendimento = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado"));
+
+        List<String> obs = empreendimento.getObservacoes();
+
+        if (index < 0 || index >= obs.size()) {
+            throw new EmpreendimentoBusinessLogicException("Índice de observação inválido");
+        }
+
+        obs.set(index, data.observacao());
+        empreendimento.setObservacoes(obs);
+
+        empreendimentoRepository.save(empreendimento);
+        return empreendimentoMapper.toDto(empreendimento);
+    }
+
+    @Transactional
+    public EmpreendimentoResponse removerObservacao(Integer id, int index) {
+        Empreendimento empreendimento = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado"));
+
+        List<String> obs = empreendimento.getObservacoes();
+
+        if (index < 0 || index >= obs.size()) {
+            throw new EmpreendimentoBusinessLogicException("Índice de observação inválido");
+        }
+
+        obs.remove(index);
+        empreendimento.setObservacoes(obs);
+
+        empreendimentoRepository.save(empreendimento);
+        return empreendimentoMapper.toDto(empreendimento);
+    }
+
+    @Transactional
+    public EmpreendimentoResponse limparObservacoes(Integer id) {
+        Empreendimento empreendimento = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado"));
+
+        empreendimento.setObservacoes(List.of()); // limpa tudo
+
+        empreendimentoRepository.save(empreendimento);
+        return empreendimentoMapper.toDto(empreendimento);
+    }
+
 
 }
