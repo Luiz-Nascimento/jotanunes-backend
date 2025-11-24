@@ -1,13 +1,13 @@
 package com.jotanunes.especificacoes.controller;
 
-import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMRequest;
+import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMBulkRequest;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasIdsResponse;
-import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.service.CombinacaoEMMService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,22 +33,31 @@ public class CombinacaoEMMController {
     }
 
     @Operation(
-            summary = "Retornar dados de todas as combinações EMM por empreendimento",
-            description = "Retorna dados de todas as combinações EMM cadastradas para o empreendimento com ID especificado"
+            summary = "Retornar dados de uma combinação EMM",
+            description = "Retorna dados de uma combinação EMM apartir de seu id"
     )
-    @GetMapping("/empreendimento/{empreendimentoID}/ids")
-    public List<MaterialMarcasIdsResponse> findMaterialMarcasIdsByEmpreendimentoId(@PathVariable Integer empreendimentoID) {
-        return service.findMaterialMarcasIdsByEmpreendimentoId(empreendimentoID);
+    @GetMapping("/{id}")
+    public ResponseEntity<CombinacaoEMMResponse> findById(@PathVariable Integer id) {
+        CombinacaoEMMResponse response = service.findById(id);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(
             summary = "Adicionar novas combinações EMM para um empreendimento",
             description = "Adiciona novas combinações EMM ao empreendimento com ID especificado"
     )
-    @PostMapping("/empreendimento/{empreendimentoID}")
+    @PostMapping("/empreendimento/{empreendimentoID}/bulk")
     public List<CombinacaoEMMResponse> addCombinacoes(@PathVariable Integer empreendimentoID,
-                                                     @RequestBody @Valid List<CombinacaoEMMRequest> requests) {
+                                                     @RequestBody @Valid List<CombinacaoEMMBulkRequest> requests) {
         return service.createCombinacoes(empreendimentoID, requests);
+    }
+
+    @PostMapping("/empreendimento/{empreendimentoID}")
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 

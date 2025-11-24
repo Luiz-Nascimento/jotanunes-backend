@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.controller.openapi;
 
+import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.empreendimento.EspecificacaTecnicaDTO;
@@ -43,7 +44,7 @@ public interface EmpreendimentoControllerOpenApi {
             summary = "Retorna dados das combinações de material e marcas do empreendimento",
             description = "Retorna conjunto de todas combinações de material e marcas do empreendimento com ID especificado"
     )
-    List<MaterialMarcasNomeResponse> findMaterialMarcas(Integer id);
+    List<CombinacaoEMMResponse> findCombinacoes(Integer id);
 
     @Operation(
             summary = "Criação de um novo empreendimento",

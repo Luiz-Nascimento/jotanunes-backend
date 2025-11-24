@@ -1,6 +1,7 @@
 package com.jotanunes.especificacoes.controller;
 
 import com.jotanunes.especificacoes.controller.openapi.EmpreendimentoControllerOpenApi;
+import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
 import com.jotanunes.especificacoes.dto.CombinacaoEMM.MaterialMarcasNomeResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.documento.DocumentoGeradoDTO;
@@ -73,9 +74,9 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
     }
 
     @Override
-    @GetMapping("/{id}/material-marcas")
-    public List<MaterialMarcasNomeResponse> findMaterialMarcas(@PathVariable Integer id) {
-        return combinacaoEMMService.findMaterialMarcasNomeByEmpreendimentoId(id);
+    @GetMapping("/{id}/combinacoes")
+    public List<CombinacaoEMMResponse> findCombinacoes(@PathVariable Integer id) {
+        return empreendimentoService.findCombinacoes(id);
     }
 
     @GetMapping("/{id}/docx")
