@@ -97,6 +97,12 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
     }
 
     @Override
+    @GetMapping("/{id}/revisoes")
+    public List<RevisaoItemResponse> findRevisoes(@PathVariable Integer id) {
+        return revisaoItemService.findRevisoesByEmpreendimentoId(id);
+    }
+
+    @Override
     @PostMapping
     @PreAuthorize("hasAuthority('CRIAR_EMPREENDIMENTOS')")
     public ResponseEntity<EmpreendimentoResponse> create(@RequestBody @Valid EmpreendimentoRequest data) {
