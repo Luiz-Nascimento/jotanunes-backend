@@ -5,10 +5,14 @@ import com.jotanunes.especificacoes.dto.CombinacaoEMM.CombinacaoEMMResponse;
 import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.documento.DocumentoGeradoDTO;
 import com.jotanunes.especificacoes.dto.empreendimento.*;
+import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
+import com.jotanunes.especificacoes.model.RevisaoItem;
 import com.jotanunes.especificacoes.service.AmbienteService;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
 import com.jotanunes.especificacoes.service.RelatorioService;
+import com.jotanunes.especificacoes.service.RevisaoItemService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +33,17 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
 
     private final EmpreendimentoService empreendimentoService;
     private final AmbienteService ambienteService;
+    private final RevisaoItemService revisaoItemService;
 
     private final RelatorioService relatorioService;
 
     private static final Logger logger = LoggerFactory.getLogger(EmpreendimentoController.class);
 
-    public EmpreendimentoController(EmpreendimentoService empreendimentoService, AmbienteService ambienteService,
+    public EmpreendimentoController(EmpreendimentoService empreendimentoService, AmbienteService ambienteService, RevisaoItemService revisaoItemService,
                                     RelatorioService relatorioService) {
         this.empreendimentoService = empreendimentoService;
         this.ambienteService = ambienteService;
+        this.revisaoItemService = revisaoItemService;
         this.relatorioService = relatorioService;
     }
 
@@ -83,6 +89,11 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
                         + "\"")
                 .contentType(documento.contentType())
                 .body(documento.bytes());
+    }
+
+    @GetMapping("/{id}/revisoes")
+    public List<RevisaoItemResponse> findRevisoes(@PathVariable Integer id) {
+        return revisaoItemService.findRevisoesByEmpreendimentoId(id);
     }
 
     @Override
