@@ -77,6 +77,10 @@ public class Ambiente {
         return id;
     }
 
+    public String getNome() {
+        return catalogoAmbiente.getNome();
+    }
+
     public Set<Item> getItens() {
         return itens;
     }
