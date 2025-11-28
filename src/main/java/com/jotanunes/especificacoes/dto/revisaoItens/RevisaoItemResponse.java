@@ -8,6 +8,8 @@ import java.util.Date;
 public record RevisaoItemResponse(
         Integer id,
         Integer itemId,
+        String itemNome,
+        String ambienteNome,
         String status,
         @JsonInclude(JsonInclude.Include.NON_NULL)
         String motivo,
