@@ -1,5 +1,6 @@
 package com.jotanunes.especificacoes.infra.security;
 
+import com.jotanunes.especificacoes.model.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,8 +24,10 @@ public class JwtUtil {
     }
 
     public String generateToken(UserDetails userDetails) {
+        User user = (User) userDetails;
         return Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("name", user.getNome())
                 .claim("role", userDetails.getAuthorities().iterator().next().getAuthority())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
