@@ -56,7 +56,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
 
-        config.setAllowedOrigins(List.of("http://localhost:5173", "https://front-end-jota-nunes-81cjdlpmk.vercel.app"));
+        config.setAllowedOrigins(List.of("http://localhost:5173", "https://front-end-jota-nunes-81cjdlpmk.vercel.app",
+                "https://front-end-jota-nunes-vue.vercel.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
