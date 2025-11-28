@@ -117,8 +117,13 @@ public class EmpreendimentoService {
         }
         boolean anyAmbienteReprovado = empreendimento.getAmbientes().stream().anyMatch(
                 ambiente -> ambiente.getStatus() == AmbienteStatus.REPROVADO);
+        boolean anyAmbienteVazio = empreendimento.getAmbientes().stream().anyMatch(ambiente ->
+                ambiente.getItens().isEmpty());
         if (anyAmbienteReprovado) {
             throw new EmpreendimentoBusinessLogicException("Empreendimento ainda não corrigido");
+        }
+        if (anyAmbienteVazio) {
+            throw new EmpreendimentoBusinessLogicException("Empreendimento contém ambientes vazios");
         }
         empreendimento.setStatus(EmpreendimentoStatus.PENDENTE);
         eventPublisher.publishEvent(new EmpreendimentoPendenteEvent(empreendimento.getNome()));
@@ -151,6 +156,7 @@ public class EmpreendimentoService {
         empreendimento.setStatus(EmpreendimentoStatus.REPROVADO);
     }
 
+    @Transactional
     public EmpreendimentoResponse copy(EmpreendimentoRequest data, Integer idEmpreendimento) {
         Empreendimento empreendimentoReferencia = empreendimentoRepository.findById(idEmpreendimento)
                 .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado com id: " + idEmpreendimento));
