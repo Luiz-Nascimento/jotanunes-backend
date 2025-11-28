@@ -90,12 +90,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
                 .contentType(documento.contentType())
                 .body(documento.bytes());
     }
-
-    @GetMapping("/{id}/revisoes")
-    public List<RevisaoItemResponse> findRevisoes(@PathVariable Integer id) {
-        return revisaoItemService.findRevisoesByEmpreendimentoId(id);
-    }
-
+    
     @Override
     @GetMapping("/{id}/revisoes")
     public List<RevisaoItemResponse> findRevisoes(@PathVariable Integer id) {
