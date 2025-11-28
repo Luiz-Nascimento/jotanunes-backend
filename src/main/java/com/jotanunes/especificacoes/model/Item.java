@@ -50,7 +50,9 @@ public class Item {
         return ambiente;
     }
 
-
+    public String getNome() {
+        return catalogoItem.getNome();
+    }
     public void setAmbiente(Ambiente ambiente) {
         this.ambiente = ambiente;
     }
