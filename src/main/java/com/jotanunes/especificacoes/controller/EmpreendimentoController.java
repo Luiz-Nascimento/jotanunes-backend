@@ -91,6 +91,7 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
                 .body(documento.bytes());
     }
 
+    @Override
     @GetMapping("/{id}/revisoes")
     public List<RevisaoItemResponse> findRevisoes(@PathVariable Integer id) {
         return revisaoItemService.findRevisoesByEmpreendimentoId(id);
