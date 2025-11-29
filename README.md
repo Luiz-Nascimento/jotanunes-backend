@@ -2,7 +2,7 @@
 
 > API REST para gestão completa e geração automatizada de documentos de especificação técnica para empreendimentos da construtora Jota Nunes.
 
-![Azure](https://img.shields.io/badge/azure-%230072C6.svg?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
@@ -12,7 +12,7 @@
 
 Este sistema foi desenvolvido para modernizar o processo de criação de especificações técnicas da construtora Jota Nunes. A aplicação gerencia todo o ciclo de vida das especificações — desde a criação e edição até a revisão final — e culmina na geração automatizada de documentos DOCX padronizados.
 
-Atualmente, a aplicação está implantada e rodando em produção utilizando **Azure Container Apps**, garantindo escalabilidade e facilidade de gerenciamento em nuvem.
+Atualmente, a aplicação está implantada e rodando em produção utilizando **Amazon Web Services (AWS) EC2**, garantindo controle total sobre a infraestrutura e escalabilidade.
 
 ## 🚀 Funcionalidades Principais
 
@@ -29,7 +29,7 @@ O projeto adota uma arquitetura de microsserviços focada no backend, onde o Spr
 * **Core:** Java 21, Spring Boot 3
 * **Banco de Dados:** PostgreSQL (com Flyway para migrations)
 * **Document Engine:** Node.js 20 + Docxtemplater (integrado via processo local no container)
-* **Infraestrutura:** Docker, Azure Container Apps
+* **Infraestrutura:** Docker, AWS EC2
 * **Documentação:** OpenAPI (Swagger UI)
 
 ## 📦 Instalação e Execução Local
@@ -53,7 +53,7 @@ O projeto adota uma arquitetura de microsserviços focada no backend, onde o Spr
 ## 📑 Documentação da API
 
 A API completa pode ser testada e visualizada através do Swagger UI.
-* **Ambiente de Produção (Azure):** [Acessar Documentação Online](https://api-jotanunes-serverless.graybay-87632aed.eastus.azurecontainerapps.io/swagger-ui/index.html)
+* **Ambiente de Produção (AWS):** [Acessar Documentação Online](https://jotanunes-backend.duckdns.org/swagger-ui/index.html#/)
 
 ---
 *Projeto desenvolvido para fins educacionais.*
