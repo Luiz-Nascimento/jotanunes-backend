@@ -2,8 +2,7 @@ version: '3.8'
 
 services:
   especificacoes-app:
-    image: jotanunes-backend
-    # SEM PORTAS AQUI! O Java fica escondido, só o Nginx acessa ele.
+    image: luizmalakoi/jotanunes-backend:latest
     dns:
       - 8.8.8.8
     env_file: .env
