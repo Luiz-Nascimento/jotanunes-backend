@@ -8,7 +8,7 @@ spring:
     application:
         name: especificacoes
     datasource:
-        url: jdbc:postgresql://jotanunes-db-get-info-database.b.aivencloud.com:21733/jotanunesdb?sslmode=require
+        url: ${DB_URL}
         username: ${DB_USERNAME}
         password: ${DB_PASSWORD}
         hikari:
