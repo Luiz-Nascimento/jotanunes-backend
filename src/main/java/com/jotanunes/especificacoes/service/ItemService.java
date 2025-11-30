@@ -76,6 +76,8 @@ public class ItemService {
         return itemMapper.toDtoList(itemRepository.findByAmbienteId(id));
     }
 
+
+
     @Transactional
     public ItemResponse create(ItemRequest data) {
         Ambiente ambiente = ambienteRepository.findById(data.idAmbiente())
