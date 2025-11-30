@@ -21,7 +21,7 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B clean package -DskipTests
-      
+
       - name: Copy JAR into workspace
         run: cp target/*.jar backend.jar
 

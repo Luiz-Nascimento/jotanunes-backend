@@ -10,7 +10,7 @@ RUN java -version && node -v && npm -v
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+COPY backend.jar app.jar
 
 COPY docx-gen ./docx-gen
 
