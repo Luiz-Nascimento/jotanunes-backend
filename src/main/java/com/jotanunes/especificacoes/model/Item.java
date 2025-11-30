@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -32,6 +33,12 @@ public class Item {
     @Column(columnDefinition= "item_status", nullable = false)
     private ItemStatus status = ItemStatus.PENDENTE;
 
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+    @OrderBy("id DESC")
+    private List<RevisaoItem> historicoRevisoes;
+
+
+
     public Item() {
     }
 
@@ -43,6 +50,10 @@ public class Item {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
 
@@ -81,9 +92,17 @@ public class Item {
         this.catalogoItem = catalogoItem;
     }
 
-    public boolean isApprovedOrPending() {
-        return status == ItemStatus.APROVADO || status == ItemStatus.PENDENTE;
+    public List<RevisaoItem> getHistoricoRevisoes() {
+        return historicoRevisoes;
     }
+
+    public String getMotivoReprovacao() {
+        if (this.status == ItemStatus.REPROVADO) {
+            return this.historicoRevisoes.getFirst().getMotivo();
+        }
+        return null;
+    }
+
 
     @Override
     public boolean equals(Object o) {
