@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  especificacoes-app:
+    build: .
+    image: jotanunes-backend-dev
+    dns:
+      - 8.8.8.8
+    env_file: .env
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - EMAIL_USERNAME=${EMAIL_USERNAME}
+      - EMAIL_SENHA=${EMAIL_SENHA}
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - especificacoes-app
