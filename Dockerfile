@@ -10,10 +10,12 @@ RUN java -version && node -v && npm -v
 
 WORKDIR /app
 
-COPY backend.jar app.jar
+COPY target/especificacoes-0.0.1-SNAPSHOT.jar app.jar
 
 COPY docx-gen ./docx-gen
 
-RUN cd docx-gen && npm ci --only=production && cd ..
+RUN cd docx-gen && npm ci --only=production
+
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
