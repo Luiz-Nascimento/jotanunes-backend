@@ -3,7 +3,6 @@ package com.jotanunes.especificacoes.util;
 import com.jotanunes.especificacoes.enums.AmbienteStatus;
 import com.jotanunes.especificacoes.enums.ItemStatus;
 import com.jotanunes.especificacoes.model.Ambiente;
-import com.jotanunes.especificacoes.model.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,15 +12,9 @@ public class AtualizadorStatus {
 
     private static final Logger logger = LoggerFactory.getLogger(AtualizadorStatus.class);
 
-    public void atualizarStatusAmbiente(Item item) {
-        Ambiente ambiente = item.getAmbiente();
+    public void ambienteStatusUpdate(Ambiente ambiente) {
         Integer ambienteId = ambiente.getId();
         var itens = ambiente.getItens();
-        //Regras de atualização:
-        //Caso um ambiente contenha todos itens aprovados ele está aprovado.
-        //Caso um ambiente contenha algum item pendente, ele está pendente.
-        //Caso um ambiente contenha algum item reprovado e nenhum pendente, ele está reprovado.
-        // Verificação de aprovação:
         boolean todosItensAprovados = itens.stream().allMatch
                 (i -> i.getStatus() == ItemStatus.APROVADO);
         if (todosItensAprovados) {
@@ -33,7 +26,6 @@ public class AtualizadorStatus {
         }
         boolean algumItemPendente = itens.stream().anyMatch(
                 i -> i.getStatus() == ItemStatus.PENDENTE);
-        //Verificação de pendência:
         if (algumItemPendente) {
             if (ambiente.getStatus() != AmbienteStatus.PENDENTE) {
                 ambiente.setStatus(AmbienteStatus.PENDENTE);
@@ -41,7 +33,6 @@ public class AtualizadorStatus {
             }
             return;
         }
-        //Verificação de reprovação:
         boolean algumItemReprovado = itens.stream().anyMatch(
                 i -> i.getStatus() == ItemStatus.REPROVADO);
         if (algumItemReprovado) {
@@ -51,5 +42,7 @@ public class AtualizadorStatus {
             }
         }
     }
+
+
 
 }

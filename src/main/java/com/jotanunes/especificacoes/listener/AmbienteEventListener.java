@@ -1,6 +1,6 @@
 package com.jotanunes.especificacoes.listener;
 
-import com.jotanunes.especificacoes.event.ItemAtualizadoEvent;
+import com.jotanunes.especificacoes.event.AmbienteAtualizadoEvent;
 import com.jotanunes.especificacoes.util.AtualizadorStatus;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ public class AmbienteEventListener {
     }
 
     @EventListener
-    public void handleItemAtualizado(ItemAtualizadoEvent event) {
-        atualizadorStatus.atualizarStatusAmbiente(event.item());
+    public void handleItemAtualizado(AmbienteAtualizadoEvent event) {
+        atualizadorStatus.ambienteStatusUpdate(event.ambiente());
     }
 }

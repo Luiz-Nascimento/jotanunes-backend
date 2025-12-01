@@ -7,7 +7,7 @@ import com.jotanunes.especificacoes.dto.item.ItemUpdate;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemRequest;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
 import com.jotanunes.especificacoes.enums.ItemStatus;
-import com.jotanunes.especificacoes.event.ItemAtualizadoEvent;
+import com.jotanunes.especificacoes.event.AmbienteAtualizadoEvent;
 import com.jotanunes.especificacoes.exception.EmpreendimentoBusinessLogicException;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.ItemMapper;
@@ -91,6 +91,7 @@ public class ItemService {
         item.setCatalogoItem(itemReferencia);
         item.setAmbiente(ambiente);
         Item itemSalvo = itemRepository.save(item);
+        eventPublisher.publishEvent(new AmbienteAtualizadoEvent(ambiente));
         logger.info("Novo item criado com id {}, associado ao ambiente: {}", itemSalvo.getId(), data.idAmbiente());
         return itemMapper.toDto(item);
     }
@@ -104,7 +105,7 @@ public class ItemService {
         }
         item.setDescricaoCustomizada(data.descricaoCustomizada());
         item.setStatus(ItemStatus.PENDENTE);
-        eventPublisher.publishEvent(new ItemAtualizadoEvent(item));
+        eventPublisher.publishEvent(new AmbienteAtualizadoEvent(item.getAmbiente()));
         logger.info("Item com id {} atualizado", id);
         return itemMapper.toDto(item);
     }
@@ -126,7 +127,7 @@ public class ItemService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com email: " + email));
         item.setStatus(data.status());
-        eventPublisher.publishEvent(new ItemAtualizadoEvent(item));
+        eventPublisher.publishEvent(new AmbienteAtualizadoEvent(item.getAmbiente()));
         RevisaoItem revisao = new RevisaoItem(item, data.status(), data.motivo(), user);
         RevisaoItem revisaoSalva = revisaoItemRepository.save(revisao);
 
@@ -141,13 +142,17 @@ public class ItemService {
 
     }
 
+    @Transactional
     public void delete(Integer id) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado"));
-        if (item.getAmbiente().isApproved()) {
-            throw new EmpreendimentoBusinessLogicException("Item não pode ser deletado, ambiente pendente ou aprovado");
+        Ambiente ambiente = item.getAmbiente();
+        if (ambiente.isApproved()) {
+            throw new EmpreendimentoBusinessLogicException("Item não pode ser deletado, ambiente está aprovado");
         }
+        ambiente.getItens().remove(item);
         itemRepository.deleteById(id);
+        eventPublisher.publishEvent(new AmbienteAtualizadoEvent(ambiente));
         logger.info("Deletado item com id {}", id);
     }
 
