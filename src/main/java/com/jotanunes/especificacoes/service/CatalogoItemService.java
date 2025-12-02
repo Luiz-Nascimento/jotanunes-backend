@@ -39,4 +39,27 @@ public class CatalogoItemService {
         entity.setAmbiente(catalogoAmbiente);
         return catalogoItemMapper.toResponse(catalogoItemRepository.save(entity));
     }
+
+    public CatalogoItemResponse update(Integer id, CatalogoItemRequest request) {
+        CatalogoItem item = catalogoItemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
+
+        CatalogoAmbiente ambiente = catalogoAmbienteRepository.findById(request.idAmbiente())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Ambiente não encontrado com id: " + request.idAmbiente()
+                ));
+
+        item.setNome(request.nome());
+        item.setDescricao(request.descricao());
+        item.setAmbiente(ambiente);
+
+        return catalogoItemMapper.toResponse(catalogoItemRepository.save(item));
+    }
+
+    public void delete(Integer id) {
+        CatalogoItem item = catalogoItemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
+
+        catalogoItemRepository.delete(item);
+    }
 }
