@@ -40,4 +40,19 @@ public class CatalogoItemController {
         CatalogoItemResponse response = service.create(request);
         return ResponseEntity.status(201).body(response);
     }
+    @Operation(summary = "Atualizar um item do catálogo")
+    @PutMapping("/{id}")
+    public ResponseEntity<CatalogoItemResponse> update(
+            @PathVariable Integer id,
+            @Valid @RequestBody CatalogoItemRequest request) {
+
+        return ResponseEntity.ok(service.update(id, request));
+    }
+
+    @Operation(summary = "Excluir um item do catálogo")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
