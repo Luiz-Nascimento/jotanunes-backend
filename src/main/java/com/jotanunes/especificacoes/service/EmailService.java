@@ -17,6 +17,8 @@ public class EmailService {
 
     private final TemplateEngine templateEngine;
 
+    private final String emailSistema = "squad12especificacoes@gmail.com";
+
     public EmailService(JavaMailSender mailSender, TemplateEngine templateEngine) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
@@ -32,11 +34,30 @@ public class EmailService {
 
             String htmlContent = templateEngine.process("empreendimento-pendente-email", context);
 
-            helper.setFrom("squad12especificacoes@gmail.com");
+            helper.setFrom(emailSistema);
             helper.setTo(emailDestinatario);
             helper.setSubject(assunto);
             helper.setText(htmlContent, true);
 
+            mailSender.send(mimeMessage);
+        } catch (Exception e) {
+            throw new SendEmailException("Erro ao notificar gestores por email");
+        }
+    }
+    public void notificarNovoUsuario(String emailDestinatario, String assunto, Map<String, Object> variaveis) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            Context context = new Context();
+            context.setVariables(variaveis);
+
+            String htmlContent = templateEngine.process("new-user-email.html", context);
+
+            helper.setFrom(emailSistema);
+            helper.setTo(emailDestinatario);
+            helper.setSubject(assunto);
+            helper.setText(htmlContent, true);
             mailSender.send(mimeMessage);
         } catch (Exception e) {
             throw new SendEmailException("Erro ao notificar gestores por email");

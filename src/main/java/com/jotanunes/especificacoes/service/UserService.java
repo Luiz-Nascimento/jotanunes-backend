@@ -1,6 +1,7 @@
 package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.usuario.*;
+import com.jotanunes.especificacoes.event.NewUserEvent;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.UserMapper;
 import com.jotanunes.especificacoes.model.User;
@@ -8,6 +9,7 @@ import com.jotanunes.especificacoes.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,13 +25,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher eventPublisher;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, BCryptPasswordEncoder passwordEncoder, ApplicationEventPublisher eventPublisher) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.eventPublisher = eventPublisher;
     }
 
     public List<UserResponse> findAll() {
@@ -44,7 +48,7 @@ public class UserService {
      return userMapper.toDto(user);
 
     }
-
+    @Transactional
     public UserResponse createUser(UserCreateRequest request) {
         User userMapped = userMapper.toEntityCreated(request);
         userMapped.setSenha(passwordEncoder.encode(request.senha()));
@@ -52,6 +56,7 @@ public class UserService {
         User userCreating = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userMapped.setCriadoPor(userCreating);
         User userPersisted = userRepository.save(userMapped);
+        eventPublisher.publishEvent(new NewUserEvent(userCreating.getUsername(), request.email(), request.senha()));
         logger.info("Administrador {} registrou um novo usuario com email {} e acesso {}", userCreating.getEmail(), userPersisted.getEmail(), userPersisted.getNivelAcesso());
         return userMapper.toDto(userPersisted);
     }
