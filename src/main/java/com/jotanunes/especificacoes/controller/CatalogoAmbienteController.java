@@ -41,4 +41,19 @@ public class CatalogoAmbienteController {
         CatalogoAmbienteResponse response = service.createCatalogoAmbiente(request);
         return ResponseEntity.ok(response);
     }
+    @Operation(summary = "Atualizar um ambiente do catálogo")
+    @PutMapping("/{id}")
+    public ResponseEntity<CatalogoAmbienteResponse> update(
+            @PathVariable Integer id,
+            @Valid @RequestBody CatalogoAmbienteRequest request) {
+
+        return ResponseEntity.ok(service.update(id, request));
+    }
+
+    @Operation(summary = "Excluir um ambiente do catálogo")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
