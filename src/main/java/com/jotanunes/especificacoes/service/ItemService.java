@@ -87,7 +87,7 @@ public class ItemService {
         }
         CatalogoItem itemReferencia = catalogoItemRepository.findById(data.idItemCatalogo())
                 .orElseThrow(() -> new ResourceNotFoundException("Item de catálogo não encontrado com id: " + data.idItemCatalogo()));
-        Item item = new Item();
+        Item item = itemMapper.toEntity(data);
         item.setCatalogoItem(itemReferencia);
         item.setAmbiente(ambiente);
         Item itemSalvo = itemRepository.save(item);

@@ -6,6 +6,7 @@ public record ItemRequest(
         @NotNull(message = "ID do ambiente é obrigatório")
         Integer idAmbiente,
         @NotNull(message = "ID do item do catálogo é obrigatório")
-        Integer idItemCatalogo
+        Integer idItemCatalogo,
+        String descricaoCustomizada
 ) {
 }

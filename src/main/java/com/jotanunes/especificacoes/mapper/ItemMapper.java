@@ -17,6 +17,8 @@ public interface ItemMapper {
     @Mapping(source = "ambiente.id", target = "ambiente")
     ItemResponse toDto(Item item);
 
+    Item toEntity(ItemRequest itemRequest);
+
     List<ItemResponse> toDtoList(List<Item> items);
 
     @Mapping(source = "catalogoItem.nome", target = "nome")
