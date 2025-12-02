@@ -1,13 +1,17 @@
 package com.jotanunes.especificacoes.listener;
 
+import com.jotanunes.especificacoes.enums.NivelAcesso;
 import com.jotanunes.especificacoes.event.EmpreendimentoPendenteEvent;
+import com.jotanunes.especificacoes.model.User;
 import com.jotanunes.especificacoes.repository.UserRepository;
 import com.jotanunes.especificacoes.service.EmailService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class NotificarGestoresListener {
@@ -23,10 +27,14 @@ public class NotificarGestoresListener {
     @Async
     @EventListener
     public void handleEmpreendimentoPendente(EmpreendimentoPendenteEvent event) {
-        List<String> emailGestoresAtivos = userRepository.findEmailGestoresAtivos();
-        String assunto = "Novo empreendimento pendente";
-        String messagem = "Olá gestor, o empreendimento " + event.nomeEmpreendimento()
-                + " foi criado no sistema e enviado para revisão!";
-        emailService.enviarEmailTexto(emailGestoresAtivos, assunto, messagem);
+        List<User> gestores = userRepository.findByNivelAcessoAndAtivoTrue(NivelAcesso.GESTOR);
+        String assunto = "Empreendimento pendente";
+        for (User gestor: gestores) {
+            Map<String, Object> vars = new HashMap<>();
+            vars.put("empreendimento", event.nomeEmpreendimento());
+            vars.put("enviadoPor", event.enviadoPor());
+            vars.put("nomeGestor", gestor.getNome());
+            emailService.notificarEmpreendimentoPendente(gestor.getEmail(), assunto, vars);
+        }
     }
 }
