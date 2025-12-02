@@ -1,33 +1,45 @@
 package com.jotanunes.especificacoes.service;
 
-import org.springframework.mail.SimpleMailMessage;
+import com.jotanunes.especificacoes.exception.SendEmailException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
-import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    public EmailService(JavaMailSender mailSender) {
+    private final TemplateEngine templateEngine;
+
+    public EmailService(JavaMailSender mailSender, TemplateEngine templateEngine) {
         this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
     }
 
-    public void enviarEmailTexto(List<String> destinatarios, String assunto, String mensagem) {
-
+    public void notificarEmpreendimentoPendente(String emailDestinatario, String assunto, Map<String, Object> variaveisTemplate) {
         try {
-            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            String[] gestores = destinatarios.toArray(new String[0]);
-            simpleMailMessage.setFrom("squad12especificacoes@gmail.com");
-            simpleMailMessage.setTo(gestores);
-            simpleMailMessage.setSubject(assunto);
-            simpleMailMessage.setText(mensagem);
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true, "UTF-8");
 
-            mailSender.send(simpleMailMessage);
+            Context context = new Context();
+            context.setVariables(variaveisTemplate);
+
+            String htmlContent = templateEngine.process("empreendimento-pendente-email", context);
+
+            helper.setFrom("squad12especificacoes@gmail.com");
+            helper.setTo(emailDestinatario);
+            helper.setSubject(assunto);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(mimeMessage);
         } catch (Exception e) {
-            System.err.println("Erro ao enviar o email: " + e.getMessage());
+            throw new SendEmailException("Erro ao notificar gestores por email");
         }
     }
 }

@@ -126,7 +126,8 @@ public class EmpreendimentoService {
             throw new EmpreendimentoBusinessLogicException("Empreendimento contém ambientes vazios");
         }
         empreendimento.setStatus(EmpreendimentoStatus.PENDENTE);
-        eventPublisher.publishEvent(new EmpreendimentoPendenteEvent(empreendimento.getNome()));
+        String enviadoPor = SecurityContextHolder.getContext().getAuthentication().getName();
+        eventPublisher.publishEvent(new EmpreendimentoPendenteEvent(empreendimento.getNome(), enviadoPor));
     }
 
     @Transactional
