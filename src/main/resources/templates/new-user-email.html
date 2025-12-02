@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Usuário criado</title>
+    <style>
+        body,table,td,p { margin:0; padding:0; }
+        img { border:0; height:auto; line-height:100%; outline:none; text-decoration:none; }
+        table { border-collapse:collapse; }
+
+        body {
+            width:100% !important;
+            -webkit-text-size-adjust:100%;
+            -ms-text-size-adjust:100%;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color:#f4f6f8;
+            color:#333333;
+        }
+
+        .email-wrapper { width:100%; padding:20px 0; }
+        .email-content { max-width:600px; margin:0 auto; }
+
+        .card { background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+
+        .header { background:#BC1F1B; color:#ffffff; padding:24px; text-align:left; }
+        .btn { background:#BC1F1B; color:#ffffff; }
+
+        .header h1 { font-size:20px; margin:0 0 4px 0; }
+        .header p { margin:0; font-size:13px; opacity:0.95; }
+
+        .body { padding:24px; }
+        .greeting { font-size:16px; margin-bottom:12px; }
+        .lead { font-size:14px; color:#555555; margin-bottom:18px; }
+
+        .credentials { background:#f7fafc; border:1px solid #eef2f7; padding:16px; border-radius:6px; margin-bottom:18px; font-family:monospace; }
+        .credentials p { margin:6px 0; font-size:13px; }
+        .credentials .label { color:#6b7280; font-size:12px; }
+
+        .btn { display:inline-block; text-decoration:none; padding:12px 18px; border-radius:6px; font-weight:600; }
+
+        .footer { padding:18px 24px; font-size:12px; color:#6b7280; text-align:center; }
+
+        @media only screen and (max-width:480px) {
+            .header h1 { font-size:18px; }
+            .body { padding:18px; }
+        }
+    </style>
+</head>
+<body>
+<center class="email-wrapper">
+    <div class="email-content">
+
+        <!-- Card / container -->
+        <table role="presentation" width="100%" class="card">
+            <tr>
+                <td class="header">
+                    <h1>Bem-vindo(a) ao Sistema de Especificações Técnicas</h1>
+                    <p>Conta criada com sucesso</p>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="body">
+                    <p class="greeting">Olá,</p>
+
+                    <p class="lead">Sua conta foi criada com sucesso. Abaixo estão as credenciais de acesso geradas para você. Guarde-as em local seguro.</p>
+
+                    <!-- Credenciais -->
+                    <div class="credentials">
+                        <p><span class="label">E‑mail:</span></p>
+                        <p th:text="${email}">email@example.com</p>
+
+                        <p style="margin-top:10px;"><span class="label">Senha:</span></p>
+                        <p th:text="${senha}">senha</p>
+
+                        <p style="margin-top:12px; color:#6b7280; font-size:12px;">Conta criada por: <strong th:text="${criadoPor}">CriadoPor</strong></p>
+                    </div>
+
+                    <!-- Call to action -->
+                    <p style="margin-bottom:18px;">Para acessar o sistema, clique no botão abaixo:</p>
+
+                    <p>
+                        <a th:href="@{https://front-end-jota-nunes-vue.vercel.app/}" class="btn">Acessar minha conta</a>
+                    </p>
+
+                    <p style="margin-top:18px; color:#6b7280; font-size:13px;">Importante: por segurança, recomendamos que altere a senha após o primeiro login.</p>
+
+                    <hr style="border:none; border-top:1px solid #eef2f7; margin:20px 0;" />
+
+                    <p style="font-size:13px; color:white;">Você pode acessar o sistema em: <a th:href="@{https://front-end-jota-nunes-vue.vercel.app/}" th:text="@{https://front-end-jota-nunes-vue.vercel.app/}">https://front-end-jota-nunes-vue.vercel.app/</a><br/><br/>Se você não solicitou essa conta ou acha que recebeu este e‑mail por engano, entre em contato com o suporte.</p>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td class="footer">
+                    <p>Atenciosamente,<br/>Equipe — Sistema de Especificações Técnicas</p>
+                    <p style="margin-top:6px;">&copy; <span th:text="${ano}">${ano}</span> JotaNunes</p>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</center>
+</body>
+</html>
