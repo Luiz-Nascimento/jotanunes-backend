@@ -75,5 +75,19 @@ public class CombinacaoEMMController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Remove um material completo (todas as marcas)",
+            description = "Remove todas as combinações EMM de um material dentro de um empreendimento"
+    )
+
+    @DeleteMapping("/{empreendimentoId}/material/{materialId}")
+    public ResponseEntity<Void> deleteMaterialCompleto(@PathVariable Integer empreendimentoId,
+                                                       @PathVariable Integer materialId)
+    {
+        service.removerMaterialDoEmpreendimento(empreendimentoId, materialId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 }

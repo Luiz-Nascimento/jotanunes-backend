@@ -10,4 +10,6 @@ import java.util.List;
 public interface CombinacaoEMMRepository extends JpaRepository<CombinacaoEMM, Integer> {
     List<CombinacaoEMM> findByEmpreendimentoId(Integer empreendimentoId);
     long countByEmpreendimento_Id(Integer idEmpreendimento);
+    void deleteByEmpreendimentoIdAndMaterialId(Integer empreendimentoId, Integer materialId);
+    List<CombinacaoEMM> findByEmpreendimentoIdAndMaterialId(Integer empreendimentoId, Integer materialId);
 }
