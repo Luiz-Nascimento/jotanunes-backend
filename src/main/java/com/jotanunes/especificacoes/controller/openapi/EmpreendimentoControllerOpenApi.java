@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Set;
 
 @Tag(name = "Empreendimentos", description = "Operações relacionadas a empreendimentos.")
 public interface EmpreendimentoControllerOpenApi {
@@ -117,7 +118,7 @@ public interface EmpreendimentoControllerOpenApi {
             summary = "Limpa todas observações sobre o empreendimento",
             description = "Remove todas as observações sobre o empreendimento"
     )
-    ResponseEntity<EmpreendimentoResponse> limparObservacoes(@PathVariable Integer id);
+    ResponseEntity<EmpreendimentoResponse> limparObservacoes(Integer id);
 
     @Operation(
             summary = "Gera um documento de especificação técnica no formato DOCX",
@@ -128,6 +129,13 @@ public interface EmpreendimentoControllerOpenApi {
     @Operation(
             summary = "Lista revisões de itens por empreendimento"
     )
-    List<RevisaoItemResponse> findRevisoes(@PathVariable Integer id);
+    List<RevisaoItemResponse> findRevisoes(Integer id);
+
+    @Operation(
+            summary = "Remove observações de um empreendimento por índice",
+            description = "Apartir do ID do empreendimento, e um conjunto de índices válidos, as observações com índice" +
+                    " especificado são removidas"
+    )
+    ResponseEntity<EmpreendimentoResponse> removerObservacoes(Integer id, Set<Integer> indexes);
 
 }

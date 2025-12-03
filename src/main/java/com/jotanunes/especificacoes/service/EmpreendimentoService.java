@@ -21,9 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EmpreendimentoService {
@@ -250,6 +249,26 @@ public class EmpreendimentoService {
         empreendimento.setObservacoes(obs);
 
         empreendimentoRepository.save(empreendimento);
+        return empreendimentoMapper.toDto(empreendimento);
+    }
+
+    @Transactional
+    public EmpreendimentoResponse removerObservacoes(Integer id, Set<Integer> indexes) {
+        Empreendimento empreendimento = empreendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empreendimento não encontrado"));
+        List<String> observacoes = empreendimento.getObservacoes();
+        // Conferir os indexes pra não saber se não nenhum inválido
+        for (Integer index: indexes) {
+            if (index < 0 || index >= observacoes.size()) {
+                throw new EmpreendimentoBusinessLogicException("Índices da observação inválido");
+            }
+        }
+        List<Integer> indexesToRemove = new ArrayList<>(indexes);
+        indexesToRemove.sort(Collections.reverseOrder());
+        for (Integer index: indexesToRemove) {
+            observacoes.remove(index.intValue());
+        }
+        empreendimento.setObservacoes(observacoes);
         return empreendimentoMapper.toDto(empreendimento);
     }
 

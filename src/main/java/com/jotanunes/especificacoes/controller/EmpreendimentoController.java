@@ -6,6 +6,7 @@ import com.jotanunes.especificacoes.dto.ambiente.AmbienteResponse;
 import com.jotanunes.especificacoes.dto.documento.DocumentoGeradoDTO;
 import com.jotanunes.especificacoes.dto.empreendimento.*;
 import com.jotanunes.especificacoes.dto.revisaoItens.RevisaoItemResponse;
+import com.jotanunes.especificacoes.model.Empreendimento;
 import com.jotanunes.especificacoes.model.RevisaoItem;
 import com.jotanunes.especificacoes.service.AmbienteService;
 import com.jotanunes.especificacoes.service.EmpreendimentoService;
@@ -25,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Tag(name = "Empreendimentos", description = "Operações relacionadas a empreendimentos.")
 @RestController
@@ -196,12 +198,20 @@ public class EmpreendimentoController implements EmpreendimentoControllerOpenApi
     }
 
     @Override
-    @DeleteMapping("/{id}/observacoes")
+    @DeleteMapping("/{id}/limpar-observacoes")
     @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
     public ResponseEntity<EmpreendimentoResponse> limparObservacoes(@PathVariable Integer id) {
         EmpreendimentoResponse response = empreendimentoService.limparObservacoes(id);
         return ResponseEntity.ok(response);
     }
 
+    @Override
+    @DeleteMapping("/{id}/observacoes")
+    @PreAuthorize("hasAuthority('EDITAR_EMPREENDIMENTOS')")
+    public ResponseEntity<EmpreendimentoResponse> removerObservacoes(@PathVariable Integer id,
+                                                                    @RequestBody Set<Integer> indexes) {
+        EmpreendimentoResponse response = empreendimentoService.removerObservacoes(id, indexes);
+        return ResponseEntity.ok(response);
+    }
 
 }
