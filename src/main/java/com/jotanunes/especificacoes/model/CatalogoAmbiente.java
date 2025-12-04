@@ -2,6 +2,8 @@ package com.jotanunes.especificacoes.model;
 
 import com.jotanunes.especificacoes.enums.TipoAmbiente;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.util.Objects;
 
@@ -17,7 +19,8 @@ public class CatalogoAmbiente {
     private String nome;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo", nullable = false, length = 20)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(columnDefinition= "ambiente_tipo", name = "tipo", nullable = false, length = 20)
     private TipoAmbiente tipo;
 
     public CatalogoAmbiente() {
