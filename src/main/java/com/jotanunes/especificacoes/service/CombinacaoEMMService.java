@@ -83,5 +83,14 @@ public class CombinacaoEMMService {
         repository.deleteById(id);
     }
 
+    public void removerMaterialDoEmpreendimento(Integer empreendimentoId, Integer materialId) {
 
+        var registros = repository.findByEmpreendimentoIdAndMaterialId(empreendimentoId, materialId);
+
+        if (registros.isEmpty()) {
+            throw new ResourceNotFoundException("Material não encontrado neste Empreendimento.");
+        }
+
+        repository.deleteAll(registros);
+    }
 }
