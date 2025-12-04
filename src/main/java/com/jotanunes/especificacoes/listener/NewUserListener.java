@@ -4,7 +4,6 @@ package com.jotanunes.especificacoes.listener;
 import com.jotanunes.especificacoes.event.NewUserEvent;
 import com.jotanunes.especificacoes.service.EmailService;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.Year;

@@ -65,13 +65,13 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Definir senha de um usuário",
+            summary = "Redefinir senha de um usuário",
             description = "Permite redefinir a senha de um usuário específico."
     )
     @PreAuthorize("hasAuthority('EDITAR_USUARIOS')")
-    @PostMapping("/{id}/definir-senha")
+    @PostMapping("/{id}/redefinir-senha")
     public ResponseEntity<Void> adminSetPassword(@PathVariable UUID id, @RequestBody UserPasswordResetRequest request) {
-        userService.adminSetPassword(id, request);
+        userService.resetPassword(id, request);
         return ResponseEntity.noContent().build();
     }
 

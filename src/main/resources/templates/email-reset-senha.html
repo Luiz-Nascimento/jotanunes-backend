@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redefinição de Senha</title>
+    <style>
+        body,table,td,p { margin:0; padding:0; }
+        img { border:0; height:auto; line-height:100%; outline:none; text-decoration:none; }
+        table { border-collapse:collapse; }
+
+        body {
+            width:100% !important;
+            -webkit-text-size-adjust:100%;
+            -ms-text-size-adjust:100%;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color:#f4f6f8;
+            color:#333333;
+        }
+
+        .email-wrapper { width:100%; padding:20px 0; }
+        .email-content { max-width:600px; margin:0 auto; }
+
+        .card { background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+
+        /* Mantendo o vermelho padrão do Jota Nunes */
+        .header { background:#BC1F1B; color:#ffffff; padding:24px; text-align:left; }
+        .btn { background:#BC1F1B; color:#ffffff; }
+
+        .header h1 { font-size:20px; margin:0 0 4px 0; }
+        .header p { margin:0; font-size:13px; opacity:0.95; }
+
+        .body { padding:24px; }
+        .greeting { font-size:16px; margin-bottom:12px; }
+        .lead { font-size:14px; color:#555555; margin-bottom:18px; line-height: 1.5; }
+
+        /* Estilo da caixa de senha */
+        .credentials { background:#f7fafc; border:1px solid #eef2f7; padding:16px; border-radius:6px; margin-bottom:18px; font-family:monospace; text-align: center; }
+        .credentials p { margin:6px 0; font-size:13px; }
+        .credentials .label { color:#6b7280; font-size:12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .credentials .temp-pass { font-size: 24px; font-weight: bold; color: #333; letter-spacing: 2px; margin-top: 5px; }
+
+        .btn { display:inline-block; text-decoration:none; padding:12px 18px; border-radius:6px; font-weight:600; }
+
+        .footer { padding:18px 24px; font-size:12px; color:#6b7280; text-align:center; }
+
+        @media only screen and (max-width:480px) {
+            .header h1 { font-size:18px; }
+            .body { padding:18px; }
+        }
+    </style>
+</head>
+<body>
+<center class="email-wrapper">
+    <div class="email-content">
+
+        <table role="presentation" width="100%" class="card">
+            <tr>
+                <td class="header">
+                    <h1>Redefinição de Senha</h1>
+                    <p>Solicitação de recuperação de acesso</p>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="body">
+                    <p class="greeting">Olá, <strong th:text="${username}">Usuário</strong>.</p>
+
+                    <p class="lead">Recebemos uma solicitação para redefinir sua senha de acesso ao <strong>Sistema de Especificações Técnicas</strong>.</p>
+
+                    <p class="lead">Por questões de segurança, geramos uma <strong>senha temporária</strong>. Utilize esta senha para fazer o login. Assim que entrar, o sistema solicitará que você crie uma nova senha definitiva.</p>
+
+                    <div class="credentials">
+                        <p><span class="label">Sua Senha Temporária</span></p>
+                        <p class="temp-pass" th:text="${senhaTemporaria}">TEMP1234</p>
+                    </div>
+
+                    <p style="margin-bottom:18px; text-align: center;">Clique abaixo para acessar o sistema:</p>
+
+                    <div style="text-align: center;">
+                        <a th:href="@{https://front-end-jota-nunes-vue.vercel.app/}" class="btn">Fazer Login e Alterar Senha</a>
+                    </div>
+
+                    <hr style="border:none; border-top:1px solid #eef2f7; margin:25px 0;" />
+
+                    <p style="font-size:13px; color:#999; line-height: 1.4;">
+                        <strong>Importante:</strong> Se você não solicitou esta alteração, ignore este e-mail ou entre em contato com o administrador do sistema imediatamente.
+                    </p>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td class="footer">
+                    <p>Atenciosamente,<br/>Equipe — Sistema de Especificações Técnicas</p>
+                    <p style="margin-top:6px;">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> JotaNunes</p>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</center>
+</body>
+</html>

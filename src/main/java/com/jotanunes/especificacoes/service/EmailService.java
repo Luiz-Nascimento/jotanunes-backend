@@ -63,4 +63,24 @@ public class EmailService {
             throw new SendEmailException("Erro ao notificar gestores por email");
         }
     }
+
+    public void notificarResetSenha(String emailDestinatario, String assunto, Map<String, Object> variaveis) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            Context context = new Context();
+            context.setVariables(variaveis);
+
+            String htmlContent = templateEngine.process("email-reset-senha.html", context);
+
+            helper.setFrom(emailSistema);
+            helper.setTo(emailDestinatario);
+            helper.setSubject(assunto);
+            helper.setText(htmlContent, true);
+            mailSender.send(mimeMessage);
+        } catch (Exception e) {
+            throw new SendEmailException(e.getMessage());
+        }
+    }
 }

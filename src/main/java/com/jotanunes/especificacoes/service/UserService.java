@@ -2,13 +2,13 @@ package com.jotanunes.especificacoes.service;
 
 import com.jotanunes.especificacoes.dto.usuario.*;
 import com.jotanunes.especificacoes.event.NewUserEvent;
+import com.jotanunes.especificacoes.event.UserPasswordResetEvent;
 import com.jotanunes.especificacoes.exception.ResourceNotFoundException;
 import com.jotanunes.especificacoes.mapper.UserMapper;
 import com.jotanunes.especificacoes.model.User;
 import com.jotanunes.especificacoes.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -75,7 +75,7 @@ public class UserService {
     }
 
     @Transactional
-    public void adminSetPassword(UUID userId, UserPasswordResetRequest request)
+    public void resetPassword(UUID userId, UserPasswordResetRequest request)
     {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Não foi possível encontrar um usuário com este Id" + userId));
@@ -83,8 +83,8 @@ public class UserService {
         user.setSenha(passwordEncoder.encode(request.getNovaSenha()));
 
         user.setAlterarSenha(true);
-
         userRepository.save(user);
+        eventPublisher.publishEvent(new UserPasswordResetEvent(user.getEmail(), user.getNome(), request.getNovaSenha()));
     }
 
     @Transactional
